@@ -1279,10 +1279,11 @@ package org.flixel
 					ry = ly + stepY*((q-lx)/stepX);
 					if((ry > tileY) && (ry < tileY + _tileHeight))
 					{
-						if(Result == null)
-							Result = new FlxPoint();
-						Result.x = rx;
-						Result.y = ry;
+						if(Result != null)
+						{
+							Result.x = rx;
+							Result.y = ry;
+						}
 						return false;
 					}
 					
@@ -1294,10 +1295,11 @@ package org.flixel
 					ry = q;
 					if((rx > tileX) && (rx < tileX + _tileWidth))
 					{
-						if(Result == null)
-							Result = new FlxPoint();
-						Result.x = rx;
-						Result.y = ry;
+						if(Result != null)
+						{
+							Result.x = rx;
+							Result.y = ry;
+						}
 						return false;
 					}
 					return true;
