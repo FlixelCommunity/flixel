@@ -340,16 +340,13 @@ package org.flixel
 		{
 			_ACTIVECOUNT++;
 			
-			if(_flickerTimer != 0)
+			if(_flickerTimer > 0)
 			{
-				if(_flickerTimer > 0)
+				_flickerTimer -= FlxG.elapsed;
+				if(_flickerTimer <= 0)
 				{
-					_flickerTimer = _flickerTimer - FlxG.elapsed;
-					if(_flickerTimer <= 0)
-					{
-						_flickerTimer = 0;
-						_flicker = false;
-					}
+					_flickerTimer = 0;
+					_flicker = false;
 				}
 			}
 			
