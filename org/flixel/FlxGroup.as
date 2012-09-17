@@ -172,6 +172,12 @@ package org.flixel
 		 */
 		public function add(Object:FlxBasic):FlxBasic
 		{
+			if (Object == null)
+			{
+				FlxG.log("WARNING: Cannot add a `null` object to a FlxGroup.");
+				return null;
+			}
+		
 			//Don't bother adding an object twice.
 			if(members.indexOf(Object) >= 0)
 				return Object;
