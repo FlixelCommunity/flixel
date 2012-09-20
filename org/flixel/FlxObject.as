@@ -254,7 +254,7 @@ package org.flixel
 		 */
 		protected var _pathInc:int;
 		/**
-		 * Internal flag for whether hte object's angle should be adjusted to the path angle during path follow behavior.
+		 * Internal flag for whether the object's angle should be adjusted to the path angle during path follow behavior.
 		 */
 		protected var _pathRotate:Boolean;
 		
@@ -509,6 +509,9 @@ package org.flixel
 		public function stopFollowingPath(DestroyPath:Boolean=false):void
 		{
 			pathSpeed = 0;
+			velocity.x = 0;
+			velocity.y = 0;
+			
 			if(DestroyPath && (path != null))
 			{
 				path.destroy();
@@ -542,7 +545,7 @@ package org.flixel
 				if(_pathNodeIndex < 0)
 				{
 					_pathNodeIndex = 0;
-					pathSpeed = 0;
+					stopFollowingPath(false);
 				}
 			}
 			else if((_pathMode & PATH_LOOP_FORWARD) > 0)
@@ -586,7 +589,7 @@ package org.flixel
 				if(_pathNodeIndex >= path.nodes.length)
 				{
 					_pathNodeIndex = path.nodes.length-1;
-					pathSpeed = 0;
+					stopFollowingPath(false);
 				}
 			}
 
