@@ -728,7 +728,6 @@ package org.flixel
 		 */
 		static public function addBitmap(Graphic:Class, Reverse:Boolean=false, Unique:Boolean=false, Key:String=null):BitmapData
 		{
-			var needReverse:Boolean = false;
 			if(Key == null)
 			{
 				Key = String(Graphic)+(Reverse?"_REVERSE_":"");
@@ -743,29 +742,24 @@ package org.flixel
 					Key = ukey;
 				}
 			}
-			
 			//If there is no data for this key, generate the requested graphic
 			if(!checkBitmapCache(Key))
 			{
-				_cache[Key] = (new Graphic).bitmapData;
+				var pixels:BitmapData = (new Graphic()).bitmapData;
 				if(Reverse)
-					needReverse = true;
-			}
-			var pixels:BitmapData = _cache[Key];
-			if(!needReverse && Reverse && (pixels.width == (new Graphic).bitmapData.width))
-				needReverse = true;
-			if(needReverse)
-			{
-				var newPixels:BitmapData = new BitmapData(pixels.width<<1,pixels.height,true,0x00000000);
-				newPixels.draw(pixels);
-				var mtx:Matrix = new Matrix();
-				mtx.scale(-1,1);
-				mtx.translate(newPixels.width,0);
-				newPixels.draw(pixels,mtx);
-				pixels = newPixels;
+				{
+					var newPixels:BitmapData = new BitmapData(pixels.width<<1,pixels.height,true,0x00000000);
+					newPixels.draw(pixels);
+					var mtx:Matrix = new Matrix();
+					mtx.scale(-1,1);
+					mtx.translate(newPixels.width,0);
+					newPixels.draw(pixels, mtx);
+					pixels.dispose();
+					pixels = newPixels;	
+				}
 				_cache[Key] = pixels;
 			}
-			return pixels;
+			return _cache[Key];
 		}
 		
 		/**
