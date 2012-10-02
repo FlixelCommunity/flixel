@@ -169,6 +169,8 @@ package org.flixel
 		{
 			kill();
 
+			_sound.removeEventListener(Event.ID3, gotID3);
+			
 			_transform = null;
 			_sound = null;
 			exists = false;
@@ -515,10 +517,8 @@ package org.flixel
 		protected function gotID3(event:Event=null):void
 		{
 			FlxG.log("got ID3 info!");
-			if(_sound.id3.songName.length > 0)
-				name = _sound.id3.songName;
-			if(_sound.id3.artist.length > 0)
-				artist = _sound.id3.artist;
+			name = _sound.id3.songName;
+			artist = _sound.id3.artist;
 			_sound.removeEventListener(Event.ID3, gotID3);
 		}
 	}
