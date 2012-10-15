@@ -78,11 +78,6 @@ package org.flixel
 		 */
 		public var bounce:Number;
 		/**
-		 * Set your own particle class type here.
-		 * Default is <code>FlxParticle</code>.
-		 */
-		public var particleClass:Class;
-		/**
 		 * Internal helper for deciding how many particles to launch.
 		 */
 		protected var _quantity:uint;
@@ -102,6 +97,11 @@ package org.flixel
 		 * Internal point object, handy for reusing for memory mgmt purposes.
 		 */
 		protected var _point:FlxPoint;
+		/**
+		 * Internal variable for tracking the class to create when generating particles.
+		 */
+		protected var _particleClass:Class;
+		
 		
 		/**
 		 * Creates a new <code>FlxEmitter</code> object at a specific position.
@@ -123,7 +123,7 @@ package org.flixel
 			minRotation = -360;
 			maxRotation = 360;
 			gravity = 0;
-			particleClass = null;
+			_particleClass = FlxParticle;
 			particleDrag = new FlxPoint();
 			frequency = 0.1;
 			lifespan = 3;
@@ -143,7 +143,7 @@ package org.flixel
 			minParticleSpeed = null;
 			maxParticleSpeed = null;
 			particleDrag = null;
-			particleClass = null;
+			_particleClass = null;
 			_point = null;
 			super.destroy();
 		}
@@ -151,7 +151,7 @@ package org.flixel
 		/**
 		 * This function generates a new array of particle sprites to attach to the emitter.
 		 * 
-		 * @param	Graphics		If you opted to not pre-configure an array of FlxSprite objects, you can simply pass in a particle image or sprite sheet.
+		 * @param	Graphics		If you opted to not pre-configure an array of FlxParticle objects, you can simply pass in a particle image or sprite sheet.
 		 * @param	Quantity		The number of particles to generate when using the "create from image" option.
 		 * @param	BakedRotations	How many frames of baked rotation to use (boosts performance).  Set to zero to not use baked rotations.
 		 * @param	Multiple		Whether the image in the Graphics param is a single particle or a bunch of particles (if it's a bunch, they need to be square!).
@@ -177,10 +177,8 @@ package org.flixel
 			var i:uint = 0;
 			while(i < Quantity)
 			{
-				if(particleClass == null)
-					particle = new FlxParticle();
-				else
-					particle = new particleClass();
+				particle = new particleClass() as FlxParticle;
+				
 				if(Multiple)
 				{
 					randomFrame = FlxG.random()*totalFrames;
@@ -290,7 +288,7 @@ package org.flixel
 		 */
 		public function emitParticle():void
 		{
-			var particle:FlxParticle = recycle(FlxParticle) as FlxParticle;
+			var particle:FlxParticle = recycle(particleClass) as FlxParticle;
 			particle.lifespan = lifespan;
 			particle.elasticity = bounce;
 			particle.reset(x - (particle.width>>1) + FlxG.random()*width, y - (particle.height>>1) + FlxG.random()*height);
@@ -316,6 +314,28 @@ package org.flixel
 			particle.drag.x = particleDrag.x;
 			particle.drag.y = particleDrag.y;
 			particle.onEmit();
+		}
+		
+		/**
+		 * Set your own particle class type here. The custom class must extend <code>FlxParticle</code>.
+		 * Default is <code>FlxParticle</code>.
+		 */
+		public function get particleClass():Class
+		{
+			return _particleClass;
+		}
+		
+		public function set particleClass(value:Class):void
+		{
+			var testParticle:Object = new value();
+			if (testParticle is FlxParticle)
+			{
+				_particleClass = value;
+			}
+			else
+			{
+				FlxG.log("ERROR: " + FlxU.getClassName(testParticle, true) + " must extend FlxParticle in order to be used in a FlxEmitter.");
+			}
 		}
 		
 		/**
