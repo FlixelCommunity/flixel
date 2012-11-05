@@ -840,14 +840,14 @@ package org.flixel
 		 */
 		static public function removeCamera(Camera:FlxCamera,Destroy:Boolean=true):void
 		{
-			try
+			if(Camera && FlxG._game.contains(Camera._flashSprite))
 			{
+				FlxG.cameras.splice(FlxG.cameras.indexOf(Camera), 1);
 				FlxG._game.removeChild(Camera._flashSprite);
 			}
-			catch(E:Error)
-			{
+			else 
 				FlxG.log("Error removing camera, not part of game.");
-			}
+				
 			if(Destroy)
 				Camera.destroy();
 		}

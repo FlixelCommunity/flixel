@@ -266,7 +266,8 @@ package org.flixel
 		 */
 		override public function destroy():void
 		{
-			screen.destroy();
+			if(screen != null)
+				screen.destroy();
 			screen = null;
 			target = null;
 			scroll = null;
