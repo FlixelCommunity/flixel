@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# NOTE: These variables are relative to where you are calling the script from,
+#	NOT the location of the script!
+
+SOURCE_CODE_LOCATION="."
+LIBRARY_LOCATION="lib"
+
+SWC_OUTPUT_LOCATION="bin"
+ASDOC_OUTPUT_LOCATION="docs"
+

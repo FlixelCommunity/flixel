@@ -1,0 +1,49 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+
+	# GET sdk location
+
+	flex_sdk_location=`git config utils.flex-sdk-home`;
+	
+	if [ ! "$flex_sdk_location" ]; then
+		echo "Flex SDK not set!"
+	elif [ ! -e "$flex_sdk_location" ]; then
+		echo "ERROR: '$flex_sdk_location' does not exist."
+	elif [ ! -e "$flex_sdk_location/flex-sdk-description.xml" ]; then
+		echo "ERROR: '$flex_sdk_location' does not contain a valid SDK."
+	else
+		
+		# All good! Return the path of the SDK
+		echo "$flex_sdk_location"
+		exit 0
+		
+	fi
+	
+	echo "Please set the path to the Flex SDK by running the following command:"
+	echo "	\$ utils/flex-sdk [flex sdk location]"
+	exit 1
+
+
+elif [ $# -eq 1 ]; then
+	
+	# SET sdk location
+	
+	flex_sdk_location=$1
+	
+	if [ ! -e "$flex_sdk_location" ]; then
+		echo "ERROR: '$flex_sdk_location' does not exist."; exit 1;
+	elif [ ! -e "$flex_sdk_location/flex-sdk-description.xml" ]; then
+		echo "ERROR: '$flex_sdk_location' does not contain a valid SDK."; exit 1;
+	else
+		git config utils.flex-sdk-home "$1"
+		echo "Flex SDK set to '$1'"
+		exit 0
+	fi
+	
+else
+	
+	echo "Invalid number of arguments. Pass one argument to set the SDK location, or no arguments to retreive it."
+	exit 2
+
+fi

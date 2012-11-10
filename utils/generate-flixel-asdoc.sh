@@ -1,9 +1,17 @@
-#! /bin/sh
+#!/bin/bash
 
-# NOTE: These variables are relative to where you are calling the script from,
-#	NOT the location of the script!
-FLEX_SDK_LOCATION="/Applications/Adobe Flash Builder 4 Plug-in/sdks/4.0.0"
-CODE_LOCATION="."
-TARGET_LOCATION="docs"
+source utils/config
 
-"$FLEX_SDK_LOCATION"/bin/asdoc -source-path "$CODE_LOCATION" -doc-sources "$CODE_LOCATION" -output "$TARGET_LOCATION"
+FLEX_SDK_LOCATION=`utils/flex-sdk`
+
+if [ $? -eq 0 ];then
+
+	"$FLEX_SDK_LOCATION"/bin/asdoc -source-path "$SOURCE_CODE_LOCATION" -doc-sources "$SOURCE_CODE_LOCATION" -output "$ASDOC_OUTPUT_LOCATION"
+
+else
+
+	# Echo out the error message from running the script
+	echo "$FLEX_SDK_LOCATION";
+	exit 1;
+
+fi
