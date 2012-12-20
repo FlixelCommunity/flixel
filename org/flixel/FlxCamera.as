@@ -320,15 +320,24 @@ package org.flixel
 			
 			//Make sure we didn't go outside the camera's bounds
 			if(bounds != null)
-			{
-				if(scroll.x < bounds.left)
-					scroll.x = bounds.left;
-				if(scroll.x > bounds.right - width)
-					scroll.x = bounds.right - width;
-				if(scroll.y < bounds.top)
-					scroll.y = bounds.top;
-				if(scroll.y > bounds.bottom - height)
-					scroll.y = bounds.bottom - height;
+			{	
+				var zoomOffsetWidth:Number = 0;
+				var zoomOffsetHeight:Number = 0;
+				
+				if (zoom > 1)
+				{
+					zoomOffsetWidth = width * (zoom - 1) / (2 * zoom);
+					zoomOffsetHeight = height * (zoom - 1) / (2 * zoom);
+				}
+				
+				if(scroll.x < bounds.left - zoomOffsetWidth)
+					scroll.x = bounds.left - zoomOffsetWidth;
+				if(scroll.x > bounds.right - width + zoomOffsetWidth)
+					scroll.x = bounds.right - width + zoomOffsetWidth;
+				if(scroll.y < bounds.top - zoomOffsetHeight)
+					scroll.y = bounds.top - zoomOffsetHeight;
+				if(scroll.y > bounds.bottom - height + zoomOffsetHeight)
+					scroll.y = bounds.bottom - height + zoomOffsetHeight;
 			}
 			
 			//Update the "flash" special effect
