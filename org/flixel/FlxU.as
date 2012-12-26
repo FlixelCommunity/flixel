@@ -565,7 +565,7 @@ package org.flixel
 			}
 			
 			var dx:Number = X-PivotX;
-			var dy:Number = PivotY+Y; //Y axis is inverted in flash, normally this would be a subtract operation
+			var dy:Number = PivotY-Y;
 			if(Point == null)
 				Point = new FlxPoint();
 			Point.x = PivotX + cos*dx - sin*dy;
