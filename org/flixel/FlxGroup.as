@@ -47,6 +47,10 @@ package org.flixel
 		 * Helper for sort.
 		 */
 		protected var _sortOrder:int;
+		/**
+		 * Helper for sort.
+		 */
+		protected var _sortCheckIndexExistence:Boolean;
 
 		/**
 		 * Constructor
@@ -316,14 +320,19 @@ package org.flixel
 		 * <code>myGroup.sort("y",ASCENDING)</code> at the bottom of your
 		 * <code>FlxState.update()</code> override.  To sort all existing objects after
 		 * a big explosion or bomb attack, you might call <code>myGroup.sort("exists",DESCENDING)</code>.
+		 * If you are sure every object in the group has the sorting property you want to sort on, then you
+		 * might call <code>sort()</code> passing <code>false</code> as the third parameter which disables
+		 * the index existence check, boosting the sorting performance.
 		 * 
 		 * @param	Index	The <code>String</code> name of the member variable you want to sort on.  Default value is "y".
-		 * @param	Order	A <code>FlxGroup</code> constant that defines the sort order.  Possible values are <code>ASCENDING</code> and <code>DESCENDING</code>.  Default value is <code>ASCENDING</code>.  
+		 * @param	Order	A <code>FlxGroup</code> constant that defines the sort order.  Possible values are <code>ASCENDING</code> and <code>DESCENDING</code>.  Default value is <code>ASCENDING</code>.
+		 * @param	CheckIndexExistence	Whether the method should check if group members have the sorting property you want to sort on. Members without the sorting property are always placed at the end of the group after the sort, in no particular order. Checking the index existence prevents the method from throwing an exception in case it encounters an object without the sorting property, but it causes a huge performance penalty. Default value is <code>true</code>. 
 		 */
-		public function sort(Index:String="y",Order:int=ASCENDING):void
+		public function sort(Index:String="y",Order:int=ASCENDING,CheckIndexExistence:Boolean=true):void
 		{
 			_sortIndex = Index;
 			_sortOrder = Order;
+			_sortCheckIndexExistence = CheckIndexExistence;
 			members.sort(sortHandler);
 		}
 
@@ -572,6 +581,14 @@ package org.flixel
 		 */
 		protected function sortHandler(Obj1:FlxBasic,Obj2:FlxBasic):int
 		{
+			if (_sortCheckIndexExistence == true)
+			{
+				// If the sorting property is missing, place the object at the end of the list.
+				if(!Obj1 || !(_sortIndex in Obj1))
+					return 1;
+				else if(!Obj2 || !(_sortIndex in Obj2))
+					return -1;
+			}
 			if(Obj1[_sortIndex] < Obj2[_sortIndex])
 				return _sortOrder;
 			else if(Obj1[_sortIndex] > Obj2[_sortIndex])
