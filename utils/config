@@ -3,6 +3,14 @@
 # NOTE: These variables are relative to where you are calling the script from,
 #	NOT the location of the script!
 
+PROJECT_NAME="flixel"
+
+# The version number of the project. Can be any "file-name friendly" string.
+# If empty, the version number will not be included in the generated SWC's name.
+# If set to 'auto', will automatically generate the version number based on
+#   output from `git describe`.
+PROJECT_VERSION=auto
+
 SOURCE_CODE_LOCATION="."
 LIBRARY_LOCATION="lib"
 
