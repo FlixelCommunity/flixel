@@ -745,7 +745,14 @@ package org.flixel
 			//If there is no data for this key, generate the requested graphic
 			if(!checkBitmapCache(Key))
 			{
-				var pixels:BitmapData = (new Graphic()).bitmapData;
+				var bitmap:Bitmap = new Graphic() as Bitmap;
+				if(bitmap == null)
+				{
+					FlxG.log("Error: " + FlxU.getClassName(Graphic) + " must extend flash.display.Bitmap.");
+					return FlxG.addBitmap(FlxSprite.ImgDefault, Reverse);
+				}
+				
+				var pixels:BitmapData = bitmap.bitmapData;
 				if(Reverse)
 				{
 					var newPixels:BitmapData = new BitmapData(pixels.width<<1,pixels.height,true,0x00000000);
