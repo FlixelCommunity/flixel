@@ -49,7 +49,7 @@ package org.flixel.system.debug
 		 */
 		override public function destroy():void
 		{
-			removeChild(_text);
+			if (_text) removeChild(_text);
 			_text = null;
 			_lines = null;
 			super.destroy();

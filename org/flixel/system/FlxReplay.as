@@ -64,12 +64,13 @@ package org.flixel.system
 		 */
 		public function destroy():void
 		{
-			if(_frames == null)
-				return;
-			var i:int = frameCount-1;
-			while(i >= 0)
-				(_frames[i--] as FrameRecord).destroy();
-			_frames = null;
+			if(_frames != null)
+			{
+				var i:int = frameCount-1;
+				while(i >= 0)
+					(_frames[i--] as FrameRecord).destroy();
+				_frames = null;
+			}
 		}
 		
 		/**

@@ -98,15 +98,17 @@ package org.flixel.plugin
 		 */
 		public function clear():void
 		{
-			var i:int = _paths.length-1;
-			var path:FlxPath;
-			while(i >= 0)
+			if (_paths != null)
 			{
-				path = _paths[i--] as FlxPath;
-				if(path != null)
-					path.destroy();
+				var i:int = _paths.length-1;
+				while(i >= 0)
+				{
+					var path:FlxPath = _paths[i--] as FlxPath;
+					if(path != null)
+						path.destroy();
+				}
+				_paths.length = 0;
 			}
-			_paths.length = 0;
 		}
 	}
 }

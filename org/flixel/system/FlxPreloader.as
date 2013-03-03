@@ -237,7 +237,8 @@ package org.flixel.system
 		
 		protected function destroy():void
 		{
-			removeChild(_buffer);
+			if (_buffer != null)
+				removeChild(_buffer);
 			_buffer = null;
 			_bmpBar = null;
 			_text = null;
