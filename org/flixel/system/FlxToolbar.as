@@ -17,9 +17,24 @@
 	
 	public class FlxToolbar extends Sprite
 	{
+		/**
+		 * Instantiate class members
+		 */
 		public function FlxToolbar()
 		{
-			// does a lot of nothing for now.
+			// add mouse listeners
+			addEventListener(Event.ENTER_FRAME,init);
+		}
+		
+		/**
+		 * Clean up memory
+		 */
+		public function destroy():void
+		{
+			// remove mouse event listeners
+			parent.removeEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
+			parent.removeEventListener(MouseEvent.MOUSE_DOWN,handleMouseDown);
+			parent.removeEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
 		}
 		
 		/**
@@ -94,6 +109,16 @@
 			parent.addEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
 		}
 		
+		/**
+		 * override to match:
+		 *
+		 * If the mouse is released, check to see if it was released over a button that was pressed.
+		 * If it was, take the appropriate action based on button state and visibility.
+		 *
+		 * TODO: cleanup docs
+		 *
+		 * @param	E	Flash mouse event.
+		 */
 		protected function handleMouseUp(E:MouseEvent = null):void
 		{
 			// deliberate pass
