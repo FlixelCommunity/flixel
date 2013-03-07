@@ -4,6 +4,7 @@ package org.flixel.system.debug
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import org.flixel.system.FlxToolbar;
 	
 	import org.flixel.FlxG;
 	
@@ -11,10 +12,10 @@ package org.flixel.system.debug
 	 * This control panel has all the visual debugger toggles in it, in the debugger overlay.
 	 * Currently there is only one toggle that flips on all the visual debug settings.
 	 * This panel is heavily based on the VCR panel.
-	 * 
+	 *
 	 * @author Adam Atomic
 	 */
-	public class Vis extends Sprite
+	public class Vis extends FlxToolbar
 	{
 		[Embed(source="../../data/vis/bounds.png")] protected var ImgBounds:Class;
 
@@ -34,9 +35,7 @@ package org.flixel.system.debug
 			_bounds = new ImgBounds();
 			addChild(_bounds);
 			
-			unpress();
-			checkOver();
-			updateGUI();
+			updateGUIFromMouse();
 			
 			addEventListener(Event.ENTER_FRAME,init);
 		}
@@ -67,41 +66,14 @@ package org.flixel.system.debug
 		//***EVENT HANDLERS***//
 		
 		/**
-		 * Just sets up basic mouse listeners, a la FlxWindow.
-		 * 
-		 * @param	E	Flash event.
-		 */
-		protected function init(E:Event=null):void
-		{
-			if(root == null)
-				return;
-			removeEventListener(Event.ENTER_FRAME,init);
-			
-			parent.addEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
-			parent.addEventListener(MouseEvent.MOUSE_DOWN,handleMouseDown);
-			parent.addEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
-		}
-		
-		/**
-		 * If the mouse moves, check to see if any buttons should be highlighted.
-		 * 
-		 * @param	E	Flash mouse event.
-		 */
-		protected function handleMouseMove(E:MouseEvent=null):void
-		{
-			if(!checkOver())
-				unpress();
-			updateGUI();
-		}
-		
-		/**
 		 * If the mouse is pressed down, check to see if the user started pressing down a specific button.
-		 * 
+		 *
 		 * @param	E	Flash mouse event.
 		 */
-		protected function handleMouseDown(E:MouseEvent=null):void
+		override protected function handleMouseDown(E:MouseEvent = null):void
 		{
-			unpress();
+			super.handleMouseDown(E);
+			
 			if(_overBounds)
 				_pressingBounds = true;
 		}
@@ -109,16 +81,17 @@ package org.flixel.system.debug
 		/**
 		 * If the mouse is released, check to see if it was released over a button that was pressed.
 		 * If it was, take the appropriate action based on button state and visibility.
-		 * 
+		 *
 		 * @param	E	Flash mouse event.
 		 */
-		protected function handleMouseUp(E:MouseEvent=null):void
+		override protected function handleMouseUp(E:MouseEvent=null):void
 		{
-			if(_overBounds && _pressingBounds)
+			if (_overBounds && _pressingBounds)
+			{
 				onBounds();
-			unpress();
-			checkOver();
-			updateGUI();
+			}
+			
+			updateGUIFromMouse()
 		}
 		
 		//***MISC GUI MGMT STUFF***//
@@ -126,31 +99,40 @@ package org.flixel.system.debug
 		/**
 		 * This function checks to see what button the mouse is currently over.
 		 * Has some special behavior based on whether a recording is happening or not.
-		 * 
+		 *
 		 * @return	Whether the mouse was over any buttons or not.
 		 */
-		protected function checkOver():Boolean
+		override protected function checkOver():Boolean
 		{
 			_overBounds = false;
+			
 			if((mouseX < 0) || (mouseX > width) || (mouseY < 0) || (mouseY > height))
+			{
 				return false;
+			}
+			
 			if((mouseX > _bounds.x) || (mouseX < _bounds.x + _bounds.width))
+			{
 				_overBounds = true;
+			}
+			
 			return true;
 		}
 		
 		/**
 		 * Sets all the pressed state variables for the buttons to false.
 		 */
-		protected function unpress():void
+		protected override function unpress():void
 		{
+			super.unpress();
+			
 			_pressingBounds = false;
 		}
 		
 		/**
 		 * Figures out what buttons to highlight based on the _overWhatever and _pressingWhatever variables.
 		 */
-		protected function updateGUI():void
+		override protected function updateGUI():void
 		{
 			if(FlxG.visualDebug)
 			{
