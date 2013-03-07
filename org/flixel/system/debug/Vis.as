@@ -36,21 +36,17 @@ package org.flixel.system.debug
 			addChild(_bounds);
 			
 			updateGUIFromMouse();
-			
-			addEventListener(Event.ENTER_FRAME,init);
 		}
 		
 		/**
 		 * Clean up memory.
 		 */
-		public function destroy():void
+		override public function destroy():void
 		{
+			super.destroy();
+			
 			removeChild(_bounds);
 			_bounds = null;
-			
-			parent.removeEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
-			parent.removeEventListener(MouseEvent.MOUSE_DOWN,handleMouseDown);
-			parent.removeEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
 		}
 		
 		//***ACTUAL BUTTON BEHAVIORS***//
@@ -91,7 +87,7 @@ package org.flixel.system.debug
 				onBounds();
 			}
 			
-			updateGUIFromMouse()
+			updateGUIFromMouse();
 		}
 		
 		//***MISC GUI MGMT STUFF***//
@@ -124,8 +120,6 @@ package org.flixel.system.debug
 		 */
 		protected override function unpress():void
 		{
-			super.unpress();
-			
 			_pressingBounds = false;
 		}
 		

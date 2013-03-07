@@ -136,17 +136,17 @@ package org.flixel.system.debug
 			
 			stepRequested = false;
 			_file = null;
-
-			updateGUIFromMouse();
 			
-			addEventListener(Event.ENTER_FRAME,init);
+			updateGUIFromMouse();
 		}
 		
 		/**
 		 * Clean up memory.
 		 */
-		public function destroy():void
+		override public function destroy():void
 		{
+			super.destroy();
+			
 			_file = null;
 			
 			removeChild(_open);
@@ -167,10 +167,6 @@ package org.flixel.system.debug
 			_play = null;
 			removeChild(_step);
 			_step = null;
-			
-			parent.removeEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
-			parent.removeEventListener(MouseEvent.MOUSE_DOWN,handleMouseDown);
-			parent.removeEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
 		}
 		
 		/**
