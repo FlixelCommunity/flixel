@@ -1,4 +1,4 @@
-﻿package org.flixel.system
+package org.flixel.system
 {
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -9,7 +9,8 @@
 	 * the original code, which was reorganized and copy/pasted here, largely.
 	 *
 	 * I realize a lot of this is made for override. What this means is that
-	 * extending classes must examine unpress(),
+	 * extending classes must examine checkover(), unpress(), and the mouse
+	 * handlers for override.
 	 *
 	 * @author Adam Atomic
 	 * @author greysondn
@@ -62,7 +63,7 @@
 		 * not.
 		 *
 		 * @return	Boolean	true if mouse was over a button
-		 * 					false if it wasn't
+		 * 					false if it wasn't (and by default)
 		 */
 		protected function checkOver():Boolean
 		{
@@ -71,11 +72,9 @@
 		}
 		
 		/**
-		 * Override to match:
-		 *
-		 * Figures out what buttons to highlight based on the _overWhatever and _pressingWhatever variables.
-		 *
-		 * TODO: clean up documentation.
+		 * Override to provide logic to figures out what buttons to highlight
+		 * and highlight accordingly, based upon what the mouse is over and/or
+		 * pressing.
 		 */
 		protected function updateGUI():void
 		{
@@ -110,12 +109,8 @@
 		}
 		
 		/**
-		 * override to match:
-		 *
-		 * If the mouse is released, check to see if it was released over a button that was pressed.
-		 * If it was, take the appropriate action based on button state and visibility.
-		 *
-		 * TODO: cleanup docs
+		 * Override to check if the mouse has been released and - if so, if it
+		 * was over any button and to call related functions accordingly.
 		 *
 		 * @param	E	Flash mouse event.
 		 */
@@ -140,7 +135,6 @@
 		 * Overrride this function and make a call to parent to implement
 		 * checking if the user has pressed down a specific button.
 		 *
-		 *
 		 * @param	E	Flash mouse event.
 		 */
 		protected function handleMouseDown(E:MouseEvent=null):void
@@ -148,8 +142,6 @@
 			// only common line of code in originals ~greysondn, 7 Mar 2013
 			unpress();
 		}
-		
-		
 	}
-
+	
 }
