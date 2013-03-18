@@ -570,6 +570,22 @@ package org.flixel
 			}
 			super.kill();
 		}
+
+
+		/**
+		 * Calls kill on the group's members but leaves the group intact
+		 */
+		public function killMembers():void
+		{
+			var basic:FlxBasic;
+			var i:uint = 0;
+			while(i < length)
+			{
+				basic = members[i++] as FlxBasic;
+				if((basic != null) && basic.exists)
+					basic.kill();
+			}
+		}
 		
 		/**
 		 * Helper function for the sort process.
