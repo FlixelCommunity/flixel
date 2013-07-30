@@ -1,5 +1,6 @@
 package org.flixel.system
 {
+	import org.flixel.FlxG;
 	import org.flixel.FlxObject;
 	
 	/**
@@ -19,6 +20,11 @@ package org.flixel.system
 		public var next:FlxList;
 		
 		/**
+		 * A pool to prevent repeated <code>new</code> calls.
+		 */
+		static public var listPool:ObjectPool = new ObjectPool(FlxList);
+		
+		/**
 		 * Creates a new link, and sets <code>object</code> and <code>next</code> to <code>null</code>.
 		 */
 		public function FlxList()
@@ -36,6 +42,8 @@ package org.flixel.system
 			if(next != null)
 				next.destroy();
 			next = null;
+			
+			listPool.disposeObject(this);
 		}
 	}
 }

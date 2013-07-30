@@ -1,7 +1,7 @@
 package org.flixel
 {
 	import flash.display.BitmapData;
-  import flash.display.Bitmap;
+	import flash.display.Bitmap;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -972,14 +972,22 @@ package org.flixel
 		static public function overlap(ObjectOrGroup1:FlxBasic=null,ObjectOrGroup2:FlxBasic=null,NotifyCallback:Function=null,ProcessCallback:Function=null):Boolean
 		{
 			if(ObjectOrGroup1 == null)
+			{
 				ObjectOrGroup1 = FlxG.state;
+			}
+
 			if(ObjectOrGroup2 === ObjectOrGroup1)
+			{
 				ObjectOrGroup2 = null;
+			}
+			
 			FlxQuadTree.divisions = FlxG.worldDivisions;
-			var quadTree:FlxQuadTree = new FlxQuadTree(FlxG.worldBounds.x,FlxG.worldBounds.y,FlxG.worldBounds.width,FlxG.worldBounds.height);
+			var quadTree:FlxQuadTree = FlxQuadTree.quadTreePool.getNew();
+			quadTree.init(FlxG.worldBounds.x,FlxG.worldBounds.y,FlxG.worldBounds.width,FlxG.worldBounds.height);
 			quadTree.load(ObjectOrGroup1,ObjectOrGroup2,NotifyCallback,ProcessCallback);
 			var result:Boolean = quadTree.execute();
 			quadTree.destroy();
+
 			return result;
 		}
 		
