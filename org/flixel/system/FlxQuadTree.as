@@ -258,13 +258,17 @@ package org.flixel.system
 		 */
 		public function destroy():void
 		{
-			_headA.destroy();
+			if(_headA != null)
+				_headA.destroy();
 			_headA = null;
-			_tailA.destroy();
+			if(_tailA != null)
+				_tailA.destroy();
 			_tailA = null;
-			_headB.destroy();
+			if(_headB != null)
+				_headB.destroy();
 			_headB = null;
-			_tailB.destroy();
+			if(_tailB != null)
+				_tailB.destroy();
 			_tailB = null;
 
 			if(_northWestTree != null)

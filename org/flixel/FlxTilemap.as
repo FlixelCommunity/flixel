@@ -157,16 +157,25 @@ package org.flixel
 			_flashPoint = null;
 			_flashRect = null;
 			_tiles = null;
-			var i:uint = 0;
-			var l:uint = _tileObjects.length;
-			while(i < l)
-				(_tileObjects[i++] as FlxTile).destroy();
-			_tileObjects = null;
-			i = 0;
-			l = _buffers.length;
-			while(i < l)
-				(_buffers[i++] as FlxTilemapBuffer).destroy();
-			_buffers = null;
+			
+			if (_tileObjects != null)
+			{
+				var i:uint = 0;
+				var l:uint = _tileObjects.length;
+				while(i < l)
+					(_tileObjects[i++] as FlxTile).destroy();
+				_tileObjects = null;
+			}
+			
+			if (_buffers != null)
+			{
+				i = 0;
+				l = _buffers.length;
+				while(i < l)
+					(_buffers[i++] as FlxTilemapBuffer).destroy();
+				_buffers = null;
+			}
+			
 			_data = null;
 			_rects = null;
 			_debugTileNotSolid = null;

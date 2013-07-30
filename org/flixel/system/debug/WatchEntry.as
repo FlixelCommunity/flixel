@@ -100,9 +100,13 @@ package org.flixel.system.debug
 			nameDisplay = null;
 			field = null;
 			custom = null;
-			valueDisplay.removeEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
-			valueDisplay.removeEventListener(KeyboardEvent.KEY_UP,handleKeyUp);
-			valueDisplay = null;
+			
+			if (valueDisplay != null)
+			{
+				valueDisplay.removeEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
+				valueDisplay.removeEventListener(KeyboardEvent.KEY_UP,handleKeyUp);
+				valueDisplay = null;
+			}
 		}
 		
 		/**

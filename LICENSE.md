@@ -1,4 +1,6 @@
-Copyright (c) 2009 Adam 'Atomic' Saltsman
+
+**Copyright (c) 2009 Adam 'Atomic' Saltsman and other contributors.**  
+Full list at http://github.com/FlixelCommunity/flixel/contributors
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
@@ -21,7 +23,7 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-NOTE FROM THE AUTHOR: As far as I know, you only have to include
-this license if you are redistributing source code that includes
-the Flixel library.  There is no need (or way, afaik) to include
-it in your compiled flash games and apps!
+_NOTE FROM THE AUTHOR: As far as I know, you only have to include_
+_this license if you are redistributing source code that includes_
+_the Flixel library.  There is no need (or way, afaik) to include_
+_it in your compiled flash games and apps!_

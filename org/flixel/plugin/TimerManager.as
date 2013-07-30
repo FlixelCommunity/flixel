@@ -75,15 +75,17 @@ package org.flixel.plugin
 		 */
 		public function clear():void
 		{
-			var i:int = _timers.length-1;
-			var timer:FlxTimer;
-			while(i >= 0)
+			if (_timers != null)
 			{
-				timer = _timers[i--] as FlxTimer;
-				if(timer != null)
-					timer.destroy();
+				var i:int = _timers.length-1;
+				while(i >= 0)
+				{
+					var timer:FlxTimer = _timers[i--] as FlxTimer;
+					if(timer != null)
+						timer.destroy();
+				}
+				_timers.length = 0;
 			}
-			_timers.length = 0;
 		}
 	}
 }
