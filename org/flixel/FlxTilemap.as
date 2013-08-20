@@ -251,11 +251,8 @@ package org.flixel
 			
 			//create some tile objects that we'll use for overlap checks (one for each tile)
 			i = 0;
-			var l:uint = (_tiles.width/_tileWidth) * (_tiles.height/_tileHeight);
-			if(auto > OFF)
-				l++;
+			var l:uint = (_tiles.width/_tileWidth) * (_tiles.height/_tileHeight) + _startingIndex;
 			_tileObjects = new Array(l);
-			var ac:uint;
 			while(i < l)
 			{
 				_tileObjects[i] = new FlxTile(this,i,_tileWidth,_tileHeight,(i >= DrawIndex),(i >= CollideIndex)?allowCollisions:NONE);
