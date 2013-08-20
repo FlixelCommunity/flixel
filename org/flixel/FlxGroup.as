@@ -568,7 +568,27 @@ package org.flixel
 				if((basic != null) && basic.exists)
 					basic.kill();
 			}
+			
+			// Kill the group itself
 			super.kill();
+		}
+		
+		/**
+		 * Calls revive on the group itself and then on the group's members.
+		 */
+		override public function revive():void
+		{
+			// Revive the group itself
+			super.revive();
+			
+			var basic:FlxBasic;
+			var i:uint = 0;
+			while(i < length)
+			{
+				basic = members[i++] as FlxBasic;
+				if((basic != null) && !basic.alive)
+					basic.revive();
+			}
 		}
 		
 		/**
