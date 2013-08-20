@@ -954,14 +954,15 @@ package org.flixel
 				column = selectionX;
 				while(column < selectionWidth)
 				{
-					overlapFound = false;
-					tile = _tileObjects[_data[rowStart+column]] as FlxTile;
+					tile = _tileObjects[_data[rowStart + column]] as FlxTile;
+					tile.x = X+column*_tileWidth;
+					tile.y = Y+row*_tileHeight;
+					tile.last.x = tile.x - deltaX;
+					tile.last.y = tile.y - deltaY;
+					overlapFound = (Object.x + Object.width > tile.x) && (Object.x < tile.x + tile.width) && (Object.y + Object.height > tile.y) && (Object.y < tile.y + tile.height);
+					
 					if(tile.allowCollisions)
 					{
-						tile.x = X+column*_tileWidth;
-						tile.y = Y+row*_tileHeight;
-						tile.last.x = tile.x - deltaX;
-						tile.last.y = tile.y - deltaY;
 						if(Callback != null)
 						{
 							if(FlipCallbackParams)
@@ -969,22 +970,16 @@ package org.flixel
 							else
 								overlapFound = Callback(tile,Object);
 						}
-						else
-							overlapFound = (Object.x + Object.width > tile.x) && (Object.x < tile.x + tile.width) && (Object.y + Object.height > tile.y) && (Object.y < tile.y + tile.height);
-						if(overlapFound)
-						{
-							if((tile.callback != null) && ((tile.filter == null) || (Object is tile.filter)))
-							{
-								tile.mapIndex = rowStart+column;
-								tile.callback(tile,Object);
-							}
-							results = true;
-						}
-					}
-					else if((tile.callback != null) && ((tile.filter == null) || (Object is tile.filter)))
+					}	
+					if(overlapFound)
 					{
-						tile.mapIndex = rowStart+column;
-						tile.callback(tile,Object);
+						if((tile.callback != null) && ((tile.filter == null) || (Object is tile.filter)))
+						{
+							tile.mapIndex = rowStart+column;
+							tile.callback(tile,Object);
+						}
+						if(tile.allowCollisions)
+							results = true;
 					}
 					column++;
 				}
