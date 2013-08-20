@@ -524,8 +524,8 @@ package org.flixel
 			gfx.clear();
 			gfx.moveTo(StartX,StartY);
 			var alphaComponent:Number = Number((Color >> 24) & 0xFF) / 255;
-			if(alphaComponent <= 0)
-				alphaComponent = 1;
+			if(alphaComponent < 0)
+				alphaComponent = 0;
 			gfx.lineStyle(Thickness,Color,alphaComponent);
 			gfx.lineTo(EndX,EndY);
 			
