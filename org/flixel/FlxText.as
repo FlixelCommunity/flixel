@@ -28,6 +28,11 @@ package org.flixel
 		 * Internal tracker for the text shadow color, default is clear/transparent.
 		 */
 		protected var _shadow:uint;
+		/**
+		 * Internal reference to a several Flash <code>TextField</code> objects.
+		 * They are used to render each text line independently to avoid anti-aliasing.
+		 */
+		protected var _textFields:Vector.<TextField>
 		
 		/**
 		 * Creates a new <code>FlxText</code> object at the specified position.
@@ -65,6 +70,7 @@ package org.flixel
 			_shadow = 0;
 			allowCollisions = NONE;
 			moves = false;
+			_textFields = new Vector.<TextField>();
 			calcFrame();
 		}
 		
@@ -208,6 +214,7 @@ package org.flixel
 			format.align = Alignment;
 			_textField.defaultTextFormat = format;
 			_textField.setTextFormat(format);
+			_regen = true;
 			calcFrame();
 		}
 		
@@ -250,6 +257,33 @@ package org.flixel
 				_flashRect.width = width;
 				_flashRect.height = height;
 				_regen = false;
+				
+				//generate our single line text fields;
+				var heightCounter:int;
+				_textFields.length = 0;
+				i = 0;
+				while (i < nl)
+				{
+					var tf:TextField = new TextField();
+					tf.y = heightCounter;
+					tf.width = _textField.width;
+					tf.embedFonts = _textField.embedFonts;
+					tf.selectable = false;
+					tf.sharpness = 100;
+					tf.multiline = false;
+					tf.wordWrap = false;
+					tf.text = _textField.getLineText(i);
+					tf.defaultTextFormat = _textField.defaultTextFormat;
+					tf.setTextFormat(_textField.defaultTextFormat);
+					if(tf.text.length <= 0)
+						tf.height = 1;
+					else
+						tf.height = 30;
+					var lPos:Number = _textField.getLineMetrics(i).x;
+					if ( lPos != Math.round(lPos)) { tf.x = Math.round(lPos)-lPos; }
+					heightCounter += _textField.getLineMetrics(i++).height;
+					_textFields.push(tf);
+				}
 			}
 			else	//Else just clear the old buffer before redrawing the text
 				_pixels.fillRect(_flashRect,0);
@@ -260,25 +294,31 @@ package org.flixel
 				var format:TextFormat = _textField.defaultTextFormat;
 				var formatAdjusted:TextFormat = format;
 				_matrix.identity();
-				//If it's a single, centered line of text, we center it ourselves so it doesn't blur to hell
-				if((format.align == "center") && (_textField.numLines == 1))
-				{
-					formatAdjusted = new TextFormat(format.font,format.size,format.color,null,null,null,null,null,"left");
-					_textField.setTextFormat(formatAdjusted);				
-					_matrix.translate(Math.floor((width - _textField.getLineMetrics(0).width)/2),0);
-				}
+				
 				//Render a single pixel shadow beneath the text
 				if(_shadow > 0)
 				{
-					_textField.setTextFormat(new TextFormat(formatAdjusted.font,formatAdjusted.size,_shadow,null,null,null,null,null,formatAdjusted.align));				
-					_matrix.translate(1,1);
-					_pixels.draw(_textField,_matrix,_colorTransform);
-					_matrix.translate(-1,-1);
-					_textField.setTextFormat(new TextFormat(formatAdjusted.font,formatAdjusted.size,formatAdjusted.color,null,null,null,null,null,formatAdjusted.align));
+					i = 0;
+					while (i < _textFields.length)
+					{
+						_textFields[i].setTextFormat(new TextFormat(formatAdjusted.font,formatAdjusted.size,_shadow,null,null,null,null,null,formatAdjusted.align));				
+						_matrix.translate(1+_textFields[i].x,1+_textFields[i].y);
+						_pixels.draw(_textFields[i],_matrix,_colorTransform);
+						_matrix.translate(-1-_textFields[i].x,-1-_textFields[i].y);
+						_textFields[i].setTextFormat(new TextFormat(formatAdjusted.font, formatAdjusted.size, formatAdjusted.color, null, null, null, null, null, formatAdjusted.align));
+						i++;
+					}
 				}
 				//Actually draw the text onto the buffer
-				_pixels.draw(_textField,_matrix,_colorTransform);
-				_textField.setTextFormat(new TextFormat(format.font,format.size,format.color,null,null,null,null,null,format.align));
+				i = 0;
+				while (i < _textFields.length)
+				{
+					_matrix.translate(_textFields[i].x, _textFields[i].y);
+					_pixels.draw(_textFields[i],_matrix,_colorTransform);
+					_textFields[i].setTextFormat(new TextFormat(format.font, format.size, format.color, null, null, null, null, null, format.align));
+					_matrix.translate(-_textFields[i].x,-_textFields[i].y);
+					i++;
+				}
 			}
 			
 			//Finally, update the visible pixels
