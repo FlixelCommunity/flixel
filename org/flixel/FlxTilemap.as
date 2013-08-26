@@ -832,18 +832,22 @@ package org.flixel
 				var basic:FlxBasic;
 				var i:uint = 0;
 				var members:Array = (ObjectOrGroup as FlxGroup).members;
+				var length:uint = (ObjectOrGroup as FlxGroup).length;
 				while(i < length)
 				{
 					basic = members[i++] as FlxBasic;
-					if(basic is FlxObject)
+					if((basic != null) && basic.exists)
 					{
-						if(overlapsWithCallback(basic as FlxObject))
-							results = true;
-					}
-					else
-					{
-						if(overlaps(basic,InScreenSpace,Camera))
-							results = true;
+						if(basic is FlxObject)
+						{
+							if(overlapsWithCallback(basic as FlxObject))
+								results = true;
+						}
+						else
+						{
+							if(overlaps(basic,InScreenSpace,Camera))
+								results = true;
+						}
 					}
 				}
 				return results;
@@ -874,20 +878,28 @@ package org.flixel
 				var basic:FlxBasic;
 				var i:uint = 0;
 				var members:Array = (ObjectOrGroup as FlxGroup).members;
+				var length:uint = (ObjectOrGroup as FlxGroup).length;
 				while(i < length)
 				{
 					basic = members[i++] as FlxBasic;
-					if(basic is FlxObject)
+					if((basic != null) && basic.exists)
 					{
-						_point.x = X;
-						_point.y = Y;
-						if(overlapsWithCallback(basic as FlxObject,null,false,_point))
-							results = true;
-					}
-					else
-					{
-						if(overlapsAt(X,Y,basic,InScreenSpace,Camera))
-							results = true;
+						if(basic is FlxObject)
+						{
+							_point.x = X;
+							_point.y = Y;
+							if(overlapsWithCallback(basic as FlxObject,null,false,_point))
+							{	
+								results = true;
+							}
+						}
+						else
+						{
+							if(overlapsAt(X,Y,basic,InScreenSpace,Camera))
+							{	
+								results = true;
+							}
+						}
 					}
 				}
 				return results;
