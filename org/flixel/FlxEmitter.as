@@ -168,7 +168,7 @@ package org.flixel
 			{ 
 				var sprite:FlxSprite = new FlxSprite();
 				sprite.loadGraphic(Graphics,true);
-				totalFrames = sprite.frames;
+				totalFrames = sprite.numFrames;
 				sprite.destroy();
 			}
 

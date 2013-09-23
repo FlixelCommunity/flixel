@@ -45,7 +45,7 @@ package org.flixel
 			var sprite:FlxSprite = new FlxSprite().loadGraphic(TileGraphic,true,false,TileWidth,TileHeight);
 			var spriteWidth:uint = sprite.width;
 			var spriteHeight:uint = sprite.height;
-			var total:uint = sprite.frames + Empties;
+			var total:uint = sprite.numFrames + Empties;
 			
 			//Then prep the "canvas" as it were (just doublechecking that the size is on tile boundaries)
 			var regen:Boolean = false;
