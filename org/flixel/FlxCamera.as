@@ -302,6 +302,12 @@ package org.flixel
 					var targetX:Number = target.x + ((target.x > 0)?0.0000001:-0.0000001);
 					var targetY:Number = target.y + ((target.y > 0)?0.0000001:-0.0000001);
 					
+					if ((target is FlxSprite) && (FlxSprite(target).isSimpleRender()))
+					{
+						targetX = FlxU.ceil(targetX);
+						targetY = FlxU.ceil(targetY);
+					}
+					
 					edge = targetX - deadzone.x;
 					if(scroll.x > edge)
 						scroll.x = edge;
@@ -381,11 +387,14 @@ package org.flixel
 		{
 			target = Target;
 			var helper:Number;
+			var w:Number = 0;
+			var h:Number = 0;
+			
 			switch(Style)
 			{
 				case STYLE_PLATFORMER:
-					var w:Number = width/8;
-					var h:Number = height/3;
+					w = width/8;
+					h = height/3;
 					deadzone = new FlxRect((width-w)/2,(height-h)/2 - h*0.25,w,h);
 					break;
 				case STYLE_TOPDOWN:
@@ -397,6 +406,13 @@ package org.flixel
 					deadzone = new FlxRect((width-helper)/2,(height-helper)/2,helper,helper);
 					break;
 				case STYLE_LOCKON:
+					if (target != null) 
+					{	
+						w = target.width;
+						h = target.height;
+					}
+					deadzone = new FlxRect((width-w)/2,(height-h)/2 - h * 0.25,w,h);
+					break;
 				default:
 					deadzone = null;
 					break;

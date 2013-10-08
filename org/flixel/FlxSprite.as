@@ -161,6 +161,14 @@ package org.flixel
 		protected var _matrix:Matrix;
 		
 		/**
+		 * If the Sprite is beeing rendered in simple mode.
+		 */
+		public function isSimpleRender():Boolean 
+		{
+			return ((angle == 0) || (_bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null)
+		}
+		
+		/**
 		 * Creates a white 8x8 square <code>FlxSprite</code> at the specified position.
 		 * Optionally can load a simple, one-frame graphic instead.
 		 * 
@@ -454,18 +462,19 @@ package org.flixel
 				camera = cameras[i++];
 				if(!onScreen(camera))
 					continue;
-				_point.x = x - int(camera.scroll.x*scrollFactor.x) - offset.x;
-				_point.y = y - int(camera.scroll.y*scrollFactor.y) - offset.y;
+				_point.x = x - int(camera.scroll.x*scrollFactor.x) - FlxU.floor(offset.x);
+				_point.y = y - int(camera.scroll.y*scrollFactor.y) - FlxU.floor(offset.y);
 				_point.x += (_point.x > 0)?0.0000001:-0.0000001;
 				_point.y += (_point.y > 0)?0.0000001:-0.0000001;
-				if(((angle == 0) || (_bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null))
-				{	//Simple render
+				
+				if(isSimpleRender())
+				{
 					_flashPoint.x = _point.x;
 					_flashPoint.y = _point.y;
 					camera.buffer.copyPixels(framePixels,_flashRect,_flashPoint,null,null,true);
 				}
-				else
-				{	//Advanced render
+				else //Advanced render
+				{
 					_matrix.identity();
 					_matrix.translate(-origin.x,-origin.y);
 					_matrix.scale(scale.x,scale.y);
@@ -474,6 +483,7 @@ package org.flixel
 					_matrix.translate(_point.x+origin.x,_point.y+origin.y);
 					camera.buffer.draw(framePixels,_matrix,null,blend,null,antialiasing);
 				}
+				
 				_VISIBLECOUNT++;
 				if(FlxG.visualDebug && !ignoreDrawDebug)
 					drawDebug(camera);
