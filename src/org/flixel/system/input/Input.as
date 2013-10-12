@@ -38,7 +38,7 @@ package org.flixel.system.input
 			var i:uint = 0;
 			while(i < _total)
 			{
-				var o:Object = _map[i++];
+				var o:KeyState = _map[i++];
 				if(o == null) continue;
 				if((o.last == -1) && (o.current == -1)) o.current = 0;
 				else if((o.last == 2) && (o.current == 2)) o.current = 1;
@@ -54,7 +54,7 @@ package org.flixel.system.input
 			var i:uint = 0;
 			while(i < _total)
 			{
-				var o:Object = _map[i++];
+				var o:KeyState = _map[i++];
 				if(o == null) continue;
 				this[o.name] = false;
 				o.current = 0;
@@ -78,7 +78,7 @@ package org.flixel.system.input
 		 * 
 		 * @return	Whether the key was just pressed
 		 */
-		public function justPressed(Key:String):Boolean { return _map[_lookup[Key]].current == 2; }
+		public function justPressed(Key:String):Boolean { return (_map[_lookup[Key]] as KeyState).current == 2; }
 		
 		/**
 		 * Check to see if this key is just released.
@@ -87,7 +87,7 @@ package org.flixel.system.input
 		 * 
 		 * @return	Whether the key is just released.
 		 */
-		public function justReleased(Key:String):Boolean { return _map[_lookup[Key]].current == -1; }
+		public function justReleased(Key:String):Boolean { return (_map[_lookup[Key]] as KeyState).current == -1; }
 		
 		/**
 		 * If any keys are not "released" (0),
@@ -102,7 +102,7 @@ package org.flixel.system.input
 			var i:uint = 0;
 			while(i < _total)
 			{
-				var o:Object = _map[i++];
+				var o:KeyState = _map[i++];
 				if((o == null) || (o.current == 0))
 					continue;
 				if(data == null)
@@ -122,8 +122,8 @@ package org.flixel.system.input
 		{
 			var i:uint = 0;
 			var l:uint = Record.length;
-			var o:Object;
-			var o2:Object;
+			var o:KeyData;
+			var o2:KeyState;
 			while(i < l)
 			{
 				o = Record[i++];
@@ -156,7 +156,7 @@ package org.flixel.system.input
 			var i:uint = 0;
 			while(i < _total)
 			{
-				var o:Object = _map[i++];
+				var o:KeyState = _map[i++];
 				if((o != null) && (o.current > 0))
 					return true;
 			}
@@ -172,7 +172,7 @@ package org.flixel.system.input
 		protected function addKey(KeyName:String,KeyCode:uint):void
 		{
 			_lookup[KeyName] = KeyCode;
-			_map[KeyCode] = { name: KeyName, current: 0, last: 0 };
+			_map[KeyCode] = new KeyState(KeyName, 0, 0);
 		}
 		
 		/**

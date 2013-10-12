@@ -608,7 +608,7 @@ package org.flixel
 						if(soundPrefs.bind("flixel"))
 						{
 							if(soundPrefs.data.sound == null)
-								soundPrefs.data.sound = new Object;
+								soundPrefs.data.sound = new Object();
 							soundPrefs.data.sound.mute = FlxG.mute;
 							soundPrefs.data.sound.volume = FlxG.volume;
 							soundPrefs.close();

@@ -659,7 +659,7 @@ package org.flixel
 			var l:uint = _animations.length;
 			while(i < l)
 			{
-				if(_animations[i].name == AnimName)
+				if((_animations[i] as FlxAnim).name == AnimName)
 				{
 					_curAnim = _animations[i];
 					if(_curAnim.delay <= 0)

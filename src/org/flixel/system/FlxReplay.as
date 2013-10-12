@@ -144,7 +144,7 @@ package org.flixel.system
 			var output:String = seed+"\n";
 			var i:uint = 0;
 			while(i < frameCount)
-				output += _frames[i++].save() + "\n";
+				output += (_frames[i++] as FrameRecord).save() + "\n";
 			return output;
 		}
 

@@ -1,5 +1,6 @@
 package org.flixel.system.replay
 {
+	import org.flixel.system.input.KeyData;
 	
 	/**
 	 * Helper class for the new replay system.  Represents all the game inputs for one "frame" or "step" of the game loop.
@@ -69,7 +70,7 @@ package org.flixel.system.replay
 			
 			if(keys != null)
 			{
-				var object:Object;
+				var object:KeyData;
 				var i:uint = 0;
 				var l:uint = keys.length;
 				while(i < l)
