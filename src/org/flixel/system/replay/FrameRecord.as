@@ -125,7 +125,7 @@ package org.flixel.system.replay
 					{
 						if(keys == null)
 							keys = new Array();
-						keys.push({code:int(keyPair[0] as String),value:int(keyPair[1] as String)});
+						keys.push(new KeyData(keyPair[0], keyPair[1]));
 					}
 				}
 			}
