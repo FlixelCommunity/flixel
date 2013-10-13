@@ -411,7 +411,7 @@ package org.flixel
 						w = target.width;
 						h = target.height;
 					}
-					deadzone = new FlxRect((width-w)/2,(height-h)/2 - h * 0.25,w,h);
+					deadzone = new FlxRect(((width-w)/2)+1,((height-h)/2)+1,w,h);
 					break;
 				default:
 					deadzone = null;
