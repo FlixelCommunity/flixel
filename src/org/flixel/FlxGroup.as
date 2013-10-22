@@ -555,36 +555,28 @@ package org.flixel
 		}
 		
 		/**
-		 * Calls kill on the group's members and then on the group itself.
+		 * Calls <code>kill()<code> on all of the group's members (but not on the group itself).
 		 */
-		override public function kill():void
+		override public function killAll():void
 		{
-			var basic:FlxBasic;
 			var i:uint = 0;
 			while(i < length)
 			{
-				basic = members[i++] as FlxBasic;
+				var basic:FlxBasic = members[i++] as FlxBasic;
 				if((basic != null) && basic.exists)
 					basic.kill();
 			}
-			
-			// Kill the group itself
-			super.kill();
 		}
 		
 		/**
-		 * Calls revive on the group itself and then on the group's members.
+		 * Calls <code>revive<code> on all of the group's members (but not on the group itself).
 		 */
-		override public function revive():void
+		public function reviveAll():void
 		{
-			// Revive the group itself
-			super.revive();
-			
-			var basic:FlxBasic;
 			var i:uint = 0;
 			while(i < length)
 			{
-				basic = members[i++] as FlxBasic;
+				var basic:FlxBasic = members[i++] as FlxBasic;
 				if((basic != null) && !basic.alive)
 					basic.revive();
 			}

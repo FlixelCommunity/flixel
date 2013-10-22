@@ -126,6 +126,9 @@ package org.flixel
 		 * However, if you want the "corpse" to remain in the game,
 		 * like to animate an effect or whatever, you should override this,
 		 * setting only alive to false, and leaving exists true.
+		 *
+		 * When used in a <code>FlxGroup</code>, the method will kill the group, but leave
+		 * the members alive; use <code>FlxGroup.killAll()</code> to kill any members.
 		 */
 		public function kill():void
 		{
@@ -136,6 +139,9 @@ package org.flixel
 		/**
 		 * Handy function for bringing game objects "back to life". Just sets alive and exists back to true.
 		 * In practice, this function is most often called by <code>FlxObject.reset()</code>.
+		 *
+		 * When used in a <code>FlxGroup</code>, the method will revive the group, but leave
+		 * the members as they were; use <code>FlxGroup.reviveAll()</code> to revive any members.
 		 */
 		public function revive():void
 		{
