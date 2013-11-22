@@ -11,7 +11,7 @@ PROJECT_NAME="flixel"
 #   output from `git describe`.
 PROJECT_VERSION=auto
 
-SOURCE_CODE_LOCATION="."
+SOURCE_CODE_LOCATION="src"
 LIBRARY_LOCATION="lib"
 
 SWC_OUTPUT_LOCATION="bin"
