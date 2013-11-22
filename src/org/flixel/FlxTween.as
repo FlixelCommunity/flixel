@@ -13,7 +13,7 @@ package org.flixel
 	{
 	
 		/**
-		 * A simple, linear tween (constant motion, with no acceleration).
+		 * Instantiate a new tween object.
 		 *
 		 * @param StartValue	The starting value.
 		 * @param EndValue	The end value.
@@ -55,12 +55,16 @@ package org.flixel
 		
 		
 		/**
-		 * TODO: ASDoc
+		 * Current progress of the tween, between 0 and `duration` inclusive.
 		 */
 		public function get progress():Number
 		{
 			return _progress;
 		}
+		
+		/**
+		* @private
+		*/
 		public function set progress(value:Number):void
 		{
 			if (value >= duration)
@@ -76,7 +80,7 @@ package org.flixel
 		}
 		
 		/**
-		 * TODO: ASDoc
+		 * Returns `true` if the tween has finished to completion.
 		 */
 		public function get finished():Boolean
 		{
@@ -84,7 +88,7 @@ package org.flixel
 		}
 		
 		/**
-		 * TODO: ASDoc
+		 * The calculated value based on the current `progress`.
 		 */
 		public function get value():Number
 		{

@@ -1,9 +1,6 @@
 package org.flixel
 {
 	import flash.display.Graphics;
-	import flash.display.Sprite;
-	import flash.geom.Point;
-	
 	import org.flixel.FlxBasic;
 	
 	/**
@@ -195,8 +192,8 @@ package org.flixel
 		protected var _rect:FlxRect;
 		/**
 		 * Set this to false if you want to skip the automatic motion/movement stuff (see <code>updateMotion()</code>).
-		 * FlxObject and FlxSprite default to true.
-		 * FlxText, FlxTileblock, and FlxTilemap default to false.
+		 * FlxObject, FlxSprite and FlxText default to true.
+		 * FlxTileblock and FlxTilemap default to false.
 		 */
 		public var moves:Boolean;
 		/**
@@ -689,11 +686,16 @@ package org.flixel
 			{
 				var results:Boolean = false;
 				var i:uint = 0;
-				var members:Array = (ObjectOrGroup as FlxGroup).members;
+				var group:FlxGroup = ObjectOrGroup as FlxGroup; 
+				var members:Array = group.members;
+				var length:uint = group.length;
 				while(i < length)
 				{
-					if(overlaps(members[i++],InScreenSpace,Camera))
+					var basic:FlxBasic = members[i++] as FlxBasic;
+					if (basic != null && basic.exists && overlaps(basic,InScreenSpace,Camera))
+					{
 						results = true;
+					}
 				}
 				return results;
 			}
@@ -738,13 +740,17 @@ package org.flixel
 			if(ObjectOrGroup is FlxGroup)
 			{
 				var results:Boolean = false;
-				var basic:FlxBasic;
 				var i:uint = 0;
-				var members:Array = (ObjectOrGroup as FlxGroup).members;
+				var group:FlxGroup = ObjectOrGroup as FlxGroup; 
+				var members:Array = group.members;
+				var length:uint = group.length;
 				while(i < length)
 				{
-					if(overlapsAt(X,Y,members[i++],InScreenSpace,Camera))
+					var basic:FlxBasic = members[i++] as FlxBasic;
+					if(basic != null && basic.exists && overlapsAt(X,Y,basic,InScreenSpace,Camera))
+					{
 						results = true;
+					}
 				}
 				return results;
 			}

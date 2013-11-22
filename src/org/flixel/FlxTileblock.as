@@ -1,8 +1,5 @@
 package org.flixel
 {
-	import flash.display.BitmapData;
-	import flash.geom.Rectangle;
-	
 	/**
 	 * This is a basic "environment object" class, used to create simple walls and floors.
 	 * It can be filled with a random selection of tiles to quickly add detail.
@@ -45,7 +42,7 @@ package org.flixel
 			var sprite:FlxSprite = new FlxSprite().loadGraphic(TileGraphic,true,false,TileWidth,TileHeight);
 			var spriteWidth:uint = sprite.width;
 			var spriteHeight:uint = sprite.height;
-			var total:uint = sprite.frames + Empties;
+			var total:uint = sprite.numFrames + Empties;
 			
 			//Then prep the "canvas" as it were (just doublechecking that the size is on tile boundaries)
 			var regen:Boolean = false;

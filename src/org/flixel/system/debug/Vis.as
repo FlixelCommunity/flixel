@@ -29,8 +29,6 @@ package org.flixel.system.debug
 		{
 			super();
 			
-			var spacing:uint = 7;
-			
 			_bounds = new ImgBounds();
 			addChild(_bounds);
 			

@@ -199,7 +199,7 @@ package org.flixel
 		 */
 		static public function formatTicks(StartTicks:uint,EndTicks:uint):String
 		{
-			return ((EndTicks-StartTicks)/1000)+"s"
+			return ((EndTicks-StartTicks)/1000)+"s";
 		}
 		
 		/**

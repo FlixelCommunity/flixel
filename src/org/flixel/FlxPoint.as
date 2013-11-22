@@ -46,29 +46,29 @@ package org.flixel
 		/**
 		 * Helper function, just copies the values from the specified point.
 		 * 
-		 * @param	Point	Any <code>FlxPoint</code>.
+		 * @param	point	Any <code>FlxPoint</code>.
 		 * 
 		 * @return	A reference to itself.
 		 */
-		public function copyFrom(Point:FlxPoint):FlxPoint
+		public function copyFrom(point:FlxPoint):FlxPoint
 		{
-			x = Point.x;
-			y = Point.y;
+			x = point.x;
+			y = point.y;
 			return this;
 		}
 		
 		/**
 		 * Helper function, just copies the values from this point to the specified point.
 		 * 
-		 * @param	Point	Any <code>FlxPoint</code>.
+		 * @param	point	Any <code>FlxPoint</code>.
 		 * 
 		 * @return	A reference to the altered point parameter.
 		 */
-		public function copyTo(Point:FlxPoint):FlxPoint
+		public function copyTo(point:FlxPoint):FlxPoint
 		{
-			Point.x = x;
-			Point.y = y;
-			return Point;
+			point.x = x;
+			point.y = y;
+			return point;
 		}
 		
 		/**

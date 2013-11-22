@@ -1,6 +1,5 @@
 package org.flixel
 {
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.geom.ColorTransform;
@@ -65,10 +64,6 @@ package org.flixel
 		 */
 		public var frameHeight:uint;
 		/**
-		 * The total number of frames in this image.  WARNING: assumes each row in the sprite sheet is full!
-		 */
-		public var frames:uint;
-		/**
 		 * The actual Flash <code>BitmapData</code> object representing the current display state of the sprite.
 		 */
 		public var framePixels:BitmapData;
@@ -99,6 +94,15 @@ package org.flixel
 		 * Internal, keeps track of the current index into the tile sheet based on animation or rotation.
 		 */
 		protected var _curIndex:uint;
+		/**
+		 * Internal, tracker for the maximum number of frames that can fit on the tile sheet, used with read-only getter.
+		 * WARNING: assumes each row in the sprite sheet is full!
+		 */
+		protected var _maxFrames:uint;
+		/**
+		 * Internal, tracker for the number of frames on the tile sheet, used with Flash getter/setter.
+		 */
+		protected var _numFrames:uint;
 		/**
 		 * Internal, used to time each frame of animation.
 		 */
@@ -156,6 +160,14 @@ package org.flixel
 		protected var _matrix:Matrix;
 		
 		/**
+		 * If the Sprite is beeing rendered in simple mode.
+		 */
+		public function isSimpleRender():Boolean 
+		{
+			return ((angle == 0) || (_bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null);
+		}
+		
+		/**
 		 * Creates a white 8x8 square <code>FlxSprite</code> at the specified position.
 		 * Optionally can load a simple, one-frame graphic instead.
 		 * 
@@ -188,6 +200,8 @@ package org.flixel
 			_curAnim = null;
 			_curFrame = 0;
 			_curIndex = 0;
+			_numFrames = 0;
+			_maxFrames = 0;
 			_frameTimer = 0;
 
 			_matrix = new Matrix();
@@ -402,9 +416,14 @@ package org.flixel
 				framePixels = new BitmapData(width,height);
 			origin.make(frameWidth*0.5,frameHeight*0.5);
 			framePixels.copyPixels(_pixels,_flashRect,_flashPointZero);
-			frames = (_flashRect2.width / _flashRect.width) * (_flashRect2.height / _flashRect.height);
 			if(_colorTransform != null) framePixels.colorTransform(_flashRect,_colorTransform);
 			_curIndex = 0;
+			_numFrames = 0;
+			
+			var widthHelper:uint = _flipped?_flipped:_pixels.width;
+			var maxFramesX:uint = FlxU.floor(widthHelper / frameWidth);
+			var maxFramesY:uint = FlxU.floor(_pixels.height / frameHeight);
+			_maxFrames = maxFramesX * maxFramesY;
 		}
 		
 		/**
@@ -446,14 +465,15 @@ package org.flixel
 				_point.y = y - int(camera.scroll.y*scrollFactor.y) - offset.y;
 				_point.x += (_point.x > 0)?0.0000001:-0.0000001;
 				_point.y += (_point.y > 0)?0.0000001:-0.0000001;
-				if(((angle == 0) || (_bakedRotation > 0)) && (scale.x == 1) && (scale.y == 1) && (blend == null))
-				{	//Simple render
+				
+				if(isSimpleRender())
+				{
 					_flashPoint.x = _point.x;
 					_flashPoint.y = _point.y;
 					camera.buffer.copyPixels(framePixels,_flashRect,_flashPoint,null,null,true);
 				}
-				else
-				{	//Advanced render
+				else //Advanced render
+				{
 					_matrix.identity();
 					_matrix.translate(-origin.x,-origin.y);
 					_matrix.scale(scale.x,scale.y);
@@ -462,6 +482,7 @@ package org.flixel
 					_matrix.translate(_point.x+origin.x,_point.y+origin.y);
 					camera.buffer.draw(framePixels,_matrix,null,blend,null,antialiasing);
 				}
+				
 				_VISIBLECOUNT++;
 				if(FlxG.visualDebug && !ignoreDrawDebug)
 					drawDebug(camera);
@@ -524,8 +545,8 @@ package org.flixel
 			gfx.clear();
 			gfx.moveTo(StartX,StartY);
 			var alphaComponent:Number = Number((Color >> 24) & 0xFF) / 255;
-			if(alphaComponent <= 0)
-				alphaComponent = 1;
+			if(alphaComponent < 0)
+				alphaComponent = 0;
 			gfx.lineStyle(Thickness,Color,alphaComponent);
 			gfx.lineTo(EndX,EndY);
 			
@@ -577,8 +598,8 @@ package org.flixel
 					}
 					else
 						_curFrame++;
-					_curIndex = _curAnim.frames[_curFrame];
-					dirty = true;
+					if (!trySetIndex(_curAnim.frames[_curFrame]))
+						FlxG.log("WARNING: A FlxSprite animation is trying to set the frame number of its FlxSprite out of bounds.");
 				}
 			}
 			
@@ -645,8 +666,9 @@ package org.flixel
 						finished = true;
 					else
 						finished = false;
-					_curIndex = _curAnim.frames[_curFrame];
-					dirty = true;
+					if (!trySetIndex(_curAnim.frames[_curFrame]))
+						FlxG.log("WARNING: A FlxSprite animation is trying to set the frame number of its FlxSprite out of bounds.");
+						
 					return;
 				}
 				i++;
@@ -661,8 +683,7 @@ package org.flixel
 		public function randomFrame():void
 		{
 			_curAnim = null;
-			_curIndex = int(FlxG.random()*(_pixels.width/frameWidth));
-			dirty = true;
+			trySetIndex(int(FlxG.random()*numFrames)); // Shouldn't ever throw an error
 		}
 		
 		/**
@@ -827,9 +848,90 @@ package org.flixel
 		 */
 		public function set frame(Frame:uint):void
 		{
+			if (Frame >= numFrames)
+			{
+				FlxG.log("WARNING: The frame number of a FlxSprite must be less than its `numFrames` value.");
+				Frame = numFrames - 1;
+			}
+			
 			_curAnim = null;
 			_curIndex = Frame;
 			dirty = true;
+		}
+		
+		/**
+		 * Try setting the `_curIndex` value to the specified value, extracted out to avoid duplicate code.
+		 * If it is outside of the allowed bounds, it will still set the variable to the nearest
+		 * possible value, but will return false, allowing internal code to throw its own error messages (if necessary).
+		 * Will re-draw even if the frame hasn't changed (Adam had it that way, I'll just assume he did that on purpose).
+		 */
+		private function trySetIndex(Value:uint):Boolean
+		{	
+			_curIndex = Value;
+			dirty = true;
+		
+			if (_curIndex >= numFrames)
+			{
+				_curIndex = numFrames;
+				return false;
+			}
+			
+			//else
+			return true;
+		}
+		
+		/**
+		 * The maximum number of frames that can fit on the sprite sheet, calculated based on the size of the each frame and the 
+		 */
+		public function get maxFrames():uint
+		{
+			return _maxFrames;
+		}
+		
+		/**
+		 * The number of frames that are on the sprite sheet.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>numFrames</code> instead.
+		 */
+		public function get frames():uint
+		{
+			return numFrames;
+		}
+		
+		/**
+		 * The number of frames that are on the sprite sheet. Defaults to <code>maxFrames</code> if no value is set.
+		 * 
+		 * @param	NumFrames	The number of frames on the sprite sheet. Has to be a value between <code>1</code> and <code>maxFrames</code>.
+		 */
+		public function get numFrames():uint
+		{
+			return (_numFrames == 0) ? maxFrames : _numFrames;
+		}
+		
+		/**
+		 * @private
+		 */
+		public function set numFrames(NumFrames:uint):void
+		{
+			if (NumFrames < 1)
+			{
+				FlxG.log("ERROR: Cannot set the number of frames on a FlxSprite to less than 1.");
+				_numFrames = 1;
+				return;
+			}
+			
+			if (NumFrames > maxFrames)
+			{
+				FlxG.log("ERROR: Cannot set the number of frames on a FlxSprite to higher than its `maxFrames` value (" + maxFrames + ").");
+				_numFrames = maxFrames;
+				return;
+			}
+			
+			// Will only re-render if the current frame number has changed
+			if (frame >= _numFrames)
+			{
+				frame = _numFrames - 1;
+			}
 		}
 		
 		/**
@@ -867,21 +969,21 @@ package org.flixel
 		 * Checks to see if a point in 2D world space overlaps this <code>FlxSprite</code> object's current displayed pixels.
 		 * This check is ALWAYS made in screen space, and always takes scroll factors into account.
 		 * 
-		 * @param	Point		The point in world space you want to check.
+		 * @param	TargetPoint	The point in world space you want to check.
 		 * @param	Mask		Used in the pixel hit test to determine what counts as solid.
 		 * @param	Camera		Specify which game camera you want.  If null getScreenXY() will just grab the first global camera.
 		 * 
 		 * @return	Whether or not the point overlaps this object.
 		 */
-		public function pixelsOverlapPoint(Point:FlxPoint,Mask:uint=0xFF,Camera:FlxCamera=null):Boolean
+		public function pixelsOverlapPoint(TargetPoint:FlxPoint,Mask:uint=0xFF,Camera:FlxCamera=null):Boolean
 		{
 			if(Camera == null)
 				Camera = FlxG.camera;
 			getScreenXY(_point,Camera);
 			_point.x = _point.x - offset.x;
 			_point.y = _point.y - offset.y;
-			_flashPoint.x = (Point.x - Camera.scroll.x) - _point.x;
-			_flashPoint.y = (Point.y - Camera.scroll.y) - _point.y;
+			_flashPoint.x = (TargetPoint.x - Camera.scroll.x) - _point.x;
+			_flashPoint.y = (TargetPoint.y - Camera.scroll.y) - _point.y;
 			return framePixels.hitTest(_flashPointZero,Mask,_flashPoint);
 		}
 		

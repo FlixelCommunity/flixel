@@ -1,7 +1,6 @@
 package org.flixel.system.debug
 {
 	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
@@ -14,9 +13,6 @@ package org.flixel.system.debug
 	
 	import org.flixel.FlxG;
 	import org.flixel.FlxU;
-	import org.flixel.system.FlxReplay;
-	import org.flixel.system.replay.FrameRecord;
-	import org.flixel.system.replay.MouseRecord;
 	
 	/**
 	 * This class contains the record, stop, play, and step 1 frame buttons seen on the top edge of the debugger overlay.

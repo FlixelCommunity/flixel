@@ -2,10 +2,7 @@ package org.flixel.system.debug
 {
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-	import flash.text.TextField;
-	import flash.text.TextFormat;
 	
-	import org.flixel.FlxU;
 	import org.flixel.system.FlxWindow;
 	
 	/**
@@ -160,7 +157,7 @@ package org.flixel.system.debug
 				_names.removeChild(watchEntry.nameDisplay);
 				_values.removeChild(watchEntry.valueDisplay);
 				watchEntry.destroy();
-				i++
+				i++;
 			}
 			_watching.length = 0;
 		}

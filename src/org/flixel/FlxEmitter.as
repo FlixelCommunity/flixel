@@ -168,7 +168,7 @@ package org.flixel
 			{ 
 				var sprite:FlxSprite = new FlxSprite();
 				sprite.loadGraphic(Graphics,true);
-				totalFrames = sprite.frames;
+				totalFrames = sprite.numFrames;
 				sprite.destroy();
 			}
 
@@ -389,11 +389,11 @@ package org.flixel
 		/**
 		 * Change the emitter's midpoint to match the midpoint of a <code>FlxObject</code>.
 		 * 
-		 * @param	Object		The <code>FlxObject</code> that you want to sync up with.
+		 * @param	TargetObject		The <code>FlxObject</code> that you want to sync up with.
 		 */
-		public function at(Object:FlxObject):void
+		public function at(TargetObject:FlxObject):void
 		{
-			Object.getMidpoint(_point);
+			TargetObject.getMidpoint(_point);
 			x = _point.x - (width>>1);
 			y = _point.y - (height>>1);
 		}
