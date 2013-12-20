@@ -19,12 +19,12 @@ package org.flixel.system
 		 */
 		public var callback:Function;
 		/**
-		 * Each tile can store its own filter class for their callback functions.
+		 * Each tile can store its own filter classes for their callback functions.
 		 * That is, the callback will only be triggered if an object with a class
-		 * type matching the filter touched it.
+		 * type matching any of the filters touched it.
 		 * Defaults to null, set through <code>FlxTilemap.setTileProperties()</code>.
 		 */
-		public var filter:Class;
+		public var filters:Array;
 		/**
 		 * A reference to the tilemap this tile object belongs to.
 		 */
@@ -58,7 +58,7 @@ package org.flixel.system
 			immovable = true;
 			moves = false;
 			callback = null;
-			filter = null;
+			filters = null;
 			
 			tilemap = Tilemap;
 			index = Index;

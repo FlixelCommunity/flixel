@@ -943,6 +943,7 @@ package org.flixel
 		public function overlapsWithCallback(TargetObject:FlxObject,Callback:Function=null,FlipCallbackParams:Boolean=false,Position:FlxPoint=null):Boolean
 		{
 			var results:Boolean = false;
+			var objInFilters:Boolean = false;
 			
 			var X:Number = x;
 			var Y:Number = y;
@@ -1000,7 +1001,19 @@ package org.flixel
 					}	
 					if(overlapFound)
 					{
-						if((tile.callback != null) && ((tile.filter == null) || (TargetObject is tile.filter)))
+						if (tile.filters != null)
+						{
+							for each(var classObj:Class in tile.filters)
+							{
+								if (TargetObject is classObj)
+								{
+									objInFilters = true;
+									break;
+								}
+							}
+						}
+						
+						if((tile.callback != null) && ((tile.filters == null) || (objInFilters)))
 						{
 							tile.mapIndex = rowStart+column;
 							tile.callback(tile,TargetObject);
@@ -1201,10 +1214,10 @@ package org.flixel
 		 * @param	Tile			The tile or tiles you want to adjust.
 		 * @param	AllowCollisions	Modify the tile or tiles to only allow collisions from certain directions, use FlxObject constants NONE, ANY, LEFT, RIGHT, etc.  Default is "ANY".
 		 * @param	Callback		The function to trigger, e.g. <code>lavaCallback(Tile:FlxTile, Object:FlxObject)</code>.
-		 * @param	CallbackFilter	If you only want the callback to go off for certain classes or objects based on a certain class, set that class here.
+		 * @param	CallbackFilters	If you only want the callback to go off for certain classes or objects based on a certain class, set those classes here.
 		 * @param	Range			If you want this callback to work for a bunch of different tiles, input the range here.  Default value is 1.
 		 */
-		public function setTileProperties(Tile:uint,AllowCollisions:uint=0x1111,Callback:Function=null,CallbackFilter:Class=null,Range:uint=1):void
+		public function setTileProperties(Tile:uint,AllowCollisions:uint=0x1111,Callback:Function=null,CallbackFilters:Array=null,Range:uint=1):void
 		{
 			if(Range <= 0)
 				Range = 1;
@@ -1216,7 +1229,7 @@ package org.flixel
 				tile = _tileObjects[i++] as FlxTile;
 				tile.allowCollisions = AllowCollisions;
 				tile.callback = Callback;
-				tile.filter = CallbackFilter;
+				tile.filters = CallbackFilters;
 			}
 		}
 		
