@@ -1,4 +1,4 @@
-package org.flixel
+﻿package org.flixel
 {
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
@@ -616,6 +616,31 @@ package org.flixel
 			var dx:Number = Point1.x - Point2.x;
 			var dy:Number = Point1.y - Point2.y;
 			return Math.sqrt(dx * dx + dy * dy);
+		}
+		
+		/**
+		*	Rotates an angle towards another angle by the shortest distance
+		*
+		*	@param	source	The angle to rotate from
+		*	@param	target	The angle to rotate towards
+		*	@param	degrees	Number of degrees to rotate by
+		*
+		*	@return The new angle
+		*/
+		static public function rotateTowards ( source:Number, target:Number, degrees:Number = 1 ) : Number
+		{
+			var dif:Number = Math.abs(source - target);
+			
+			if(dif < 180 && target > source)
+				return source + degrees;
+			if(dif < 180 && target < source)
+				return source - degrees;
+			if(dif > 180 && target > source)
+				return source - degrees;
+			if(dif > 180 && target < source)
+				return source + degrees;
+			
+			return source + degrees;
 		}
 	}
 }
