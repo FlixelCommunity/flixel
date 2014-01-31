@@ -58,12 +58,34 @@ package org.flixel
 			}
 		}
 		
+		/**
+		*	Clean up memory
+		*/
+		override public function destroy () : void
+		{
+			_rotationSheets = null;
+			_frame = undefined;
+			_frames = undefined;
+			_rotations = undefined;
+			_sheetMaxDimension = undefined;
+			_advRect = null;
+			_advPoint = null;
+			
+			super.destroy();
+		}
+		
+		/**
+		*	@override
+		*/
 		override public function update () : void
 		{
 			updateAdvancedAnimation();
 			super.update();
 		}
 		
+		/**
+		*	Internal function for updating the animation
+		*/
 		private function updateAdvancedAnimation () : void
 		{
 			// We need this here out of FlxSprite for now
@@ -85,6 +107,8 @@ package org.flixel
 					dirty = true;
 				}
 			}
+			
+			
 			
 			// Clear out pixels
 			_pixels.fillRect(_advRect,0x00000000);
