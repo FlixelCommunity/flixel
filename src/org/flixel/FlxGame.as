@@ -445,7 +445,7 @@ package org.flixel
 					_accumulator += elapsedMS;
 					if(_accumulator > _maxAccumulation)
 						_accumulator = _maxAccumulation;
-					while(_accumulator >= _step)
+					while(_accumulator > _step)
 					{
 						step();
 						_accumulator = _accumulator - _step; 
