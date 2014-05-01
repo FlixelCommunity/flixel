@@ -5,7 +5,7 @@ package flixel.animation
 	 * 
 	 * @author	Adam Atomic
 	 */
-	public class FlxAnim
+	public class FlxAnimation
 	{
 		/**
 		 * String name of the animation (e.g. "walk")
@@ -32,7 +32,7 @@ package flixel.animation
 		 * @param	FrameRate	The speed in frames per second that the animation should play at (e.g. 40)
 		 * @param	Looped		Whether or not the animation is looped or just plays once
 		 */
-		public function FlxAnim(Name:String, Frames:Array, FrameRate:Number=0, Looped:Boolean=true)
+		public function FlxAnimation(Name:String, Frames:Array, FrameRate:Number=0, Looped:Boolean=true)
 		{
 			name = Name;
 			delay = 0;

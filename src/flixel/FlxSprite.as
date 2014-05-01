@@ -7,7 +7,7 @@ package flixel
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import flixel.animation.FlxAnim;
+	import flixel.animation.FlxAnimation;
 	import flixel.util.FlxU;
 	import flixel.util.FlxPoint;
 	
@@ -86,7 +86,7 @@ package flixel
 		/**
 		 * Internal, keeps track of the current animation being played.
 		 */
-		protected var _curAnim:FlxAnim;
+		protected var _curAnim:FlxAnimation;
 		/**
 		 * Internal, keeps track of the current frame of animation.
 		 * This is NOT an index into the tile sheet, but the frame number in the animation object.
@@ -221,7 +221,7 @@ package flixel
 		{
 			if(_animations != null)
 			{
-				var a:FlxAnim;
+				var a:FlxAnimation;
 				var i:uint = 0;
 				var l:uint = _animations.length;
 				while(i < l)
@@ -631,7 +631,7 @@ package flixel
 		 */
 		public function addAnimation(Name:String, Frames:Array, FrameRate:Number=0, Looped:Boolean=true):void
 		{
-			_animations.push(new FlxAnim(Name,Frames,FrameRate,Looped));
+			_animations.push(new FlxAnimation(Name,Frames,FrameRate,Looped));
 		}
 		
 		/**
