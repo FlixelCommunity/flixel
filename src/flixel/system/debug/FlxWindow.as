@@ -19,7 +19,7 @@ package flixel.system.debug
 	 */
 	public class FlxWindow extends Sprite
 	{
-		[Embed(source="../data/handle.png")] protected var ImgHandle:Class;
+		[Embed(source="../../assets/handle.png")] protected var ImgHandle:Class;
 
 		/**
 		 * Minimum allowed X and Y dimensions for this window.

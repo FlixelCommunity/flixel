@@ -20,15 +20,15 @@ package flixel.system.debug
 	 */
 	public class VCR extends Sprite
 	{
-		[Embed(source="../../data/vcr/open.png")] protected var ImgOpen:Class;
-		[Embed(source="../../data/vcr/record_off.png")] protected var ImgRecordOff:Class;
-		[Embed(source="../../data/vcr/record_on.png")] protected var ImgRecordOn:Class;
-		[Embed(source="../../data/vcr/stop.png")] protected var ImgStop:Class;
-		[Embed(source="../../data/vcr/flixel.png")] protected var ImgFlixel:Class;
-		[Embed(source="../../data/vcr/restart.png")] protected var ImgRestart:Class;
-		[Embed(source="../../data/vcr/pause.png")] protected var ImgPause:Class;
-		[Embed(source="../../data/vcr/play.png")] protected var ImgPlay:Class;
-		[Embed(source="../../data/vcr/step.png")] protected var ImgStep:Class;
+		[Embed(source="../../assets/vcr/open.png")] protected var ImgOpen:Class;
+		[Embed(source="../../assets/vcr/record_off.png")] protected var ImgRecordOff:Class;
+		[Embed(source="../../assets/vcr/record_on.png")] protected var ImgRecordOn:Class;
+		[Embed(source="../../assets/vcr/stop.png")] protected var ImgStop:Class;
+		[Embed(source="../../assets/vcr/flixel.png")] protected var ImgFlixel:Class;
+		[Embed(source="../../assets/vcr/restart.png")] protected var ImgRestart:Class;
+		[Embed(source="../../assets/vcr/pause.png")] protected var ImgPause:Class;
+		[Embed(source="../../assets/vcr/play.png")] protected var ImgPlay:Class;
+		[Embed(source="../../assets/vcr/step.png")] protected var ImgStep:Class;
 		
 		static protected const FILE_TYPES:Array = [new FileFilter("Flixel Game Recording", "*.fgr")];
 		static protected const DEFAULT_FILE_NAME:String = "replay.fgr";

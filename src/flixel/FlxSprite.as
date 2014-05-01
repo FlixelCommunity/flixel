@@ -19,7 +19,7 @@ package flixel
 	 */
 	public class FlxSprite extends FlxObject
 	{
-		[Embed(source="data/default.png")] public static var ImgDefault:Class;
+		[Embed(source="assets/default.png")] public static var ImgDefault:Class;
 		
 		/**
 		 * WARNING: The origin of the sprite will default to its center.

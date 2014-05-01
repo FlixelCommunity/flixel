@@ -22,9 +22,9 @@ package flixel.system
 	 */
 	public class FlxPreloader extends MovieClip
 	{
-		[Embed(source="../data/logo.png")] protected var ImgLogo:Class;
-		[Embed(source="../data/logo_corners.png")] protected var ImgLogoCorners:Class;
-		[Embed(source="../data/logo_light.png")] protected var ImgLogoLight:Class;
+		[Embed(source="../assets/logo.png")] protected var ImgLogo:Class;
+		[Embed(source="../assets/logo_corners.png")] protected var ImgLogoCorners:Class;
+		[Embed(source="../assets/logo_light.png")] protected var ImgLogoLight:Class;
 
 		/**
 		 * @private

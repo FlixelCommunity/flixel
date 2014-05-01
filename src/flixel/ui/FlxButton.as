@@ -15,8 +15,8 @@ package flixel.ui
 	 */
 	public class FlxButton extends FlxSprite
 	{
-		[Embed(source="data/button.png")] protected var ImgDefaultButton:Class;
-		[Embed(source="data/beep.mp3")] protected var SndBeep:Class;
+		[Embed(source="../assets/button.png")] protected var ImgDefaultButton:Class;
+		[Embed(source="../assets/beep.mp3")] protected var SndBeep:Class;
 		
 		/**
 		 * Used with public variable <code>status</code>, means not highlighted or pressed.

@@ -15,7 +15,7 @@ package flixel.system.debug
 	 */
 	public class Vis extends Sprite
 	{
-		[Embed(source="../../data/vis/bounds.png")] protected var ImgBounds:Class;
+		[Embed(source="../../assets/vis/bounds.png")] protected var ImgBounds:Class;
 
 		protected var _bounds:Bitmap;
 		protected var _overBounds:Boolean;

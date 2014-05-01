@@ -17,7 +17,7 @@ package flixel.input.mouse
 	 */
 	public class Mouse extends FlxPoint
 	{
-		[Embed(source="../../data/cursor.png")] protected var ImgDefaultCursor:Class;
+		[Embed(source="../../assets/cursor.png")] protected var ImgDefaultCursor:Class;
 
 		/**
 		 * Current "delta" value of mouse wheel.  If the wheel was just scrolled up, it will have a positive value.  If it was just scrolled down, it will have a negative value.  If it wasn't just scroll this frame, it will be 0.

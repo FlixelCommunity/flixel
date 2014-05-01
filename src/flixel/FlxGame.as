@@ -31,9 +31,9 @@ package flixel
 	 */
 	public class FlxGame extends Sprite
 	{
-		[Embed(source="data/nokiafc22.ttf",fontFamily="system",embedAsCFF="false")] protected var junk:String;
-		[Embed(source="data/beep.mp3")] protected var SndBeep:Class;
-		[Embed(source="data/logo.png")] protected var ImgLogo:Class;
+		[Embed(source="assets/nokiafc22.ttf",fontFamily="system",embedAsCFF="false")] protected var junk:String;
+		[Embed(source="assets/beep.mp3")] protected var SndBeep:Class;
+		[Embed(source="assets/logo.png")] protected var ImgLogo:Class;
 
 		/**
 		 * Sets 0, -, and + to control the global volume sound volume.

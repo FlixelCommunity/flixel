@@ -29,8 +29,8 @@ package flixel.tile
 	 */
 	public class FlxTilemap extends FlxObject
 	{
-		[Embed(source="data/autotiles.png")] static public var ImgAuto:Class;
-		[Embed(source="data/autotiles_alt.png")] static public var ImgAutoAlt:Class;
+		[Embed(source="../assets/autotiles.png")] static public var ImgAuto:Class;
+		[Embed(source="../assets/autotiles_alt.png")] static public var ImgAutoAlt:Class;
 		
 		/**
 		 * No auto-tiling.
