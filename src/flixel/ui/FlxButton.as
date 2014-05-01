@@ -1,6 +1,12 @@
-package org.flixel
+package flixel.ui
 {
+	import flixel.FlxCamera;
 	import flash.events.MouseEvent;
+	
+	import flixel.FlxG;
+	import flixel.FlxSprite;
+	import flixel.system.FlxSound;
+	import flixel.util.FlxPoint;
 	
 	/**
 	 * A simple button class that calls a function when clicked by the mouse.

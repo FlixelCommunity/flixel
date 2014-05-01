@@ -1,4 +1,4 @@
-package org.flixel
+package flixel
 {
 	/**
 	 * This is the basic game "state" object - e.g. in a simple game

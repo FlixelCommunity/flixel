@@ -1,5 +1,11 @@
-package org.flixel
+package flixel.system
 {
+	import flixel.FlxG;
+	import flixel.util.FlxU;
+	import flixel.util.FlxPoint;
+	import flixel.util.FlxTween;
+	import flixel.FlxObject;
+	import flixel.FlxBasic;
 	import flash.events.Event;
 	import flash.media.Sound;
 	import flash.media.SoundChannel;

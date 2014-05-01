@@ -1,6 +1,6 @@
-package org.flixel.system
+package flixel.util
 {
-	import org.flixel.FlxObject;
+	import flixel.FlxObject;
 	
 	/**
 	 * A miniature linked list class.

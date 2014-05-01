@@ -1,12 +1,11 @@
-package org.flixel.system.debug
+package flixel.system.debug
 {
+	import flixel.util.FlxU;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.text.TextFieldType;
 	import flash.text.TextFormat;
-	
-	import org.flixel.FlxU;
 
 	/**
 	 * Helper class for the debugger overlay's Watch window.

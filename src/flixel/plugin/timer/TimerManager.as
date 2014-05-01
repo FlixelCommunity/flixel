@@ -1,6 +1,6 @@
-package org.flixel.plugin
+package flixel.plugin.timer
 {
-	import org.flixel.*;
+	import flixel.FlxBasic;
 	
 	/**
 	 * A simple manager for tracking and updating game timer objects.

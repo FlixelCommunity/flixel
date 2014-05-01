@@ -1,13 +1,22 @@
-package org.flixel
+package flixel.tile
 {
+	import flixel.util.FlxRect;
+	import flixel.FlxBasic;
+	import flixel.FlxGroup;
+	import flixel.util.FlxU;
+	import flixel.util.FlxPath;
+	import flixel.util.FlxPoint;
+	import flixel.FlxCamera;
+	import flixel.FlxG;
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
-	import org.flixel.system.FlxTile;
-	import org.flixel.system.FlxTilemapBuffer;
+
+	import flixel.FlxObject;
+	import flixel.tile.FlxTile;
+	import flixel.tile.FlxTilemapBuffer;
 
 	/**
 	 * This is a traditional tilemap display and collision class.

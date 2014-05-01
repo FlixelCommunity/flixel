@@ -1,5 +1,6 @@
-package org.flixel
+package flixel.system
 {
+	import flixel.FlxG;
 	import flash.events.NetStatusEvent;
 	import flash.net.SharedObject;
 	import flash.net.SharedObjectFlushStatus;

@@ -1,12 +1,12 @@
-package org.flixel.system
+package flixel.tile
 {
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import org.flixel.FlxCamera;
-	import org.flixel.FlxG;
-	import org.flixel.FlxU;
+	import flixel.FlxG;
+	import flixel.FlxCamera;
+	import flixel.util.FlxU;
 
 	/**
 	 * A helper object to keep tilemap drawing performance decent across the new multi-camera system.

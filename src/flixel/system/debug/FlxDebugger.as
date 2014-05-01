@@ -1,4 +1,4 @@
-package org.flixel.system
+package flixel.system.debug
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -9,12 +9,7 @@ package org.flixel.system
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
-	import org.flixel.FlxG;
-	import org.flixel.system.debug.Log;
-	import org.flixel.system.debug.Perf;
-	import org.flixel.system.debug.VCR;
-	import org.flixel.system.debug.Vis;
-	import org.flixel.system.debug.Watch;
+	import flixel.FlxG;
 	
 	/**
 	 * Container for the new debugger overlay.

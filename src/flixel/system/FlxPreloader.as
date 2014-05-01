@@ -1,5 +1,6 @@
-package org.flixel.system
+package flixel.system
 {
+	import flixel.FlxG;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
@@ -15,8 +16,6 @@ package org.flixel.system
 	import flash.text.TextFormat;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getTimer;
-	
-	import org.flixel.FlxG;
 
 	/**
 	 * This class handles the 8-bit style preloader.

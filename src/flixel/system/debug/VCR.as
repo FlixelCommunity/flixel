@@ -1,5 +1,7 @@
-package org.flixel.system.debug
+package flixel.system.debug
 {
+	import flixel.FlxG;
+	import flixel.util.FlxU;
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -10,9 +12,6 @@ package org.flixel.system.debug
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.utils.ByteArray;
-	
-	import org.flixel.FlxG;
-	import org.flixel.FlxU;
 	
 	/**
 	 * This class contains the record, stop, play, and step 1 frame buttons seen on the top edge of the debugger overlay.

@@ -1,4 +1,4 @@
-package org.flixel
+package flixel
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -6,6 +6,10 @@ package org.flixel
 	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	
+	import flixel.util.FlxU;
+	import flixel.util.FlxPoint;
+	import flixel.util.FlxRect;
 
 	/**
 	 * The camera class is used to display the game's visuals in the Flash player.

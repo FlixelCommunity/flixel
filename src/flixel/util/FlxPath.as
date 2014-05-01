@@ -1,8 +1,10 @@
-package org.flixel
+package flixel.util
 {
 	import flash.display.Graphics;
 	
-	import org.flixel.plugin.DebugPathDisplay;
+	import flixel.FlxG;
+	import flixel.FlxCamera;
+	import flixel.plugin.pathdisplay.DebugPathDisplay;
 	
 	/**
 	 * This is a simple path data container.  Basically a list of points that

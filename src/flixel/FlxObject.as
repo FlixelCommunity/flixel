@@ -1,7 +1,12 @@
-package org.flixel
+package flixel
 {
 	import flash.display.Graphics;
-	import org.flixel.FlxBasic;
+	
+	import flixel.tile.FlxTilemap;
+	import flixel.util.FlxU;
+	import flixel.util.FlxPath;
+	import flixel.util.FlxRect;
+	import flixel.util.FlxPoint;
 	
 	/**
 	 * This is the base class for most of the display objects (<code>FlxSprite</code>, <code>FlxText</code>, etc).

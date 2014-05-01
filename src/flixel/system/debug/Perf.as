@@ -1,13 +1,11 @@
-package org.flixel.system.debug
+package flixel.system.debug
 {
+	import flixel.FlxG;
 	import flash.geom.Rectangle;
 	import flash.system.System;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.utils.getTimer;
-	
-	import org.flixel.FlxG;
-	import org.flixel.system.FlxWindow;
 	
 	/**
 	 * A simple performance monitor widget, for use in the debugger overlay.

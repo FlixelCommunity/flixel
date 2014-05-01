@@ -1,5 +1,6 @@
-package org.flixel
-{	
+package flixel
+{
+	import flixel.util.FlxU;
 	/**
 	 * This is a useful "generic" Flixel object.
 	 * Both <code>FlxObject</code> and <code>FlxGroup</code> extend this class,
@@ -9,8 +10,10 @@ package org.flixel
 	 */
 	public class FlxBasic
 	{
-		static internal var _ACTIVECOUNT:uint;
-		static internal var _VISIBLECOUNT:uint;
+		// Had to make these public when Flixel was reorganized.
+		// The properties do not work as neither 'internal' nor 'protected'
+		static public var _ACTIVECOUNT:uint;
+		static public var _VISIBLECOUNT:uint;
 
 		/**
 		 * IDs seem like they could be pretty useful, huh?

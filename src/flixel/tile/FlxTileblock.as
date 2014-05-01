@@ -1,5 +1,7 @@
-package org.flixel
+package flixel.tile
 {
+	import flixel.FlxG;
+	import flixel.FlxSprite;
 	/**
 	 * This is a basic "environment object" class, used to create simple walls and floors.
 	 * It can be filled with a random selection of tiles to quickly add detail.

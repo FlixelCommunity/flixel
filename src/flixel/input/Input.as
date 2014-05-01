@@ -1,4 +1,4 @@
-package org.flixel.system.input
+package flixel.input
 {
 	/**
 	 * Basic input class that manages the fast-access Booleans and detailed key-state tracking.
@@ -11,15 +11,15 @@ package org.flixel.system.input
 		/**
 		 * @private
 		 */
-		internal var _lookup:Object;
+		protected var _lookup:Object;
 		/**
 		 * @private
 		 */
-		internal var _map:Array;
+		protected var _map:Array;
 		/**
 		 * @private
 		 */
-		internal const _total:uint = 256;
+		protected const _total:uint = 256;
 		
 		/**
 		 * Constructor

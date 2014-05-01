@@ -1,5 +1,6 @@
-package org.flixel.system.input
+package flixel.input.keyboard 
 {
+	import flixel.input.Input;
 	import flash.events.KeyboardEvent;
 	
 	/**

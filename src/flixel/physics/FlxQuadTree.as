@@ -1,9 +1,10 @@
-package org.flixel.system
+package flixel.physics
 {
-	import org.flixel.FlxBasic;
-	import org.flixel.FlxGroup;
-	import org.flixel.FlxObject;
-	import org.flixel.FlxRect;
+	import flixel.util.FlxList;
+	import flixel.FlxBasic;
+	import flixel.FlxGroup;
+	import flixel.FlxObject;
+	import flixel.util.FlxRect;
 
 	/**
 	 * A fairly generic quad tree structure for rapid overlap checks.

@@ -1,4 +1,4 @@
-package org.flixel
+package flixel
 {
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
@@ -7,7 +7,9 @@ package org.flixel
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import org.flixel.system.FlxAnim;
+	import flixel.animation.FlxAnim;
+	import flixel.util.FlxU;
+	import flixel.util.FlxPoint;
 	
 	/**
 	 * The main "game object" class, the sprite is a <code>FlxObject</code>

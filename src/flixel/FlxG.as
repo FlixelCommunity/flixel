@@ -1,17 +1,21 @@
-package org.flixel
+package flixel
 {
+	import flixel.util.FlxU;
+	import flixel.system.FlxSound;
+	import flixel.input.keyboard.Keyboard;
+	import flixel.input.mouse.Mouse;
+	import flixel.util.FlxRect;
 	import flash.display.BitmapData;
-  import flash.display.Bitmap;
+	import flash.display.Bitmap;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
-	import org.flixel.plugin.DebugPathDisplay;
-	import org.flixel.plugin.TimerManager;
-	import org.flixel.system.FlxQuadTree;
-	import org.flixel.system.input.*;
+	import flixel.plugin.pathdisplay.DebugPathDisplay;
+	import flixel.plugin.timer.TimerManager;
+	import flixel.physics.FlxQuadTree;
 	
 	/**
 	 * This is a global helper class full of useful functions for audio,

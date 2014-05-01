@@ -1,5 +1,7 @@
-package org.flixel
+package flixel.effects.particles
 {
+	import flixel.FlxG;
+	import flixel.FlxSprite;
 	
 	/**
 	 * This is a simple particle class that extends the default behavior

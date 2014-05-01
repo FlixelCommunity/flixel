@@ -1,6 +1,9 @@
-package org.flixel.plugin
+package flixel.plugin.pathdisplay
 {
-	import org.flixel.*;
+	import flixel.FlxCamera;
+	import flixel.FlxG;
+	import flixel.FlxBasic;
+	import flixel.util.FlxPath;
 	
 	/**
 	 * A simple manager for tracking and drawing FlxPath debug data to the screen.

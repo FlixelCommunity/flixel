@@ -1,5 +1,11 @@
-package org.flixel
+package flixel.effects.particles
 {
+	import flixel.util.FlxU;
+	import flixel.FlxObject;
+	import flixel.FlxG;
+	import flixel.FlxSprite;
+	import flixel.util.FlxPoint;
+	import flixel.FlxGroup;
 
 	/**
 	 * <code>FlxEmitter</code> is a lightweight particle emitter.

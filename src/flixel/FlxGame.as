@@ -1,5 +1,8 @@
-package org.flixel
+package flixel
 {
+	import flixel.plugin.timer.FlxTimer;
+	import flixel.util.FlxU;
+	import flixel.system.FlxSave;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
@@ -14,9 +17,9 @@ package org.flixel
 	import flash.ui.Mouse;
 	import flash.utils.getTimer;
 	
-	import org.flixel.plugin.TimerManager;
-	import org.flixel.system.FlxDebugger;
-	import org.flixel.system.FlxReplay;
+	import flixel.plugin.timer.TimerManager;
+	import flixel.plugin.replay.FlxReplay;
+	import flixel.system.debug.FlxDebugger;
 
 	/**
 	 * FlxGame is the heart of all flixel games, and contains a bunch of basic game loops and things.

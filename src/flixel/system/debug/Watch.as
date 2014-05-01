@@ -1,9 +1,7 @@
-package org.flixel.system.debug
+package flixel.system.debug
 {
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-	
-	import org.flixel.system.FlxWindow;
 	
 	/**
 	 * A Visual Studio-style "watch" window, for use in the debugger overlay.

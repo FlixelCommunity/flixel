@@ -1,11 +1,10 @@
-package org.flixel.system.debug
+package flixel.system.debug
 {
+	import flixel.FlxG;
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	
-	import org.flixel.FlxG;
 	
 	/**
 	 * This control panel has all the visual debugger toggles in it, in the debugger overlay.

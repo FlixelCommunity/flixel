@@ -1,4 +1,4 @@
-package org.flixel
+package flixel.util
 {	
 	/**
 	 * Simple class for tweening a simple numerical value from one point to another.

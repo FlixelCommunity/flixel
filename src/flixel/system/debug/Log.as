@@ -1,9 +1,8 @@
-package org.flixel.system.debug
+package flixel.system.debug
 {
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
-	import org.flixel.system.FlxWindow;
 
 	/**
 	 * A simple trace output window for use in the debugger overlay.

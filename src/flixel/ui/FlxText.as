@@ -1,8 +1,10 @@
-package org.flixel
+package flixel.ui
 {
 	import flash.display.BitmapData;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
+
+	import flixel.FlxSprite;
 	
 	/**
 	 * Extends <code>FlxSprite</code> to support rendering text.

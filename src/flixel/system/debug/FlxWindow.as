@@ -1,4 +1,4 @@
-package org.flixel.system
+package flixel.system.debug
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -10,7 +10,7 @@ package org.flixel.system
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
-	import org.flixel.FlxU;
+	import flixel.util.FlxU;
 	
 	/**
 	 * A generic, Flash-based window class, created for use in <code>FlxDebugger</code>.

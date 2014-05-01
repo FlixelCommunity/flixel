@@ -1,13 +1,13 @@
-package org.flixel.system.input
+package flixel.input.mouse
 {
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
-	import org.flixel.FlxCamera;
-	import org.flixel.FlxG;
-	import org.flixel.FlxPoint;
-	import org.flixel.system.replay.MouseRecord;
+	import flixel.FlxCamera;
+	import flixel.FlxG;
+	import flixel.util.FlxPoint;
+	import flixel.plugin.replay.MouseRecord;
 	
 	/**
 	 * This class helps contain and track the mouse pointer in your game.

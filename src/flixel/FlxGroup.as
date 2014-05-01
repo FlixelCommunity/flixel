@@ -1,4 +1,4 @@
-package org.flixel
+package flixel
 {
 	/**
 	 * This is an organizational class that can update and render a bunch of <code>FlxBasic</code>s.

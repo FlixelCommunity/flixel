@@ -1,10 +1,12 @@
-package org.flixel
+package flixel.util
 {
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
 	import flash.utils.getTimer;
+	
+	import flixel.FlxG;
 	
 	public class FlxU
 	{

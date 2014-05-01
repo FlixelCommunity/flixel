@@ -1,4 +1,4 @@
-package org.flixel
+package flixel.util
 {
 	import flash.geom.Point;
 	

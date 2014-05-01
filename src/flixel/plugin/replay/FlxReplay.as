@@ -1,8 +1,6 @@
-package org.flixel.system
+package flixel.plugin.replay
 {
-	import org.flixel.FlxG;
-	import org.flixel.system.replay.FrameRecord;
-	import org.flixel.system.replay.MouseRecord;
+	import flixel.FlxG;
 
 	/**
 	 * The replay object both records and replays game recordings,

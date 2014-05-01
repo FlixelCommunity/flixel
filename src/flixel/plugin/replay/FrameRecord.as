@@ -1,4 +1,4 @@
-package org.flixel.system.replay
+package flixel.plugin.replay
 {
 	
 	/**
