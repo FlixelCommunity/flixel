@@ -1,24 +1,28 @@
 package flixel.util
 {
 	import flixel.FlxG;
+	import flixel.util.FlxU;
 	
 	/**
 	 * A class containing a set of functions for random generation.
 	 * 
-	 * There are no static methods for retrieving random numbers; either create your own instance of the FlxRandom class, or use the 'FlxG.random' instance.
+	 * @see 	http://en.wikipedia.org/wiki/Linear_congruential_generator
+	 * @see 	Stephen K. Park and Keith W. Miller and Paul K. Stockmeyer (1988). "Technical Correspondence". Communications of the ACM 36 (7): 105–110.
 	 * 
 	 * Contains modified code from the following libraries:
 	 *  - HaxeFlixel (released under the MIT License) <https://github.com/HaxeFlixel/flixel>
 	 *  - AS3Libs by Grant Skinner (released under the MIT License) <https://github.com/gskinner/AS3Libs>
+	 * 
+	 * There are no static methods for retrieving random numbers; either create your own instance of the FlxRandom class, or use the <code>FlxG.random</code> instance.
 	 */
 	public class FlxRandom
 	{
 		/**
-		 * Creates a new instance of the FlxRandom class.
+		 * Creates a new instance of the <code>FlxRandom</code> class.
 		 * 
-		 * If you want, you can set the seed with an integer between  inclusive. However, FlxG automatically sets this with a new random seed when starting your game.
+		 * If you want, you can set the seed with an integer between  inclusive. However, <code>FlxG</code> automatically sets this with a new random seed when starting your game.
 		 *
-		 * @param	seed	The seed you wish to use to start off the random number generator; needs to be a value between MIN_SEED (1) and MAX_SEED (2,147,483,646). If the value is set to 0, a random starting seed will be chosen.
+		 * @param	seed	The seed you wish to use to start off the random number generator; needs to be a value between <code>MIN_SEED</code> (<code>1</code>) and <code>MAX_SEED</code> (<code>2,147,483,646</code>). If the value is set to <code>0</code>, a random starting seed will be chosen.
 		 */
 		public function FlxRandom(seed:uint = 0)
 		{
@@ -45,7 +49,7 @@ package flixel.util
 		protected var _currentSeed:int = 0;
 		
 		/**
-		 * The original seed value used to start off the pseudo-random number generator. When set, will also reset the value of 'currentSeed'.
+		 * The original seed value used to start off the pseudo-random number generator. When set, will also reset the value of <code>currentSeed</code>.
 		 */
 		public function get seed():uint
 		{
@@ -69,7 +73,7 @@ package flixel.util
 		}
 		
 		/**
-		 * The current "state" of the original seed. This value changes each time the 'generate()' method is called.
+		 * The current "state" of the original seed. This value changes each time the <code>generate()</code> method is called.
 		 */
 		public function get currentSeed():uint 
 		{
@@ -77,7 +81,7 @@ package flixel.util
 		}
 		
 		/**
-		 * Resets the current "state" of the seed (represented by the 'currentSeed' value) to the original 'seed' value.
+		 * Resets the current "state" of the seed (represented by the <code>currentSeed</code> value) to the original <code>seed</code> value.
 		 */
 		public function resetSeed():void
 		{
@@ -101,10 +105,7 @@ package flixel.util
 		
 		/**
 		 * Constants used in the pseudorandom number generation equation.
-		 * These are the constants suggested by the revised MINSTD pseudorandom number generator, and they use the full range of possible integer values.
-		 * 
-		 * @see 	http://en.wikipedia.org/wiki/Linear_congruential_generator
-		 * @see 	Stephen K. Park and Keith W. Miller and Paul K. Stockmeyer (1988). "Technical Correspondence". Communications of the ACM 36 (7): 105–110.
+		 * These are the constants suggested by the revised "minimum standard" pseudo-random number generator, and result in an integer between <code>1</code> and <code>0x7FFFFFFF-1</code> (see <code>MIN_SEED</code> and <code>MAX_SEED</code> values)
 		 */
 		protected const MULTIPLIER:int = 48271;
 		protected const MODULUS:int = 2147483647; // 0x7FFFFFFF (31 bit integer)
@@ -113,7 +114,7 @@ package flixel.util
 		 * Internal method to quickly generate a pseudorandom number. Used only by other functions of this class.
 		 * Also updates the current seed, which will then be used to generate the next pseudorandom number.
 		 * 
-		 * @return	A new pseudorandom number between 0 inclusive and 1 exclusive.
+		 * @return	A new pseudorandom number between <code>0</code> inclusive and <code>1</code> exclusive.
 		 */
 		protected function generate():Number
 		{
@@ -122,11 +123,11 @@ package flixel.util
 		}
 		
 		/**
-		 * Returns a pseudo-random float (also known as Number) value between 'min' inclusive and 'max' exclusive.
+		 * Returns a pseudo-random float (also known as <code>Number</code> in ActionScript 3) value between <code>min</code> inclusive and <code>max</code> exclusive.
 		 * That is <code>[min, max)</code>
 		 * 
-		 * @param	min			The minimum value that should be returned. 0 by default.
-		 * @param	max			The maximum value that should be returned. 1 by default.
+		 * @param	min			The minimum value that should be returned. <code>0</code> by default.
+		 * @param	max			The maximum value that should be returned. <code>1</code> by default.
 		 */
 		public function float(min:Number = 0, max:Number = 1):Number
 		{
@@ -135,12 +136,12 @@ package flixel.util
 		}
 		
 		/**
-		 * Returns either a 'true' or 'false' based on the chance value.
-		 * A chance value of 0.5 means a 50% chance of 'true' being returned.
-		 * A chance value of 0.8 means an 80% chance of 'true' being returned.
-		 * A chance value of 0 means 'false' will always be returned.
+		 * Returns either a <code>true</code> or <code>false</code> based on the chance value.
+		 * A chance value of 0.5 means a 50% chance of <code>true</code> being returned.
+		 * A chance value of 0.8 means an 80% chance of <code>true</code> being returned.
+		 * A chance value of 0 means <code>false</code> will always be returned.
 		 * 
-		 * @param	chance		The odds of returning 'true'. 0.5 (50% chance) by default.
+		 * @param	chance		The odds of returning <code>true</code>. 0.5 (50% chance) by default.
 		 */
 		public function boolean(chance:Number = 0.5):Boolean
 		{
@@ -148,13 +149,13 @@ package flixel.util
 		}
 		
 		/**
-		 * Returns either a '1' or '-1' based on the chance value.
-		 * A chance value of 0.8 means an 80% chance of '1' being returned.
-		 * A chance value of 0 means 'false' will always be returned.
+		 * Returns either a <code>1</code> or <code>-1</code> based on the chance value.
+		 * A chance value of <code>0.8</code> means an 80% chance of <code>1</code> being returned.
+		 * A chance value of <code>0</code> means <code>false</code> will always be returned.
 		 * 
-		 * Recommended to be used with the '*' operator: <code>score += random.sign(0.8) * 10;</code> will result in an 80% chance of '10' and a 20% chance of '-10'.
+		 * Recommended to be used with the <code>*</code> operator: <code>score += random.sign(0.8) * 10;</code> will result in an 80% chance of <code>10</code> and a 20% chance of <code>-10</code>.
 		 * 
-		 * @param	chance		The odds of returning '1'. 0.5 (50% chance) by default.
+		 * @param	chance		The odds of returning <code>1</code>. <code>0.5</code> (50% chance) by default.
 		 */
 		public function sign(chance:Number = 0.5):int
 		{
@@ -162,12 +163,12 @@ package flixel.util
 		}
 		
 		/**
-		 * Returns either a '1' or '0' based on the chance value.
-		 * A chance value of 0.5 means a 50% chance of '1' being returned.
-		 * A chance value of 0.8 means an 80% chance of '1' being returned.
-		 * A chance value of 0 means '0' will always be returned.
+		 * Returns either a <code>1</code> or <code>0</code> based on the chance value.
+		 * A chance value of 0.5 means a 50% chance of <code>1</code> being returned.
+		 * A chance value of 0.8 means an 80% chance of <code>1</code> being returned.
+		 * A chance value of 0 means <code>0</code> will always be returned.
 		 * 
-		 * @param	chance		The odds of returning '1'. 0.5 (50% chance) by default.
+		 * @param	chance		The odds of returning <code>1</code>. <code>0.5</code> (50% chance) by default.
 		 */
 		public function bit(chance:Number=0.5):int 
 		{
@@ -175,24 +176,24 @@ package flixel.util
 		}
 		
 		/**
-		 * Returns a pseudo-random integer between the specified range 'min' and 'max', both inclusive.
+		 * Returns a pseudo-random integer between the specified range <code>min</code> and <code>max</code>, both inclusive.
 		 * That is <code>[min, max]</code>.
 		 * 
-		 * If no 'max' value is specified, a value between '0' and the first argument will be returned instead.
+		 * If no <code>max</code> value is specified, a value between <code>0</code> and the first argument will be returned instead.
 		 * 
 		 * @param	min			The minimum value that should be returned. Required.
-		 * @param	max			The maximum value that should be returned. If omitted, the first parameter will instead be treated as the 'max' value.
+		 * @param	max			The maximum value that should be returned. If omitted, the first parameter will instead be treated as the <code>max</code> value.
 		 */
 		public function integer(min:Number, max:Number = NaN):int
 		{
 			if (isNaN(max)) { max = min; min = 0; }
 			// Need to use floor instead of bit shift to work properly with negative values:
-			return Math.floor(float(min, max + 1));
+			return FlxU.floor(float(min, max + 1));
 		}
 		
 		/**
 		 * Select a random item from the specified array. Does not modify the array.
-		 * Will return 'null' if random selection is missing, or array has no entries.
+		 * Will return <code>null</code> if random selection is missing, or array has no entries.
 		 * 
 		 * @param	array			The array to pick the item from.
 		 * @param	startIndex		Optional offset off the front of the array. Default value is 0, or the beginning of the array.
@@ -213,7 +214,7 @@ package flixel.util
 		 * Shuffles the entire array into a new pseudo-random order.
 		 * 
 		 * @param	array			An array to shuffle.
-		 * @param	modifyArray		Whether or not to modify the passed in array. If set to 'false', a new array with the same values will be returned instead of modifying the original one.
+		 * @param	modifyArray		Whether or not to modify the passed in array. If set to <code>false</code>, a new array with the same values will be returned instead of modifying the original one.
 		 * @return	The newly shuffled array.
 		 */
 		public function shuffle(array:Array, modifyArray:Boolean = true):Array
@@ -221,7 +222,7 @@ package flixel.util
 			if (!modifyArray)
 				{ array = array.slice(); }
 			
-			var len = array.length;
+			var len:int = array.length;
 			for (var i:uint = 0; i < len; i++)
 			{
 				var j:uint = uint(len * generate());
@@ -237,10 +238,10 @@ package flixel.util
 		/**
 		 * Chooses a random color, or greyscale shade.
 		 * 
-		 * NOTE: For non-32 bit colors, you may want to set the 'alpha' to '0' to return the color as '0xRRGGBB', though, the alpha bits are usually ignored in practice if they aren't used by a certain function.
+		 * NOTE: For non-32 bit colors, you may want to set the <code>alpha</code> to <code>0</code> to return the color as <code>0xRRGGBB</code>, though, the alpha bits are usually ignored in practice if they aren't used by a certain function.
 		 * 
-		 * @param	alpha			The alpha value, from 0 (transparent) to 1 (opaque)
-		 * @param	greyScale		Whether or not to return a shade of grey instead of a color. Defaults to 'false'.
+		 * @param	alpha			The alpha value, from <code>0 (transparent) to <code>1 (opaque)
+		 * @param	greyScale		Whether or not to return a shade of grey instead of a color. Defaults to <code>false</code>.
 		 * @return	The 32 bit color in the format 0xAARRGGBB
 		 */
 		public function color(alpha:Number = 1, greyScale:Boolean = false):uint
@@ -249,10 +250,10 @@ package flixel.util
 			if (alpha < 0) { alpha = 0; }
 			var alphaHex:uint = uint(0xFF * alpha);
 			
-			// Since 'generate()' can never return '1', we will never get exactly pure white (0xFFFFFF). Oh well, we can come close.
+			// Since `generate()` can never return `1`, we will never get exactly pure white (0xFFFFFF). Oh well, we can come close.
 			if (greyScale)
 			{
-				var greyHex = uint(0xFF * generate());
+				var greyHex:uint = uint(0xFF * generate());
 				return alphaHex << 24 | greyHex << 16 | greyHex << 8 | greyHex << 0;
 			}
 			else
