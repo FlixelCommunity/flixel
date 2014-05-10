@@ -192,12 +192,21 @@ package flixel.util
 		
 		/**
 		 * Select a random item from the specified array. Does not modify the array.
+		 * Will return 'null' if random selection is missing, or array has no entries.
 		 * 
 		 * @param	array			The array to pick the item from.
+		 * @param	startIndex		Optional offset off the front of the array. Default value is 0, or the beginning of the array.
+		 * @param	length			Optional restriction on the number of values you want to randomly select from.
 		 */
-		public function item(array:Array):*
+		public function item(array:Array, startIndex:uint = 0, length:uint = 0):*
 		{
-			return array[uint(array.length * generate())];
+			if ((length == 0) || (length > (array.length - startIndex)))
+				{ length = (array.length - startIndex); }
+			
+			if (length > 0)
+				{ return array[startIndex + uint(length * generate())]; }
+			
+			return null;
 		}
 		
 		/**
@@ -223,6 +232,33 @@ package flixel.util
 				array[i] = item;
 			}
 			return array;
+		}
+		
+		/**
+		 * Chooses a random color, or greyscale shade.
+		 * 
+		 * NOTE: For non-32 bit colors, you may want to set the 'alpha' to '0' to return the color as '0xRRGGBB', though, the alpha bits are usually ignored in practice if they aren't used by a certain function.
+		 * 
+		 * @param	alpha			The alpha value, from 0 (transparent) to 1 (opaque)
+		 * @param	greyScale		Whether or not to return a shade of grey instead of a color. Defaults to 'false'.
+		 * @return	The 32 bit color in the format 0xAARRGGBB
+		 */
+		public function color(alpha:Number = 1, greyScale:Boolean = false):uint
+		{
+			if (alpha > 1) { alpha = 1; }
+			if (alpha < 0) { alpha = 0; }
+			var alphaHex:uint = uint(0xFF * alpha);
+			
+			// Since 'generate()' can never return '1', we will never get exactly pure white (0xFFFFFF). Oh well, we can come close.
+			if (greyScale)
+			{
+				var greyHex = uint(0xFF * generate());
+				return alphaHex << 24 | greyHex << 16 | greyHex << 8 | greyHex << 0;
+			}
+			else
+			{
+				return alphaHex << 24 | uint(0xFFFFFF * generate());
+			}
 		}
 		
 	}
