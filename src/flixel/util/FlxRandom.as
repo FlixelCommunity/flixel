@@ -6,6 +6,10 @@ package flixel.util
 	 * A class containing a set of functions for random generation.
 	 * 
 	 * There are no static methods for retrieving random numbers; either create your own instance of the FlxRandom class, or use the 'FlxG.random' instance.
+	 * 
+	 * Contains modified code from the following libraries:
+	 *  - HaxeFlixel (released under the MIT License) <https://github.com/HaxeFlixel/flixel>
+	 *  - AS3Libs by Grant Skinner (released under the MIT License) <https://github.com/gskinner/AS3Libs>
 	 */
 	public class FlxRandom
 	{
@@ -117,6 +121,109 @@ package flixel.util
 			return (_currentSeed / MODULUS);
 		}
 		
+		/**
+		 * Returns a pseudo-random float (also known as Number) value between 'min' inclusive and 'max' exclusive.
+		 * That is <code>[min, max)</code>
+		 * 
+		 * @param	min			The minimum value that should be returned. 0 by default.
+		 * @param	max			The maximum value that should be returned. 1 by default.
+		 */
+		public function float(min:Number = 0, max:Number = 1):Number
+		{
+			if ( (min == 0) && (max == 1) ) { return generate(); } // For performance 
+			else return min + generate() * (max - min);
+		}
+		
+		/**
+		 * Returns either a 'true' or 'false' based on the chance value.
+		 * A chance value of 0.5 means a 50% chance of 'true' being returned.
+		 * A chance value of 0.8 means an 80% chance of 'true' being returned.
+		 * A chance value of 0 means 'false' will always be returned.
+		 * 
+		 * @param	chance		The odds of returning 'true'. 0.5 (50% chance) by default.
+		 */
+		public function boolean(chance:Number = 0.5):Boolean
+		{
+			return (generate() < chance);
+		}
+		
+		/**
+		 * Returns either a '1' or '-1' based on the chance value.
+		 * A chance value of 0.8 means an 80% chance of '1' being returned.
+		 * A chance value of 0 means 'false' will always be returned.
+		 * 
+		 * Recommended to be used with the '*' operator: <code>score += random.sign(0.8) * 10;</code> will result in an 80% chance of '10' and a 20% chance of '-10'.
+		 * 
+		 * @param	chance		The odds of returning '1'. 0.5 (50% chance) by default.
+		 */
+		public function sign(chance:Number = 0.5):int
+		{
+			return (generate() < chance) ? 1 : -1;
+		}
+		
+		/**
+		 * Returns either a '1' or '0' based on the chance value.
+		 * A chance value of 0.5 means a 50% chance of '1' being returned.
+		 * A chance value of 0.8 means an 80% chance of '1' being returned.
+		 * A chance value of 0 means '0' will always be returned.
+		 * 
+		 * @param	chance		The odds of returning '1'. 0.5 (50% chance) by default.
+		 */
+		public function bit(chance:Number=0.5):int 
+		{
+			return (generate() < chance) ? 1 : 0;
+		}
+		
+		/**
+		 * Returns a pseudo-random integer between the specified range 'min' and 'max', both inclusive.
+		 * That is <code>[min, max]</code>.
+		 * 
+		 * If no 'max' value is specified, a value between '0' and the first argument will be returned instead.
+		 * 
+		 * @param	min			The minimum value that should be returned. Required.
+		 * @param	max			The maximum value that should be returned. If omitted, the first parameter will instead be treated as the 'max' value.
+		 */
+		public function integer(min:Number, max:Number = NaN):int
+		{
+			if (isNaN(max)) { max = min; min = 0; }
+			// Need to use floor instead of bit shift to work properly with negative values:
+			return Math.floor(float(min, max + 1));
+		}
+		
+		/**
+		 * Select a random item from the specified array. Does not modify the array.
+		 * 
+		 * @param	array			The array to pick the item from.
+		 */
+		public function item(array:Array):*
+		{
+			return array[uint(array.length * generate())];
+		}
+		
+		/**
+		 * Shuffles the entire array into a new pseudo-random order.
+		 * 
+		 * @param	array			An array to shuffle.
+		 * @param	modifyArray		Whether or not to modify the passed in array. If set to 'false', a new array with the same values will be returned instead of modifying the original one.
+		 * @return	The newly shuffled array.
+		 */
+		public function shuffle(array:Array, modifyArray:Boolean = true):Array
+		{
+			if (!modifyArray)
+				{ array = array.slice(); }
+			
+			var len = array.length;
+			for (var i:uint = 0; i < len; i++)
+			{
+				var j:uint = uint(len * generate());
+				if (j == i) { continue; }
+				
+				var item:* = array[j];
+				array[j] = array[i];
+				array[i] = item;
+			}
+			return array;
+		}
 		
 	}
 }
