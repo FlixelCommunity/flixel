@@ -521,7 +521,7 @@ package flixel
 			if(_recordingRequested)
 			{
 				_recordingRequested = false;
-				_replay.create(FlxG.globalSeed);
+				_replay.create(FlxG.random.seed);
 				_recording = true;
 				if(_debugger != null)
 				{
@@ -533,7 +533,7 @@ package flixel
 			{
 				_replayRequested = false;
 				_replay.rewind();
-				FlxG.globalSeed = _replay.seed;
+				FlxG.random.seed = _replay.seed;
 				if(_debugger != null)
 					_debugger.vcr.playing();
 				_replaying = true;

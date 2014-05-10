@@ -177,17 +177,15 @@ package flixel.effects.particles
 				totalFrames = sprite.numFrames;
 				sprite.destroy();
 			}
-
-			var randomFrame:uint;
-			var particle:FlxParticle;
+			
 			var i:uint = 0;
 			while(i < Quantity)
 			{
-				particle = new particleClass() as FlxParticle;
+				var particle:FlxParticle = new particleClass() as FlxParticle;
 				
 				if(Multiple)
 				{
-					randomFrame = FlxG.random()*totalFrames;
+					var randomFrame:uint = FlxG.random.integer(0, totalFrames-1);
 					if(BakedRotations > 0)
 						particle.loadRotatedGraphic(Graphics,BakedRotations,randomFrame);
 					else
@@ -297,25 +295,16 @@ package flixel.effects.particles
 			var particle:FlxParticle = recycle(particleClass) as FlxParticle;
 			particle.lifespan = lifespan;
 			particle.elasticity = bounce;
-			particle.reset(x - (particle.width>>1) + FlxG.random()*width, y - (particle.height>>1) + FlxG.random()*height);
+			particle.reset(x - (particle.width>>1) + FlxG.random.float(0, width), y - (particle.height>>1) + FlxG.random.float(0, height));
 			particle.visible = true;
 			
-			if(minParticleSpeed.x != maxParticleSpeed.x)
-				particle.velocity.x = minParticleSpeed.x + FlxG.random()*(maxParticleSpeed.x-minParticleSpeed.x);
-			else
-				particle.velocity.x = minParticleSpeed.x;
-			if(minParticleSpeed.y != maxParticleSpeed.y)
-				particle.velocity.y = minParticleSpeed.y + FlxG.random()*(maxParticleSpeed.y-minParticleSpeed.y);
-			else
-				particle.velocity.y = minParticleSpeed.y;
+			particle.velocity.x = FlxG.random.float(minParticleSpeed.x, maxParticleSpeed.x);
+			particle.velocity.y = FlxG.random.float(minParticleSpeed.y, maxParticleSpeed.y);
 			particle.acceleration.y = gravity;
 			
-			if(minRotation != maxRotation)
-				particle.angularVelocity = minRotation + FlxG.random()*(maxRotation-minRotation);
-			else
-				particle.angularVelocity = minRotation;
+			particle.angularVelocity = FlxG.random.float(minRotation, maxRotation);
 			if(particle.angularVelocity != 0)
-				particle.angle = FlxG.random()*360-180;
+				particle.angle = FlxG.random.float(-180, 180);
 			
 			particle.drag.x = particleDrag.x;
 			particle.drag.y = particleDrag.y;

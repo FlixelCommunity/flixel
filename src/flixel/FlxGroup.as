@@ -538,7 +538,7 @@ package flixel
 		{
 			if(Length == 0)
 				Length = length;
-			return FlxG.getRandom(members,StartIndex,Length) as FlxBasic;
+			return FlxG.random.item(members,StartIndex,Length) as FlxBasic;
 		}
 		
 		/**
