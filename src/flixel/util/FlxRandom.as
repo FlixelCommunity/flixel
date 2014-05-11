@@ -6,14 +6,14 @@ package flixel.util
 	/**
 	 * A class containing a set of functions for random generation.
 	 * 
-	 * @see 	http://en.wikipedia.org/wiki/Linear_congruential_generator
-	 * @see 	Stephen K. Park and Keith W. Miller and Paul K. Stockmeyer (1988). "Technical Correspondence". Communications of the ACM 36 (7): 105–110.
+	 * There are no static methods for retrieving random numbers; either create your own instance of the FlxRandom class, or use the <code>FlxG.random</code> instance.
 	 * 
 	 * Contains modified code from the following libraries:
-	 *  - HaxeFlixel (released under the MIT License) <https://github.com/HaxeFlixel/flixel>
-	 *  - AS3Libs by Grant Skinner (released under the MIT License) <https://github.com/gskinner/AS3Libs>
+	 *  - HaxeFlixel (released under the MIT License) - https://github.com/HaxeFlixel/flixel
+	 *  - AS3Libs by Grant Skinner (released under the MIT License) - https://github.com/gskinner/AS3Libs
 	 * 
-	 * There are no static methods for retrieving random numbers; either create your own instance of the FlxRandom class, or use the <code>FlxG.random</code> instance.
+	 * @see 	http://en.wikipedia.org/wiki/Linear_congruential_generator
+	 * @see 	Stephen K. Park and Keith W. Miller and Paul K. Stockmeyer (1988). "Technical Correspondence". Communications of the ACM 36 (7): 105–110.
 	 */
 	public class FlxRandom
 	{
