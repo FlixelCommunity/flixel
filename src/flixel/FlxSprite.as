@@ -8,7 +8,7 @@ package flixel
 	import flash.geom.Rectangle;
 	
 	import flixel.animation.FlxAnimation;
-	import flixel.util.FlxU;
+	import flixel.util.FlxMath;
 	import flixel.util.FlxPoint;
 	
 	/**
@@ -332,7 +332,7 @@ package flixel
 				max = brush.height;
 			if(AutoBuffer)
 				max *= 1.5;
-			var columns:uint = FlxU.ceil(Rotations/rows);
+			var columns:uint = FlxMath.ceil(Rotations/rows);
 			width = max*columns;
 			height = max*rows;
 			var key:String = String(Graphic) + ":" + Frame + ":" + width + "x" + height;
@@ -423,8 +423,8 @@ package flixel
 			_numFrames = 0;
 			
 			var widthHelper:uint = _flipped?_flipped:_pixels.width;
-			var maxFramesX:uint = FlxU.floor(widthHelper / frameWidth);
-			var maxFramesY:uint = FlxU.floor(_pixels.height / frameHeight);
+			var maxFramesX:uint = FlxMath.floor(widthHelper / frameWidth);
+			var maxFramesY:uint = FlxMath.floor(_pixels.height / frameHeight);
 			_maxFrames = maxFramesX * maxFramesY;
 		}
 		

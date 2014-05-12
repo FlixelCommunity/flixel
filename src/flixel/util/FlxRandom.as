@@ -1,7 +1,7 @@
 package flixel.util
 {
 	import flixel.FlxG;
-	import flixel.util.FlxU;
+	import flixel.util.FlxMath;
 	
 	/**
 	 * A class containing a set of functions for random generation.
@@ -188,7 +188,7 @@ package flixel.util
 		{
 			if (isNaN(max)) { max = min; min = 0; }
 			// Need to use floor instead of bit shift to work properly with negative values:
-			return FlxU.floor(float(min, max + 1));
+			return FlxMath.floor(float(min, max + 1));
 		}
 		
 		/**

@@ -1,7 +1,6 @@
 package flixel.system
 {
 	import flixel.FlxG;
-	import flixel.util.FlxU;
 	import flixel.util.FlxPoint;
 	import flixel.util.FlxTween;
 	import flixel.FlxObject;

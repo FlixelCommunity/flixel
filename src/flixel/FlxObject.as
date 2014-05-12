@@ -4,6 +4,7 @@ package flixel
 	
 	import flixel.tile.FlxTilemap;
 	import flixel.util.FlxU;
+	import flixel.util.FlxMath;
 	import flixel.util.FlxPath;
 	import flixel.util.FlxRect;
 	import flixel.util.FlxPoint;
@@ -486,7 +487,7 @@ package flixel
 			}
 			
 			path = Path;
-			pathSpeed = FlxU.abs(Speed);
+			pathSpeed = FlxMath.abs(Speed);
 			_pathMode = Mode;
 			_pathRotate = AutoRotate;
 			
