@@ -660,8 +660,8 @@ package flixel
 				}
 				else
 				{
-					pathAngle = FlxU.getAngle(_point,node);
-					FlxU.rotatePoint(0,pathSpeed,0,0,pathAngle,velocity);
+					pathAngle = FlxPoint.angleBetween(_point,node);
+					FlxPoint.rotate(0,pathSpeed,0,0,pathAngle,velocity);
 				}
 				
 				//then set object rotation if necessary
