@@ -1,5 +1,6 @@
 package flixel
 {
+	import flash.utils.getTimer;
 	import flixel.util.FlxRandom;
 	import flixel.util.FlxU;
 	import flixel.system.FlxSound;
@@ -340,6 +341,15 @@ package flixel
 			_game._maxAccumulation = 2000/_game._flashFramerate - 1;
 			if(_game._maxAccumulation < _game._step)
 				_game._maxAccumulation = _game._step;
+		}
+		
+		/**
+		 * Just grabs the current "ticks" or time in milliseconds that has passed since Flash Player started up.
+		 * Useful for finding out how long it takes to execute specific blocks of code.
+		 */
+		static public function getTicks():uint
+		{
+			return getTimer();
 		}
 		
 		/**

@@ -4,7 +4,6 @@ package flixel.util
 	import flash.net.navigateToURL;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
-	import flash.utils.getTimer;
 	
 	import flixel.FlxG;
 	
@@ -19,17 +18,6 @@ package flixel.util
 		static public function openURL(URL:String):void
 		{
 			navigateToURL(new URLRequest(URL), "_blank");
-		}
-		
-		/**
-		 * Just grabs the current "ticks" or time in milliseconds that has passed since Flash Player started up.
-		 * Useful for finding out how long it takes to execute specific blocks of code.
-		 * 
-		 * @return	A <code>uint</code> to be passed to <code>FlxU.endProfile()</code>.
-		 */
-		static public function getTicks():uint
-		{
-			return getTimer();
 		}
 		
 		/**
@@ -586,6 +574,18 @@ package flixel.util
 		{
 			FlxG.warnDeprecated('FlxU.bound()', 'FlxMath.clamp()');
 			return FlxMath.clamp(Value, Min, Max);
+		}
+		
+		/**
+		 * Just grabs the current "ticks" or time in milliseconds that has passed since Flash Player started up.
+		 * Useful for finding out how long it takes to execute specific blocks of code.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxG.getTicks()</code> instead.
+		 */
+		static public function getTicks():uint
+		{
+			FlxG.warnDeprecated('FlxU.getTicks()', 'FlxG.getTicks()');
+			return FlxG.getTicks();
 		}
 	}
 }
