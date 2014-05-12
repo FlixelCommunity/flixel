@@ -115,71 +115,6 @@ package flixel.util
 		}
 		
 		/**
-		 * Generates a random number based on the seed provided.
-		 * 
-		 * @param	Seed	A number between 0 and 1, used to generate a predictable random number (very optional).
-		 * 
-		 * @return	A <code>Number</code> between 0 and 1.
-		 */
-		static public function srand(Seed:Number):Number
-		{
-			return ((69621 * int(Seed * 0x7FFFFFFF)) % 0x7FFFFFFF) / 0x7FFFFFFF;
-		}
-		
-		/**
-		 * Shuffles the entries in an array into a new random order.
-		 * <code>FlxG.shuffle()</code> is deterministic and safe for use with replays/recordings.
-		 * HOWEVER, <code>FlxU.shuffle()</code> is NOT deterministic and unsafe for use with replays/recordings.
-		 * 
-		 * @param	A				A Flash <code>Array</code> object containing...stuff.
-		 * @param	HowManyTimes	How many swaps to perform during the shuffle operation.  Good rule of thumb is 2-4 times as many objects are in the list.
-		 * 
-		 * @return	The same Flash <code>Array</code> object that you passed in in the first place.
-		 */
-		static public function shuffle(Objects:Array,HowManyTimes:uint):Array
-		{
-			var i:uint = 0;
-			var index1:uint;
-			var index2:uint;
-			var object:Object;
-			while(i < HowManyTimes)
-			{
-				index1 = Math.random()*Objects.length;
-				index2 = Math.random()*Objects.length;
-				object = Objects[index2];
-				Objects[index2] = Objects[index1];
-				Objects[index1] = object;
-				i++;
-			}
-			return Objects;
-		}
-		
-		/**
-		 * Fetch a random entry from the given array.
-		 * Will return null if random selection is missing, or array has no entries.
-		 * <code>FlxG.getRandom()</code> is deterministic and safe for use with replays/recordings.
-		 * HOWEVER, <code>FlxU.getRandom()</code> is NOT deterministic and unsafe for use with replays/recordings.
-		 * 
-		 * @param	Objects		A Flash array of objects.
-		 * @param	StartIndex	Optional offset off the front of the array. Default value is 0, or the beginning of the array.
-		 * @param	Length		Optional restriction on the number of values you want to randomly select from.
-		 * 
-		 * @return	The random object that was selected.
-		 */
-		static public function getRandom(Objects:Array,StartIndex:uint=0,Length:uint=0):Object
-		{
-			if(Objects != null)
-			{
-				var l:uint = Length;
-				if((l == 0) || (l > Objects.length - StartIndex))
-					l = Objects.length - StartIndex;
-				if(l > 0)
-					return Objects[StartIndex + uint(Math.random()*l)];
-			}
-			return null;
-		}
-		
-		/**
 		 * Just grabs the current "ticks" or time in milliseconds that has passed since Flash Player started up.
 		 * Useful for finding out how long it takes to execute specific blocks of code.
 		 * 
@@ -619,5 +554,83 @@ package flixel.util
 			var dy:Number = Point1.y - Point2.y;
 			return Math.sqrt(dx * dx + dy * dy);
 		}
+		
+		
+		/*     --- Deprecated members in Flixel v2.57 ---     */
+		/*  To be removed after developers have had time to adjust to the new changes. */
+		
+		/**
+		 * Generates a random number based on the seed provided.
+		 * 
+		 * @param	Seed	A number between 0 and 1, used to generate a predictable random number (very optional).
+		 * 
+		 * @return	A <code>Number</code> between 0 and 1.
+		 * 
+		 * @deprecated This property is deprecated. Use the <code>FlxRandom</code> class instead.
+		 */
+		static public function srand(Seed:Number):Number
+		{
+			FlxG.warnDeprecated('FlxU.srand()', 'FlxRandom');
+			// I'll just keep using the old deprecated method for now. No use using FlxRandom since the RNG is slightly different.
+			return ((69621 * int(Seed * 0x7FFFFFFF)) % 0x7FFFFFFF) / 0x7FFFFFFF;
+		}
+		
+		/**
+		 * Shuffles the entries in an array into a new random order.
+		 * NOT deterministic and unsafe for use with replays/recordings.
+		 * 
+		 * @param	Objects			A Flash <code>Array</code> object containing...stuff.
+		 * @param	HowManyTimes	How many swaps to perform during the shuffle operation.  Good rule of thumb is 2-4 times as many objects are in the list.
+		 * 
+		 * @return	The same Flash <code>Array</code> object that you passed in in the first place.
+		 * 
+		 * @deprecated This property is deprecated. Use the <code>shuffle()</code> method of the <code>FlxRandom</code> class instead.
+		 */
+		static public function shuffle(Objects:Array,HowManyTimes:uint):Array
+		{
+			FlxG.warnDeprecated('FlxU.shuffle()', 'FlxRandom#shuffle()');
+			var i:uint = 0;
+			var index1:uint;
+			var index2:uint;
+			var object:Object;
+			while(i < HowManyTimes)
+			{
+				index1 = Math.random()*Objects.length;
+				index2 = Math.random()*Objects.length;
+				object = Objects[index2];
+				Objects[index2] = Objects[index1];
+				Objects[index1] = object;
+				i++;
+			}
+			return Objects;
+		}
+		
+		/**
+		 * Fetch a random entry from the given array.
+		 * Will return null if random selection is missing, or array has no entries.
+		 * NOT deterministic and unsafe for use with replays/recordings.
+		 * 
+		 * @param	Objects		A Flash array of objects.
+		 * @param	StartIndex	Optional offset off the front of the array. Default value is 0, or the beginning of the array.
+		 * @param	Length		Optional restriction on the number of values you want to randomly select from.
+		 * 
+		 * @return	The random object that was selected.
+		 * 
+		 * @deprecated This property is deprecated. Use the <code>item()</code> method of the <code>FlxRandom</code> class instead.
+		 */
+		static public function getRandom(Objects:Array,StartIndex:uint=0,Length:uint=0):Object
+		{
+			FlxG.warnDeprecated('FlxU.getRandom()', 'FlxRandom#item()');
+			if(Objects != null)
+			{
+				var l:uint = Length;
+				if((l == 0) || (l > Objects.length - StartIndex))
+					l = Objects.length - StartIndex;
+				if(l > 0)
+					return Objects[StartIndex + uint(Math.random()*l)];
+			}
+			return null;
+		}
+		
 	}
 }

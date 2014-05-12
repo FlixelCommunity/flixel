@@ -76,7 +76,7 @@ package flixel.tile
 				column = 0;
 				while(column < widthInTiles)
 				{
-					if(FlxG.random()*total > Empties)
+					if(FlxG.random.float()*total > Empties)
 					{
 						sprite.randomFrame();
 						sprite.drawFrame();

@@ -374,9 +374,9 @@ package flixel
 				else
 				{
 					if((_fxShakeDirection == SHAKE_BOTH_AXES) || (_fxShakeDirection == SHAKE_HORIZONTAL_ONLY))
-						_fxShakeOffset.x = (FlxG.random()*_fxShakeIntensity*width*2-_fxShakeIntensity*width)*_zoom;
+						_fxShakeOffset.x = FlxG.random.float(-_fxShakeIntensity, _fxShakeIntensity)*width*_zoom;
 					if((_fxShakeDirection == SHAKE_BOTH_AXES) || (_fxShakeDirection == SHAKE_VERTICAL_ONLY))
-						_fxShakeOffset.y = (FlxG.random()*_fxShakeIntensity*height*2-_fxShakeIntensity*height)*_zoom;
+						_fxShakeOffset.y = FlxG.random.float(-_fxShakeIntensity, _fxShakeIntensity)*height*_zoom;
 				}
 			}
 		}

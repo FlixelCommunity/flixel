@@ -1,5 +1,6 @@
 package flixel
 {
+	import flixel.util.FlxRandom;
 	import flixel.util.FlxU;
 	import flixel.system.FlxSound;
 	import flixel.input.keyboard.Keyboard;
@@ -146,10 +147,6 @@ package flixel
 		 */
 		static public var mobile:Boolean; 
 		/**
-		 * The global random number generator seed (for deterministic behavior in recordings and saves).
-		 */
-		static public var globalSeed:Number;
-		/**
 		 * <code>FlxG.levels</code> and <code>FlxG.scores</code> are generic
 		 * global variables that can be used for various cross-state stuff.
 		 */
@@ -217,6 +214,11 @@ package flixel
 		 * DebugPathDisplay, and TimerManager.
 		 */
 		 static public var plugins:Array;
+		
+		/**
+		 * The global instance of the deterministic 'FlxRandom' pseudo-random number generator.
+		 */
+		 static public var random:FlxRandom;
 		 
 		/**
 		 * Set this hook to get a callback whenever the volume changes.
@@ -250,6 +252,21 @@ package flixel
 		{
 			if((_game != null) && (_game._debugger != null))
 				_game._debugger.log.add((Data == null)?"ERROR: null object":((Data is Array)?FlxU.formatArray(Data as Array):Data.toString()));
+		}
+		
+		/**
+		 * Warn the developer or user about a deprecated member.
+		 *
+		 * Mostly a helper function for the existing 
+		 * 
+		 * @param	OldMember	The name of the old, depricated member.
+		 * @param	NewMember	The name of the new replacement member. Optional.
+		 */
+		static public function warnDeprecated(OldMember:String, NewMember:String):void
+		{
+			var message:String = "WARNING: The member '" + OldMember + "' has been deprecated and may be removed in a future release.";
+			if (NewMember) { message += " Please use '" + NewMember + "' intead."; }
+			FlxG.log(message);
 		}
 		
 		/**
@@ -335,70 +352,6 @@ package flixel
 			var fsh:uint = FlxG.height*FlxG.camera.zoom;
 			FlxG.camera.x = (FlxG.stage.fullScreenWidth - fsw)/2;
 			FlxG.camera.y = (FlxG.stage.fullScreenHeight - fsh)/2;
-		}
-		
-		/**
-		 * Generates a random number.  Deterministic, meaning safe
-		 * to use if you want to record replays in random environments.
-		 * 
-		 * @return	A <code>Number</code> between 0 and 1.
-		 */
-		static public function random():Number
-		{
-			return globalSeed = FlxU.srand(globalSeed);
-		}
-		
-		/**
-		 * Shuffles the entries in an array into a new random order.
-		 * <code>FlxG.shuffle()</code> is deterministic and safe for use with replays/recordings.
-		 * HOWEVER, <code>FlxU.shuffle()</code> is NOT deterministic and unsafe for use with replays/recordings.
-		 * 
-		 * @param	A				A Flash <code>Array</code> object containing...stuff.
-		 * @param	HowManyTimes	How many swaps to perform during the shuffle operation.  Good rule of thumb is 2-4 times as many objects are in the list.
-		 * 
-		 * @return	The same Flash <code>Array</code> object that you passed in in the first place.
-		 */
-		static public function shuffle(Objects:Array,HowManyTimes:uint):Array
-		{
-			var i:uint = 0;
-			var index1:uint;
-			var index2:uint;
-			var object:Object;
-			while(i < HowManyTimes)
-			{
-				index1 = FlxG.random()*Objects.length;
-				index2 = FlxG.random()*Objects.length;
-				object = Objects[index2];
-				Objects[index2] = Objects[index1];
-				Objects[index1] = object;
-				i++;
-			}
-			return Objects;
-		}
-		
-		/**
-		 * Fetch a random entry from the given array.
-		 * Will return null if random selection is missing, or array has no entries.
-		 * <code>FlxG.getRandom()</code> is deterministic and safe for use with replays/recordings.
-		 * HOWEVER, <code>FlxU.getRandom()</code> is NOT deterministic and unsafe for use with replays/recordings.
-		 * 
-		 * @param	Objects		A Flash array of objects.
-		 * @param	StartIndex	Optional offset off the front of the array. Default value is 0, or the beginning of the array.
-		 * @param	Length		Optional restriction on the number of values you want to randomly select from.
-		 * 
-		 * @return	The random object that was selected.
-		 */
-		static public function getRandom(Objects:Array,StartIndex:uint=0,Length:uint=0):Object
-		{
-			if(Objects != null)
-			{
-				var l:uint = Length;
-				if((l == 0) || (l > Objects.length - StartIndex))
-					l = Objects.length - StartIndex;
-				if(l > 0)
-					return Objects[StartIndex + uint(FlxG.random()*l)];
-			}
-			return null;
 		}
 		
 		/**
@@ -1153,7 +1106,7 @@ package flixel
 			FlxG.paused = false;
 			FlxG.timeScale = 1.0;
 			FlxG.elapsed = 0;
-			FlxG.globalSeed = Math.random();
+			FlxG.random = new FlxRandom();
 			FlxG.worldBounds = new FlxRect(-10,-10,FlxG.width+20,FlxG.height+20);
 			FlxG.worldDivisions = 6;
 			var debugPathDisplay:DebugPathDisplay = FlxG.getPlugin(DebugPathDisplay) as DebugPathDisplay;
@@ -1268,5 +1221,67 @@ package flixel
 					plugin.draw();
 			}
 		}
+		
+		
+		/*     --- Deprecated members in Flixel v2.57 ---     */
+		/*  To be removed after developers have had time to adjust to the new changes. */
+		
+		/**
+		 * The global random number generator seed (for deterministic behavior in recordings and saves).
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxG.random.seed</code> instead.
+		 */
+		static public function get globalSeed():Number
+		{
+			FlxG.warnDeprecated('FlxG.globalSeed', 'FlxG.random.seed');
+			return FlxG.random.seed;
+		}
+		/**
+		 * @private
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxG.random.seed</code> instead.
+		 */
+		static public function set globalSeed(value:Number):void
+		{
+			FlxG.warnDeprecated('FlxG.globalSeed', 'FlxG.random.seed');
+			FlxG.random.seed = value;
+		}
+		
+		/**
+		 * Shuffles the entries in an array into a new random order.
+		 * Uses <code>FlxG.random.shuffle()</code> and is deterministic and safe for use with replays/recordings.
+		 * 
+		 * @param	Objects			A Flash <code>Array</code> object containing...stuff.
+		 * @param	HowManyTimes	How many swaps to perform during the shuffle operation. Deprecated; instead, all items in the array are shuffled once.
+		 * 
+		 * @return	The same Flash <code>Array</code> object that you passed in in the first place.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxG.random.shuffle()</code> instead.
+		 */
+		static public function shuffle(Objects:Array,HowManyTimes:uint):Array
+		{
+			FlxG.warnDeprecated('FlxG.shuffle()', 'FlxG.random.shuffle()');
+			return FlxG.random.shuffle(Objects, false);
+		}
+		
+		/**
+		 * Fetch a random entry from the given array.
+		 * Will return null if random selection is missing, or array has no entries.
+		 * Uses <code>FlxG.random.item()</code> and is deterministic and safe for use with replays/recordings.
+		 * 
+		 * @param	Objects		A Flash array of objects.
+		 * @param	StartIndex	Optional offset off the front of the array. Default value is 0, or the beginning of the array.
+		 * @param	Length		Optional restriction on the number of values you want to randomly select from.
+		 * 
+		 * @return	The random object that was selected.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxG.random.item()</code> instead.
+		 */
+		static public function getRandom(Objects:Array,StartIndex:uint=0,Length:uint=0):Object
+		{
+			FlxG.warnDeprecated('FlxG.getRandom()', 'FlxG.random.item()');
+			return FlxG.random.item(Objects, StartIndex, Length);
+		}
+		
 	}
 }

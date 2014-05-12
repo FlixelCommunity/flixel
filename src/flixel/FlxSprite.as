@@ -685,7 +685,7 @@ package flixel
 		public function randomFrame():void
 		{
 			_curAnim = null;
-			trySetIndex(int(FlxG.random()*numFrames)); // Shouldn't ever throw an error
+			trySetIndex(FlxG.random.integer(0, numFrames-1)); // Shouldn't ever throw an error
 		}
 		
 		/**
