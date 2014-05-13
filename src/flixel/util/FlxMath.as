@@ -97,5 +97,39 @@ package flixel.util
 			var lowerBound:Number = (Value<Min)?Min:Value;
 			return (lowerBound>Max)?Max:lowerBound;
 		}
+		
+		
+		/**
+		 * A tween-like function that takes a starting velocity
+		 * and some other factors and returns an altered velocity.
+		 * 
+		 * @param	TimeElapsed		The amount of time in seconds that passed since last frame.
+		 * @param	Velocity		Any component of velocity (e.g. 20).
+		 * @param	Acceleration	Rate at which the velocity is changing.
+		 * @param	Drag			Really kind of a deceleration, this is how much the velocity changes if Acceleration is not set.
+		 * @param	Max				An optional absolute value cap for the velocity.
+		 * 
+		 * @return	The altered Velocity value.
+		 */
+		static public function computeVelocity(TimeElapsed:Number, Velocity:Number, Acceleration:Number=0, Drag:Number=0, Max:Number=NaN):Number
+		{
+			if(Acceleration != 0)
+				Velocity += Acceleration*TimeElapsed;
+			else if(Drag != 0)
+			{
+				var drag:Number = Drag*TimeElapsed;
+				if(Velocity - drag > 0)
+					Velocity = Velocity - drag;
+				else if(Velocity + drag < 0)
+					Velocity += drag;
+				else
+					Velocity = 0;
+			}
+			if((Velocity != 0) && (!isNaN(Max)))
+			{
+				Velocity = FlxMath.clamp(Velocity, -Max, Max);
+			}
+			return Velocity;
+		}
 	}
 }

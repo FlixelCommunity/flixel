@@ -300,41 +300,6 @@ package flixel.util
 			return getDefinitionByName(Name) as Class;
 		}
 		
-		/**
-		 * A tween-like function that takes a starting velocity
-		 * and some other factors and returns an altered velocity.
-		 * 
-		 * @param	Velocity		Any component of velocity (e.g. 20).
-		 * @param	Acceleration	Rate at which the velocity is changing.
-		 * @param	Drag			Really kind of a deceleration, this is how much the velocity changes if Acceleration is not set.
-		 * @param	Max				An absolute value cap for the velocity.
-		 * 
-		 * @return	The altered Velocity value.
-		 */
-		static public function computeVelocity(Velocity:Number, Acceleration:Number=0, Drag:Number=0, Max:Number=10000):Number
-		{
-			if(Acceleration != 0)
-				Velocity += Acceleration*FlxG.elapsed;
-			else if(Drag != 0)
-			{
-				var drag:Number = Drag*FlxG.elapsed;
-				if(Velocity - drag > 0)
-					Velocity = Velocity - drag;
-				else if(Velocity + drag < 0)
-					Velocity += drag;
-				else
-					Velocity = 0;
-			}
-			if((Velocity != 0) && (Max != 10000))
-			{
-				if(Velocity > Max)
-					Velocity = Max;
-				else if(Velocity < -Max)
-					Velocity = -Max;
-			}
-			return Velocity;
-		}
-		
 		
 		/*     --- Deprecated members in Flixel v2.57 ---     */
 		/*  To be removed after developers have had time to adjust to the new changes. */
@@ -575,6 +540,28 @@ package flixel.util
 			FlxG.warnDeprecated('FlxU.bound()', 'FlxMath.clamp()');
 			return FlxMath.clamp(Value, Min, Max);
 		}
+		
+		
+		/**
+		 * A tween-like function that takes a starting velocity
+		 * and some other factors and returns an altered velocity.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxMath.clamp()</code> instead.
+		 * 		Note the difference in arguments!
+		 * 
+		 * @param	Velocity		Any component of velocity (e.g. 20).
+		 * @param	Acceleration	Rate at which the velocity is changing.
+		 * @param	Drag			Really kind of a deceleration, this is how much the velocity changes if Acceleration is not set.
+		 * @param	Max				An absolute value cap for the velocity.
+		 * 
+		 * @return	The altered Velocity value.
+		 */
+		static public function computeVelocity(Velocity:Number, Acceleration:Number=0, Drag:Number=0, Max:Number=NaN):Number
+		{
+			FlxG.warnDeprecated('FlxU.computeVelocity()', 'FlxMath.computeVelocity()');
+			return FlxMath.computeVelocity(FlxG.elapsed, Velocity, Acceleration, Drag, Max);
+		}
+		
 		
 		/**
 		 * Just grabs the current "ticks" or time in milliseconds that has passed since Flash Player started up.

@@ -3,7 +3,6 @@ package flixel
 	import flash.display.Graphics;
 	
 	import flixel.tile.FlxTilemap;
-	import flixel.util.FlxU;
 	import flixel.util.FlxMath;
 	import flixel.util.FlxPath;
 	import flixel.util.FlxRect;
@@ -384,18 +383,18 @@ package flixel
 			var delta:Number;
 			var velocityDelta:Number;
 
-			velocityDelta = (FlxU.computeVelocity(angularVelocity,angularAcceleration,angularDrag,maxAngular) - angularVelocity)/2;
+			velocityDelta = (FlxMath.computeVelocity(FlxG.elapsed, angularVelocity,angularAcceleration,angularDrag,maxAngular) - angularVelocity)/2;
 			angularVelocity += velocityDelta; 
 			angle += angularVelocity*FlxG.elapsed;
 			angularVelocity += velocityDelta;
 			
-			velocityDelta = (FlxU.computeVelocity(velocity.x,acceleration.x,drag.x,maxVelocity.x) - velocity.x)/2;
+			velocityDelta = (FlxMath.computeVelocity(FlxG.elapsed, velocity.x,acceleration.x,drag.x,maxVelocity.x) - velocity.x)/2;
 			velocity.x += velocityDelta;
 			delta = velocity.x*FlxG.elapsed;
 			velocity.x += velocityDelta;
 			x += delta;
 			
-			velocityDelta = (FlxU.computeVelocity(velocity.y,acceleration.y,drag.y,maxVelocity.y) - velocity.y)/2;
+			velocityDelta = (FlxMath.computeVelocity(FlxG.elapsed, velocity.y,acceleration.y,drag.y,maxVelocity.y) - velocity.y)/2;
 			velocity.y += velocityDelta;
 			delta = velocity.y*FlxG.elapsed;
 			velocity.y += velocityDelta;
