@@ -6,7 +6,7 @@ package flixel.tile
 	
 	import flixel.FlxG;
 	import flixel.FlxCamera;
-	import flixel.util.FlxU;
+	import flixel.util.FlxMath;
 
 	/**
 	 * A helper object to keep tilemap drawing performance decent across the new multi-camera system.
@@ -62,10 +62,10 @@ package flixel.tile
 			if(Camera == null)
 				Camera = FlxG.camera;
 
-			columns = FlxU.ceil(Camera.width/TileWidth)+1;
+			columns = FlxMath.ceil(Camera.width/TileWidth)+1;
 			if(columns > WidthInTiles)
 				columns = WidthInTiles;
-			rows = FlxU.ceil(Camera.height/TileHeight)+1;
+			rows = FlxMath.ceil(Camera.height/TileHeight)+1;
 			if(rows > HeightInTiles)
 				rows = HeightInTiles;
 			

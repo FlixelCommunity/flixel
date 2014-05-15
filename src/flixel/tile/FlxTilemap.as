@@ -1,22 +1,21 @@
 package flixel.tile
 {
-	import flixel.util.FlxRect;
 	import flixel.FlxBasic;
-	import flixel.FlxGroup;
-	import flixel.util.FlxU;
-	import flixel.util.FlxPath;
-	import flixel.util.FlxPoint;
 	import flixel.FlxCamera;
 	import flixel.FlxG;
+	import flixel.FlxGroup;
+	import flixel.FlxObject;
+	
+	import flixel.util.FlxMath;
+	import flixel.util.FlxPath;
+	import flixel.util.FlxPoint;
+	import flixel.util.FlxRect;
+	
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
-	import flixel.FlxObject;
-	import flixel.tile.FlxTile;
-	import flixel.tile.FlxTilemapBuffer;
 
 	/**
 	 * This is a traditional tilemap display and collision class.
@@ -962,10 +961,10 @@ package flixel.tile
 			}
 			
 			//Figure out what tiles we need to check against
-			var selectionX:int = FlxU.floor((TargetObject.x - X)/_tileWidth);
-			var selectionY:int = FlxU.floor((TargetObject.y - Y)/_tileHeight);
-			var selectionWidth:uint = selectionX + (FlxU.ceil(TargetObject.width/_tileWidth)) + 1;
-			var selectionHeight:uint = selectionY + FlxU.ceil(TargetObject.height/_tileHeight) + 1;
+			var selectionX:int = FlxMath.floor((TargetObject.x - X)/_tileWidth);
+			var selectionY:int = FlxMath.floor((TargetObject.y - Y)/_tileHeight);
+			var selectionWidth:uint = selectionX + (FlxMath.ceil(TargetObject.width/_tileWidth)) + 1;
+			var selectionHeight:uint = selectionY + FlxMath.ceil(TargetObject.height/_tileHeight) + 1;
 			
 			//Then bound these coordinates by the map edges
 			if(selectionX < 0)

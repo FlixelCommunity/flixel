@@ -1,7 +1,6 @@
 package flixel.system
 {
 	import flixel.FlxG;
-	import flixel.util.FlxU;
 	import flixel.util.FlxPoint;
 	import flixel.util.FlxTween;
 	import flixel.FlxObject;
@@ -195,7 +194,7 @@ package flixel.system
 			//Distance-based volume control
 			if(_target != null)
 			{
-				radialMultiplier = FlxU.getDistance(new FlxPoint(_target.x,_target.y),new FlxPoint(x,y))/_radius;
+				radialMultiplier = FlxPoint.distance(new FlxPoint(_target.x,_target.y),new FlxPoint(x,y))/_radius;
 				if(radialMultiplier < 0) radialMultiplier = 0;
 				if(radialMultiplier > 1) radialMultiplier = 1;
 				

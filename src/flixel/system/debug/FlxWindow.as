@@ -10,7 +10,7 @@ package flixel.system.debug
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
-	import flixel.util.FlxU;
+	import flixel.util.FlxMath;
 	
 	/**
 	 * A generic, Flash-based window class, created for use in <code>FlxDebugger</code>.
@@ -286,8 +286,8 @@ package flixel.system.debug
 		{
 			if(_bounds != null)
 			{
-				x = FlxU.bound(x,_bounds.left,_bounds.right-_width);
-				y = FlxU.bound(y,_bounds.top,_bounds.bottom-_height);
+				x = FlxMath.clamp(x,_bounds.left,_bounds.right-_width);
+				y = FlxMath.clamp(y,_bounds.top,_bounds.bottom-_height);
 			}
 		}
 		
@@ -296,8 +296,8 @@ package flixel.system.debug
 		 */
 		protected function updateSize():void
 		{
-			_width = FlxU.bound(_width,minSize.x,maxSize.x);
-			_height = FlxU.bound(_height,minSize.y,maxSize.y);
+			_width = FlxMath.clamp(_width,minSize.x,maxSize.x);
+			_height = FlxMath.clamp(_height,minSize.y,maxSize.y);
 			
 			_header.scaleX = _width;
 			_background.scaleX = _width;

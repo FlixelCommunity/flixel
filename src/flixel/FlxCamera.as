@@ -7,7 +7,7 @@ package flixel
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import flixel.util.FlxU;
+	import flixel.util.FlxMath;
 	import flixel.util.FlxPoint;
 	import flixel.util.FlxRect;
 
@@ -308,8 +308,8 @@ package flixel
 					
 					if ((target is FlxSprite) && (FlxSprite(target).isSimpleRender()))
 					{
-						targetX = FlxU.floor(targetX);
-						targetY = FlxU.floor(targetY);
+						targetX = FlxMath.floor(targetX);
+						targetY = FlxMath.floor(targetY);
 					}
 					
 					edge = targetX - deadzone.x;
@@ -407,7 +407,7 @@ package flixel
 				case STYLE_TOPDOWN:
 				case STYLE_TOPDOWN_TIGHT:
 					var tdTightness:Number = (Style == STYLE_TOPDOWN_TIGHT) ? 8 : 4;
-					var tdHelper:Number = FlxU.max(width,height)/tdTightness;
+					var tdHelper:Number = FlxMath.max(width,height)/tdTightness;
 					deadzone = new FlxRect((width-tdHelper)/2,(height-tdHelper)/2,tdHelper,tdHelper);
 					break;
 				case STYLE_LOCKON:
