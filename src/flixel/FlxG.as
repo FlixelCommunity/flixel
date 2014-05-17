@@ -4,6 +4,7 @@ package flixel
 	import flixel.util.FlxRandom;
 	import flixel.util.FlxU;
 	import flixel.system.FlxSound;
+	import flixel.system.FlxSignals;
 	import flixel.input.keyboard.Keyboard;
 	import flixel.input.mouse.Mouse;
 	import flixel.util.FlxRect;
@@ -215,6 +216,11 @@ package flixel
 		 * DebugPathDisplay, and TimerManager.
 		 */
 		 static public var plugins:Array;
+		 
+		/**
+		 * TODO: add docs
+		 */
+		static public var signals:FlxSignals;
 		
 		/**
 		 * The global instance of the deterministic 'FlxRandom' pseudo-random number generator.
@@ -1092,6 +1098,8 @@ package flixel
 			addPlugin(new DebugPathDisplay());
 			addPlugin(new TimerManager());
 			
+			FlxG.signals = new FlxSignals();
+			
 			FlxG.mouse = new Mouse(FlxG._game._mouse);
 			FlxG.keys = new Keyboard();
 			FlxG.mobile = false;
@@ -1122,6 +1130,8 @@ package flixel
 			var debugPathDisplay:DebugPathDisplay = FlxG.getPlugin(DebugPathDisplay) as DebugPathDisplay;
 			if(debugPathDisplay != null)
 				debugPathDisplay.clear();
+				
+			FlxG.signals.reset.dispatch();
 		}
 		
 		/**
