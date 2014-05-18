@@ -25,6 +25,9 @@ package flixel.plugin.pathdisplay
 			// Tell Flixel to invoke the draw() method after the current
 			// state has been drawn on the screen.
 			FlxG.signals.postDraw.add(draw);
+			
+			// Subscribe to game reset events.
+			FlxG.signals.reset.add(handleGameReset);
 		}
 		
 		/**
@@ -35,6 +38,14 @@ package flixel.plugin.pathdisplay
 			clear();
 			_paths = null;
 			super.destroy();
+		}
+		
+		/**
+		 * Called when the game is reset.
+		 */
+		private function handleGameReset() :void
+		{
+				clear();
 		}
 		
 		/**

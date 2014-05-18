@@ -1125,9 +1125,6 @@ package flixel
 			FlxG.random = new FlxRandom();
 			FlxG.worldBounds = new FlxRect(-10,-10,FlxG.width+20,FlxG.height+20);
 			FlxG.worldDivisions = 6;
-			var debugPathDisplay:DebugPathDisplay = FlxG.getPlugin(DebugPathDisplay) as DebugPathDisplay;
-			if(debugPathDisplay != null)
-				debugPathDisplay.clear();
 				
 			FlxG.signals.reset.dispatch();
 		}
