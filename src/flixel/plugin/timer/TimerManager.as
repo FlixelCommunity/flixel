@@ -1,6 +1,7 @@
 package flixel.plugin.timer
 {
 	import flixel.FlxBasic;
+	import flixel.FlxG;
 	
 	/**
 	 * A simple manager for tracking and updating game timer objects.
@@ -18,6 +19,17 @@ package flixel.plugin.timer
 		{
 			_timers = new Array();
 			visible = false; //don't call draw on this plugin
+			
+			FlxG.signals.beforeStateSwitch.add(handleStateSwitch);
+		}
+		
+		/**
+		 * Called by Flixel when the current state is about to switch to
+		 * a new one. The method clears any timers left in the timer manager.
+		 */
+		private function handleStateSwitch() :void
+		{
+			clear();
 		}
 		
 		/**

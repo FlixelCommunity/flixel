@@ -1094,11 +1094,11 @@ package flixel
 			FlxG.cameras = new Array();
 			useBufferLocking = false;
 			
+			FlxG.signals = new FlxSignals();
+			
 			plugins = new Array();
 			addPlugin(new DebugPathDisplay());
 			addPlugin(new TimerManager());
-			
-			FlxG.signals = new FlxSignals();
 			
 			FlxG.mouse = new Mouse(FlxG._game._mouse);
 			FlxG.keys = new Keyboard();

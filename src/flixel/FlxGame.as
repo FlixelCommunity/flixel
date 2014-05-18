@@ -15,8 +15,6 @@ package flixel
 	import flash.utils.getTimer;
 	
 	import flixel.plugin.replay.FlxReplay;
-	import flixel.plugin.timer.TimerManager;
-	import flixel.plugin.timer.FlxTimer;
 	import flixel.util.FlxMath;
 	import flixel.system.FlxSave;
 	import flixel.system.debug.FlxDebugger;
@@ -485,10 +483,8 @@ package flixel
 			if(_debugger != null)
 				_debugger.watch.removeAll();
 			
-			//Clear any timers left in the timer manager
-			var timerManager:TimerManager = FlxTimer.manager;
-			if(timerManager != null)
-				timerManager.clear();
+			// Notify everybody about the state switch.
+			FlxG.signals.beforeStateSwitch.dispatch();
 			
 			//Destroy the old state (if there is an old state)
 			if(_state != null)

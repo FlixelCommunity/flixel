@@ -11,10 +11,19 @@ package flixel.system
 		 * Dispatched when the game is reset by <code>FlxG.resetGame()</code>.
 		 */
 		public var reset:FlxSignal;
+		
+		/**
+		 * Dispatched when the current state is about to be replaced by a new one.
+		 * The switch is a result of <code>FlxG.switchState()</code>. When this signal
+		 * is dispatched, the current state is still active (it's about to be destroyed)
+		 * and the new state is already instantiated.
+		 */
+		public var beforeStateSwitch:FlxSignal;
 
 		public function FlxSignals()
 		{
 			reset = new FlxSignal();
+			beforeStateSwitch = new FlxSignal();
 		}
 	}
 }
