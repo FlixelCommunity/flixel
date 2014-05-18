@@ -10,7 +10,7 @@ package flixel.plugin.pathdisplay
 	 * 
 	 * @author	Adam Atomic
 	 */
-	public class DebugPathDisplay extends FlxBasic
+	public class DebugPathDisplay extends FlxBasic // TODO: extends FlxPlugin or something?
 	{
 		protected var _paths:Array;
 		
@@ -20,7 +20,10 @@ package flixel.plugin.pathdisplay
 		public function DebugPathDisplay()
 		{
 			_paths = new Array();
-			active = false; //don't call update on this plugin
+			
+			// Tell Flixel to invoke the draw() method after the current
+			// state has been drawn on the screen.
+			FlxG.signals.postDraw.add(draw);
 		}
 		
 		/**
@@ -34,7 +37,7 @@ package flixel.plugin.pathdisplay
 		}
 		
 		/**
-		 * Called by <code>FlxG.drawPlugins()</code> after the game state has been drawn.
+		 * Called after the game state has been drawn.
 		 * Cycles through cameras and calls <code>drawDebug()</code> on each one.
 		 */
 		override public function draw():void

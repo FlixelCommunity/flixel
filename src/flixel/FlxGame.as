@@ -627,7 +627,7 @@ package flixel
 			
 			FlxG.elapsed = FlxG.timeScale*(_step/1000);
 			FlxG.updateSounds();
-			FlxG.updatePlugins();
+			FlxG.signals.preUpdate.dispatch();
 			_state.update();
 			FlxG.updateCameras();
 			
@@ -643,7 +643,7 @@ package flixel
 			var mark:uint = getTimer();
 			FlxG.lockCameras();
 			_state.draw();
-			FlxG.drawPlugins();
+			FlxG.signals.postDraw.dispatch();
 			FlxG.unlockCameras();
 			if(_debuggerUp)
 				_debugger.perf.flixelDraw(getTimer()-mark);

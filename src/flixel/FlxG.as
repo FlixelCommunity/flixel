@@ -1208,41 +1208,6 @@ package flixel
 			}
 		}
 		
-		/**
-		 * Used by the game object to call <code>update()</code> on all the plugins.
-		 */
-		static internal function updatePlugins():void
-		{
-			var plugin:FlxBasic;
-			var pluginList:Array = FlxG.plugins;
-			var i:uint = 0;
-			var l:uint = pluginList.length;
-			while(i < l)
-			{
-				plugin = pluginList[i++] as FlxBasic;
-				if(plugin.exists && plugin.active)
-					plugin.update();
-			}
-		}
-		
-		/**
-		 * Used by the game object to call <code>draw()</code> on all the plugins.
-		 */
-		static internal function drawPlugins():void
-		{
-			var plugin:FlxBasic;
-			var pluginList:Array = FlxG.plugins;
-			var i:uint = 0;
-			var l:uint = pluginList.length;
-			while(i < l)
-			{
-				plugin = pluginList[i++] as FlxBasic;
-				if(plugin.exists && plugin.visible)
-					plugin.draw();
-			}
-		}
-		
-		
 		/*     --- Deprecated members in Flixel v2.57 ---     */
 		/*  To be removed after developers have had time to adjust to the new changes. */
 		

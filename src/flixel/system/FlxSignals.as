@@ -19,11 +19,24 @@ package flixel.system
 		 * and the new state is already instantiated.
 		 */
 		public var beforeStateSwitch:FlxSignal;
+		
+		/**
+		 * Dispatched when Flixel is about to update the current game state and its children.
+		 * It may be called multiple times per "frame".
+		 */
+		public var preUpdate:FlxSignal;
+		
+		/**
+		 * Dispatched after Flixel has drawn the current state on the screen.
+		 */
+		public var postDraw:FlxSignal;
 
 		public function FlxSignals()
 		{
 			reset = new FlxSignal();
 			beforeStateSwitch = new FlxSignal();
+			preUpdate = new FlxSignal();
+			postDraw = new FlxSignal();
 		}
 	}
 }

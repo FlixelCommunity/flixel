@@ -8,7 +8,7 @@ package flixel.plugin.timer
 	 * 
 	 * @author	Adam Atomic
 	 */
-	public class TimerManager extends FlxBasic
+	public class TimerManager extends FlxBasic  // TODO: extends FlxPlugin or something?
 	{
 		protected var _timers:Array;
 		
@@ -18,9 +18,13 @@ package flixel.plugin.timer
 		public function TimerManager()
 		{
 			_timers = new Array();
-			visible = false; //don't call draw on this plugin
 			
+			// Subscribe to state switch events.
 			FlxG.signals.beforeStateSwitch.add(handleStateSwitch);
+			
+			// Tell Flixel to call update() before the current state
+			// is updated.
+			FlxG.signals.preUpdate.add(update);
 		}
 		
 		/**
@@ -43,7 +47,7 @@ package flixel.plugin.timer
 		}
 		
 		/**
-		 * Called by <code>FlxG.updatePlugins()</code> before the game state has been updated.
+		 * Called before the game state has been updated.
 		 * Cycles through timers and calls <code>update()</code> on each one.
 		 */
 		override public function update():void
