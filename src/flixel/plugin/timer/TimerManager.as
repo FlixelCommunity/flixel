@@ -2,13 +2,14 @@ package flixel.plugin.timer
 {
 	import flixel.FlxBasic;
 	import flixel.FlxG;
+	import flixel.plugin.FlxPlugin;
 	
 	/**
 	 * A simple manager for tracking and updating game timer objects.
 	 * 
 	 * @author	Adam Atomic
 	 */
-	public class TimerManager extends FlxBasic  // TODO: extends FlxPlugin or something?
+	public class TimerManager implements FlxPlugin
 	{
 		protected var _timers:Array;
 		
@@ -39,7 +40,7 @@ package flixel.plugin.timer
 		/**
 		 * Clean up memory.
 		 */
-		override public function destroy():void
+		public function destroy():void
 		{
 			clear();
 			_timers = null;
@@ -50,7 +51,7 @@ package flixel.plugin.timer
 		 * Called before the game state has been updated.
 		 * Cycles through timers and calls <code>update()</code> on each one.
 		 */
-		override public function update():void
+		public function update():void
 		{
 			var i:int = _timers.length-1;
 			var timer:FlxTimer;

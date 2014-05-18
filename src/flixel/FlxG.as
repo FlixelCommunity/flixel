@@ -18,6 +18,7 @@ package flixel
 	
 	import flixel.plugin.pathdisplay.DebugPathDisplay;
 	import flixel.plugin.timer.TimerManager;
+	import flixel.plugin.FlxPlugin;
 	import flixel.physics.FlxQuadTree;
 	
 	/**
@@ -979,24 +980,21 @@ package flixel
 		/**
 		 * Adds a new plugin to the global plugin array.
 		 * 
-		 * @param	Plugin	Any object that extends FlxBasic. Useful for managers and other things.  See org.flixel.plugin for some examples!
+		 * @param	Plugin	Any object that extends <code>FlxPlugin</code>. Useful for managers and other things. See org.flixel.plugin for some examples!
 		 * 
-		 * @return	The same <code>FlxBasic</code>-based plugin you passed in.
+		 * @return	The same <code>FlxPlugin</code>-based plugin you passed in.
 		 */
-		static public function addPlugin(Plugin:FlxBasic):FlxBasic
+		static public function addPlugin(Plugin:FlxPlugin):FlxPlugin
 		{
-			//Don't add repeats
 			var pluginList:Array = FlxG.plugins;
-			var i:uint = 0;
-			var l:uint = pluginList.length;
-			while(i < l)
-			{
-				if(pluginList[i++].toString() == Plugin.toString())
-					return Plugin;
-			}
+			var i:int = pluginList.indexOf(Plugin);
 			
-			//no repeats! safe to add a new instance of this plugin
-			pluginList.push(Plugin);
+			if(i == -1)
+			{
+				//no repeats! safe to add a new instance of this plugin
+				pluginList.push(Plugin);
+			}
+
 			return Plugin;
 		}
 		
@@ -1007,7 +1005,7 @@ package flixel
 		 * 
 		 * @return	The plugin object, or null if no matching plugin was found.
 		 */
-		static public function getPlugin(ClassType:Class):FlxBasic
+		static public function getPlugin(ClassType:Class):FlxPlugin
 		{
 			var pluginList:Array = FlxG.plugins;
 			var i:uint = 0;
@@ -1026,9 +1024,9 @@ package flixel
 		 * 
 		 * @param	Plugin	The plugin instance you want to remove.
 		 * 
-		 * @return	The same <code>FlxBasic</code>-based plugin you passed in.
+		 * @return	The same <code>FlxPlugin</code>-based plugin you passed in.
 		 */
-		static public function removePlugin(Plugin:FlxBasic):FlxBasic
+		static public function removePlugin(Plugin:FlxPlugin):FlxPlugin
 		{
 			//Don't add repeats
 			var pluginList:Array = FlxG.plugins;
