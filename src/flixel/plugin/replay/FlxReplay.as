@@ -1,6 +1,11 @@
 package flixel.plugin.replay
 {
+	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 	import flixel.FlxG;
+	import flixel.FlxState;
+	import flixel.plugin.FlxPlugin;
+	import flixel.system.debug.FlxDebugger;
 
 	/**
 	 * The replay object both records and replays game recordings,
@@ -10,8 +15,10 @@ package flixel.plugin.replay
 	 * recordings of gameplay with a decent amount of fidelity.
 	 * 
 	 * @author	Adam Atomic
+	 * 
+	 * Adaptation by Fernando Bevilacqua (dovyski@gmail.com)
 	 */
-	public class FlxReplay
+	public class FlxReplay implements FlxPlugin
 	{
 		/**
 		 * The random number generator seed value for this recording.
@@ -44,6 +51,40 @@ package flixel.plugin.replay
 		protected var _marker:int;
 		
 		/**
+		 * Flag for whether a playback of a recording was requested.
+		 */
+		internal var _replayRequested:Boolean;
+		/**
+		 * Flag for whether a new recording was requested.
+		 */
+		internal var _recordingRequested:Boolean;
+		/**
+		 * Flag for whether a replay is currently playing.
+		 */
+		internal var _replaying:Boolean;
+		/**
+		 * Flag for whether a new recording is being made.
+		 */
+		internal var _recording:Boolean;
+		/**
+		 * Array that keeps track of keypresses that can cancel a replay.
+		 * Handy for skipping cutscenes or getting out of attract modes!
+		 */
+		internal var _replayCancelKeys:Array;
+		/**
+		 * Helps time out a replay if necessary.
+		 */
+		internal var _replayTimer:int;
+		/**
+		 * This function, if set, is triggered when the callback stops playing.
+		 */
+		internal var _replayCallback:Function;
+		
+		
+		// TODO: remove this, it's temporary!
+		internal var _debugger:FlxDebugger;
+		
+		/**
 		 * Instantiate a new replay object.  Doesn't actually do much until you call create() or load().
 		 */
 		public function FlxReplay()
@@ -55,6 +96,17 @@ package flixel.plugin.replay
 			_frames = null;
 			_capacity = 0;
 			_marker = 0;
+			
+			_replayRequested = false;
+			_recordingRequested = false;
+			_replaying = false;
+			_recording = false;
+			
+			// Tell Flixel to call handlePreUpdate() before the current state is updated.
+			FlxG.signals.preUpdate.add(handlePreUpdate);
+			
+			// Subscribe to state switch events
+			FlxG.signals.beforeStateSwitch.add(handleStateSwitch);
 		}
 		
 		/**
@@ -196,6 +248,221 @@ package flixel.plugin.replay
 			_marker = 0;
 			frame = 0;
 			finished = false;
+		}
+		
+		/**
+		 * Automatically invoked by Flixel before the state is updated.
+		 */
+		protected function handlePreUpdate():void
+		{
+			//handle replay-related requests
+			if(_recordingRequested)
+			{
+				_recordingRequested = false;
+				create(FlxG.random.seed);
+				_recording = true;
+				if(_debugger != null)
+				{
+					_debugger.vcr.recording();
+					FlxG.log("FLIXEL: starting new flixel gameplay record.");
+				}
+			}
+			else if(_replayRequested)
+			{
+				_replayRequested = false;
+				rewind();
+				FlxG.random.seed = seed;
+				if(_debugger != null)
+					_debugger.vcr.playing();
+				_replaying = true;
+			}
+			
+			// TODO: if replaying, FlxG.updateInput() should be skipped.
+			// TODO: get _step from FlxG.
+			var _step :Number = 0.16;
+			
+			if(_replaying)
+			{
+				playNextFrame();
+				if(_replayTimer > 0)
+				{
+					_replayTimer -= _step;
+					if(_replayTimer <= 0)
+					{
+						if(_replayCallback != null)
+						{
+							_replayCallback();
+							_replayCallback = null;
+						}
+						else
+							stopReplay();
+					}
+				}
+				if(_replaying && finished)
+				{
+					stopReplay();
+					if(_replayCallback != null)
+					{
+						_replayCallback();
+						_replayCallback = null;
+					}
+				}
+				if(_debugger != null)
+					_debugger.vcr.updateRuntime(_step);
+			}
+			
+			if(_recording)
+			{
+				recordFrame();
+				if(_debugger != null)
+					_debugger.vcr.updateRuntime(_step);
+			}
+		}
+		
+		/**
+		 * TODO: add docs
+		 */
+		protected function handleStateSwitch():void
+		{
+			_replayTimer = 0;
+			_replayCancelKeys = null;
+		}
+		
+		/**
+		 * TODO: add docs
+		 * 
+		 * @param	FlashEvent	Flash keyboard event.
+		 */
+		protected function handleKeyDown(FlashEvent:KeyboardEvent):void
+		{
+			if(_replaying && (_replayCancelKeys != null) && (_debugger == null) && (FlashEvent.keyCode != 192) && (FlashEvent.keyCode != 220))
+			{
+				var replayCancelKey:String;
+				var i:uint = 0;
+				var l:uint = _replayCancelKeys.length;
+				while(i < l)
+				{
+					replayCancelKey = _replayCancelKeys[i++];
+					if((replayCancelKey == "ANY") || (FlxG.keys.getKeyCode(replayCancelKey) == FlashEvent.keyCode))
+					{
+						if(_replayCallback != null)
+						{
+							_replayCallback();
+							_replayCallback = null;
+						}
+						else
+							stopReplay();
+						break;
+					}
+				}
+				return;
+			}
+		}
+		
+		/**
+		 * TODO: add docs
+		 * 
+		 * @param	FlashEvent	Flash emouse event.
+		 */
+		protected function handleMouseDown(FlashEvent:MouseEvent):void
+		{
+			if(_replaying && (_replayCancelKeys != null))
+			{
+				var replayCancelKey:String;
+				var i:uint = 0;
+				var l:uint = _replayCancelKeys.length;
+				while(i < l)
+				{
+					replayCancelKey = _replayCancelKeys[i++] as String;
+					if((replayCancelKey == "MOUSE") || (replayCancelKey == "ANY"))
+					{
+						if(_replayCallback != null)
+						{
+							_replayCallback();
+							_replayCallback = null;
+						}
+						else
+							stopReplay();
+						break;
+					}
+				}
+				return;
+			}
+		}
+		
+		/**
+		 * Load replay data from a string and play it back.
+		 * 
+		 * @param	Data		The replay that you want to load.
+		 * @param	State		Optional parameter: if you recorded a state-specific demo or cutscene, pass a new instance of that state here.
+		 * @param	CancelKeys	Optional parameter: an array of string names of keys (see FlxKeyboard) that can be pressed to cancel the playback, e.g. ["ESCAPE","ENTER"].  Also accepts 2 custom key names: "ANY" and "MOUSE" (fairly self-explanatory I hope!).
+		 * @param	Timeout		Optional parameter: set a time limit for the replay.  CancelKeys will override this if pressed.
+		 * @param	Callback	Optional parameter: if set, called when the replay finishes.  Running to the end, CancelKeys, and Timeout will all trigger Callback(), but only once, and CancelKeys and Timeout will NOT call FlxG.stopReplay() if Callback is set!
+		 */
+		public function loadReplay(Data:String,State:FlxState=null,CancelKeys:Array=null,Timeout:Number=0,Callback:Function=null):void
+		{
+			load(Data);
+			if(State == null)
+				FlxG.resetGame();
+			else
+				FlxG.switchState(State);
+			_replayCancelKeys = CancelKeys;
+			_replayTimer = Timeout*1000;
+			_replayCallback = Callback;
+			_replayRequested = true;
+		}
+		
+		/**
+		 * Resets the game or state and replay requested flag.
+		 * 
+		 * @param	StandardMode	If true, reload entire game, else just reload current game state.
+		 */
+		public function reloadReplay(StandardMode:Boolean=true):void
+		{
+			if(StandardMode)
+				FlxG.resetGame();
+			else
+				FlxG.resetState();
+			if(frameCount > 0)
+				_replayRequested = true;
+		}
+		
+		/**
+		 * Stops the current replay.
+		 */
+		public function stopReplay():void
+		{
+			_replaying = false;
+			if(_debugger != null)
+				_debugger.vcr.stopped();
+			FlxG.resetInput();
+		}
+		
+		/**
+		 * Resets the game or state and requests a new recording.
+		 * 
+		 * @param	StandardMode	If true, reset the entire game, else just reset the current state.
+		 */
+		public function recordReplay(StandardMode:Boolean=true):void
+		{
+			if(StandardMode)
+				FlxG.resetGame();
+			else
+				FlxG.resetState();
+			_recordingRequested = true;
+		}
+		
+		/**
+		 * Stop recording the current replay and return the replay data.
+		 * 
+		 * @return	The replay data in simple ASCII format (see <code>FlxReplay.save()</code>).
+		 */
+		public function stopRecording():String
+		{
+			_recording = false;
+			if(_debugger != null)
+				_debugger.vcr.stopped();
+			return save();
 		}
 	}
 }
