@@ -6,6 +6,7 @@ package flixel.plugin.replay
 	import flixel.FlxState;
 	import flixel.plugin.FlxPlugin;
 	import flixel.system.debug.FlxDebugger;
+	import flixel.system.debug.VCR;
 
 	/**
 	 * The replay object both records and replays game recordings,
@@ -81,8 +82,8 @@ package flixel.plugin.replay
 		internal var _replayCallback:Function;
 		
 		
-		// TODO: remove this, it's temporary!
-		internal var _debugger:FlxDebugger;
+		// TODO: remove this hack!
+		internal var _debugger:Object;
 		
 		/**
 		 * Instantiate a new replay object.  Doesn't actually do much until you call create() or load().
@@ -101,6 +102,9 @@ package flixel.plugin.replay
 			_recordingRequested = false;
 			_replaying = false;
 			_recording = false;
+			
+			// TODO: remove this hack!
+			_debugger = {};
 			
 			// Tell Flixel to call handlePreUpdate() before the current state is updated.
 			FlxG.signals.preUpdate.add(handlePreUpdate);
@@ -263,7 +267,7 @@ package flixel.plugin.replay
 				_recording = true;
 				if(_debugger != null)
 				{
-					_debugger.vcr.recording();
+					vcr.recording();
 					FlxG.log("FLIXEL: starting new flixel gameplay record.");
 				}
 			}
@@ -272,8 +276,9 @@ package flixel.plugin.replay
 				_replayRequested = false;
 				rewind();
 				FlxG.random.seed = seed;
+				FlxG._ignoreInput = true;
 				if(_debugger != null)
-					_debugger.vcr.playing();
+					vcr.playing();
 				_replaying = true;
 			}
 			
@@ -308,14 +313,14 @@ package flixel.plugin.replay
 					}
 				}
 				if(_debugger != null)
-					_debugger.vcr.updateRuntime(_step);
+					vcr.updateRuntime(_step);
 			}
 			
 			if(_recording)
 			{
 				recordFrame();
 				if(_debugger != null)
-					_debugger.vcr.updateRuntime(_step);
+					vcr.updateRuntime(_step);
 			}
 		}
 		
@@ -434,7 +439,7 @@ package flixel.plugin.replay
 		{
 			_replaying = false;
 			if(_debugger != null)
-				_debugger.vcr.stopped();
+				vcr.stopped();
 			FlxG.resetInput();
 		}
 		
@@ -461,8 +466,14 @@ package flixel.plugin.replay
 		{
 			_recording = false;
 			if(_debugger != null)
-				_debugger.vcr.stopped();
+				vcr.stopped();
 			return save();
+		}
+		
+		// TODO: remove this hack!
+		public function get vcr():VCR
+		{
+			return FlxDebugger.vcr;
 		}
 	}
 }

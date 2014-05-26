@@ -349,6 +349,7 @@ package flixel
 			updateSoundTray(elapsedMS);
 			if(!_lostFocus)
 			{
+				/* TODO: step the vcr
 				if((_debugger != null) && _debugger.vcr.paused)
 				{
 					if(_debugger.vcr.stepRequested)
@@ -357,7 +358,7 @@ package flixel
 						step();
 					}
 				}
-				else
+				else */
 				{
 					_accumulator += elapsedMS;
 					if(_accumulator > _maxAccumulation)
