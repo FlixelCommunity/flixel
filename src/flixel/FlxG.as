@@ -226,7 +226,8 @@ package flixel
 		 static public var plugins:Array;
 		 
 		/**
-		 * TODO: add docs
+		 * The global instance of <code>FlxSignals</code> which contains all signals dispatched by Flixel.
+		 * For more information about signals and how to use them, check the <code>FlxSignals</code> class.
 		 */
 		static public var signals:FlxSignals;
 		
