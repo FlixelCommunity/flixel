@@ -963,10 +963,14 @@ package flixel
 			//Don't add repeats
 			var pluginList:Array = FlxG.plugins;
 			var i:int = pluginList.length-1;
+			var plugin:FlxPlugin;
 			while(i >= 0)
 			{
 				if(pluginList[i] == Plugin)
-					pluginList.splice(i,1);
+				{
+					plugin = pluginList.splice(i, 1)[0];
+					plugin.destroy();
+				}
 				i--;
 			}
 			return Plugin;
@@ -985,11 +989,13 @@ package flixel
 			var results:Boolean = false;
 			var pluginList:Array = FlxG.plugins;
 			var i:int = pluginList.length-1;
+			var plugin:FlxPlugin;
 			while(i >= 0)
 			{
 				if(pluginList[i] is ClassType)
 				{
-					pluginList.splice(i,1);
+					plugin = pluginList.splice(i,1)[0];
+					plugin.destroy();
 					results = true;
 				}
 				i--;
