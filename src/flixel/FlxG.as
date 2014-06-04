@@ -175,10 +175,9 @@ package flixel
 		/**
 		 * Whether or not the default game input should be ignored. It's useful for plugins
 		 * with custom input code.
-		 * 
-		 * TODO: make it protected/private and create a proper API for using it.
+		 * @default false
 		 */
-		static public var _ignoreInput:Boolean;
+		static public var ignoreInput:Boolean;
 		
 		/**
 		 * A handy container for a background music object.
@@ -1033,7 +1032,7 @@ package flixel
 			
 			FlxG.mouse = new Mouse(FlxG._game._mouse);
 			FlxG.keys = new Keyboard();
-			FlxG._ignoreInput = false;
+			FlxG.ignoreInput = false;
 			FlxG.mobile = false;
 
 			FlxG.levels = new Array();
@@ -1068,7 +1067,7 @@ package flixel
 		 */
 		static internal function updateInput():void
 		{
-			if (_ignoreInput) return;
+			if (FlxG.ignoreInput) return;
 			FlxG.keys.update();
 			if(!_game._debuggerUp || !_game._debugger.hasMouse)
 				FlxG.mouse.update(FlxG._game.mouseX,FlxG._game.mouseY);

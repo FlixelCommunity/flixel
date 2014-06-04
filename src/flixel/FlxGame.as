@@ -349,25 +349,13 @@ package flixel
 			updateSoundTray(elapsedMS);
 			if(!_lostFocus)
 			{
-				/* TODO: step the vcr
-				if((_debugger != null) && _debugger.vcr.paused)
+				_accumulator += elapsedMS;
+				if(_accumulator > _maxAccumulation)
+					_accumulator = _maxAccumulation;
+				while(_accumulator >= _step)
 				{
-					if(_debugger.vcr.stepRequested)
-					{
-						_debugger.vcr.stepRequested = false;
-						step();
-					}
-				}
-				else */
-				{
-					_accumulator += elapsedMS;
-					if(_accumulator > _maxAccumulation)
-						_accumulator = _maxAccumulation;
-					while(_accumulator >= _step)
-					{
-						step();
-						_accumulator = _accumulator - _step; 
-					}
+					step();
+					_accumulator = _accumulator - _step; 
 				}
 				
 				FlxBasic._VISIBLECOUNT = 0;

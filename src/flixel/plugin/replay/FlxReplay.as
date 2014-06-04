@@ -276,7 +276,7 @@ package flixel.plugin.replay
 				_replayRequested = false;
 				rewind();
 				FlxG.random.seed = seed;
-				FlxG._ignoreInput = true;
+				FlxG.ignoreInput = true;
 				if(_debugger != null)
 					vcr.playing();
 				_replaying = true;
