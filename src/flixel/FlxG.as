@@ -4,6 +4,7 @@ package flixel
 	import flixel.util.FlxRandom;
 	import flixel.util.FlxU;
 	import flixel.system.FlxSound;
+	import flixel.system.FlxSignals;
 	import flixel.input.keyboard.Keyboard;
 	import flixel.input.mouse.Mouse;
 	import flixel.util.FlxRect;
@@ -17,6 +18,7 @@ package flixel
 	
 	import flixel.plugin.pathdisplay.DebugPathDisplay;
 	import flixel.plugin.timer.TimerManager;
+	import flixel.plugin.FlxPlugin;
 	import flixel.physics.FlxQuadTree;
 	
 	/**
@@ -170,6 +172,12 @@ package flixel
 		 * A reference to a <code>FlxKeyboard</code> object.  Important for input!
 		 */
 		static public var keys:Keyboard;
+		/**
+		 * Whether or not the default game input should be ignored. It's useful for plugins
+		 * with custom input code.
+		 * @default false
+		 */
+		static public var ignoreInput:Boolean;
 		
 		/**
 		 * A handy container for a background music object.
@@ -215,6 +223,12 @@ package flixel
 		 * DebugPathDisplay, and TimerManager.
 		 */
 		 static public var plugins:Array;
+		 
+		/**
+		 * The global instance of <code>FlxSignals</code> which contains all signals dispatched by Flixel.
+		 * For more information about signals and how to use them, check the <code>FlxSignals</code> class.
+		 */
+		static public var signals:FlxSignals;
 		
 		/**
 		 * The global instance of the deterministic 'FlxRandom' pseudo-random number generator.
@@ -362,81 +376,6 @@ package flixel
 			var fsh:uint = FlxG.height*FlxG.camera.zoom;
 			FlxG.camera.x = (FlxG.stage.fullScreenWidth - fsw)/2;
 			FlxG.camera.y = (FlxG.stage.fullScreenHeight - fsh)/2;
-		}
-		
-		/**
-		 * Load replay data from a string and play it back.
-		 * 
-		 * @param	Data		The replay that you want to load.
-		 * @param	State		Optional parameter: if you recorded a state-specific demo or cutscene, pass a new instance of that state here.
-		 * @param	CancelKeys	Optional parameter: an array of string names of keys (see FlxKeyboard) that can be pressed to cancel the playback, e.g. ["ESCAPE","ENTER"].  Also accepts 2 custom key names: "ANY" and "MOUSE" (fairly self-explanatory I hope!).
-		 * @param	Timeout		Optional parameter: set a time limit for the replay.  CancelKeys will override this if pressed.
-		 * @param	Callback	Optional parameter: if set, called when the replay finishes.  Running to the end, CancelKeys, and Timeout will all trigger Callback(), but only once, and CancelKeys and Timeout will NOT call FlxG.stopReplay() if Callback is set!
-		 */
-		static public function loadReplay(Data:String,State:FlxState=null,CancelKeys:Array=null,Timeout:Number=0,Callback:Function=null):void
-		{
-			_game._replay.load(Data);
-			if(State == null)
-				FlxG.resetGame();
-			else
-				FlxG.switchState(State);
-			_game._replayCancelKeys = CancelKeys;
-			_game._replayTimer = Timeout*1000;
-			_game._replayCallback = Callback;
-			_game._replayRequested = true;
-		}
-		
-		/**
-		 * Resets the game or state and replay requested flag.
-		 * 
-		 * @param	StandardMode	If true, reload entire game, else just reload current game state.
-		 */
-		static public function reloadReplay(StandardMode:Boolean=true):void
-		{
-			if(StandardMode)
-				FlxG.resetGame();
-			else
-				FlxG.resetState();
-			if(_game._replay.frameCount > 0)
-				_game._replayRequested = true;
-		}
-		
-		/**
-		 * Stops the current replay.
-		 */
-		static public function stopReplay():void
-		{
-			_game._replaying = false;
-			if(_game._debugger != null)
-				_game._debugger.vcr.stopped();
-			resetInput();
-		}
-		
-		/**
-		 * Resets the game or state and requests a new recording.
-		 * 
-		 * @param	StandardMode	If true, reset the entire game, else just reset the current state.
-		 */
-		static public function recordReplay(StandardMode:Boolean=true):void
-		{
-			if(StandardMode)
-				FlxG.resetGame();
-			else
-				FlxG.resetState();
-			_game._recordingRequested = true;
-		}
-		
-		/**
-		 * Stop recording the current replay and return the replay data.
-		 * 
-		 * @return	The replay data in simple ASCII format (see <code>FlxReplay.save()</code>).
-		 */
-		static public function stopRecording():String
-		{
-			_game._recording = false;
-			if(_game._debugger != null)
-				_game._debugger.vcr.stopped();
-			return _game._replay.save();
 		}
 		
 		/**
@@ -973,24 +912,21 @@ package flixel
 		/**
 		 * Adds a new plugin to the global plugin array.
 		 * 
-		 * @param	Plugin	Any object that extends FlxBasic. Useful for managers and other things.  See org.flixel.plugin for some examples!
+		 * @param	Plugin	Any object that extends <code>FlxPlugin</code>. Useful for managers and other things. See org.flixel.plugin for some examples!
 		 * 
-		 * @return	The same <code>FlxBasic</code>-based plugin you passed in.
+		 * @return	The same <code>FlxPlugin</code>-based plugin you passed in.
 		 */
-		static public function addPlugin(Plugin:FlxBasic):FlxBasic
+		static public function addPlugin(Plugin:FlxPlugin):FlxPlugin
 		{
-			//Don't add repeats
 			var pluginList:Array = FlxG.plugins;
-			var i:uint = 0;
-			var l:uint = pluginList.length;
-			while(i < l)
-			{
-				if(pluginList[i++].toString() == Plugin.toString())
-					return Plugin;
-			}
+			var i:int = pluginList.indexOf(Plugin);
 			
-			//no repeats! safe to add a new instance of this plugin
-			pluginList.push(Plugin);
+			if(i == -1)
+			{
+				//no repeats! safe to add a new instance of this plugin
+				pluginList.push(Plugin);
+			}
+
 			return Plugin;
 		}
 		
@@ -1001,7 +937,7 @@ package flixel
 		 * 
 		 * @return	The plugin object, or null if no matching plugin was found.
 		 */
-		static public function getPlugin(ClassType:Class):FlxBasic
+		static public function getPlugin(ClassType:Class):FlxPlugin
 		{
 			var pluginList:Array = FlxG.plugins;
 			var i:uint = 0;
@@ -1020,17 +956,21 @@ package flixel
 		 * 
 		 * @param	Plugin	The plugin instance you want to remove.
 		 * 
-		 * @return	The same <code>FlxBasic</code>-based plugin you passed in.
+		 * @return	The same <code>FlxPlugin</code>-based plugin you passed in.
 		 */
-		static public function removePlugin(Plugin:FlxBasic):FlxBasic
+		static public function removePlugin(Plugin:FlxPlugin):FlxPlugin
 		{
 			//Don't add repeats
 			var pluginList:Array = FlxG.plugins;
 			var i:int = pluginList.length-1;
+			var plugin:FlxPlugin;
 			while(i >= 0)
 			{
 				if(pluginList[i] == Plugin)
-					pluginList.splice(i,1);
+				{
+					plugin = pluginList.splice(i, 1)[0];
+					plugin.destroy();
+				}
 				i--;
 			}
 			return Plugin;
@@ -1049,11 +989,13 @@ package flixel
 			var results:Boolean = false;
 			var pluginList:Array = FlxG.plugins;
 			var i:int = pluginList.length-1;
+			var plugin:FlxPlugin;
 			while(i >= 0)
 			{
 				if(pluginList[i] is ClassType)
 				{
-					pluginList.splice(i,1);
+					plugin = pluginList.splice(i,1)[0];
+					plugin.destroy();
 					results = true;
 				}
 				i--;
@@ -1088,12 +1030,15 @@ package flixel
 			FlxG.cameras = new Array();
 			useBufferLocking = false;
 			
+			FlxG.signals = new FlxSignals();
+			
 			plugins = new Array();
 			addPlugin(new DebugPathDisplay());
 			addPlugin(new TimerManager());
 			
 			FlxG.mouse = new Mouse(FlxG._game._mouse);
 			FlxG.keys = new Keyboard();
+			FlxG.ignoreInput = false;
 			FlxG.mobile = false;
 
 			FlxG.levels = new Array();
@@ -1119,9 +1064,8 @@ package flixel
 			FlxG.random = new FlxRandom();
 			FlxG.worldBounds = new FlxRect(-10,-10,FlxG.width+20,FlxG.height+20);
 			FlxG.worldDivisions = 6;
-			var debugPathDisplay:DebugPathDisplay = FlxG.getPlugin(DebugPathDisplay) as DebugPathDisplay;
-			if(debugPathDisplay != null)
-				debugPathDisplay.clear();
+				
+			FlxG.signals.reset.dispatch();
 		}
 		
 		/**
@@ -1129,6 +1073,7 @@ package flixel
 		 */
 		static internal function updateInput():void
 		{
+			if (FlxG.ignoreInput) return;
 			FlxG.keys.update();
 			if(!_game._debuggerUp || !_game._debugger.hasMouse)
 				FlxG.mouse.update(FlxG._game.mouseX,FlxG._game.mouseY);
@@ -1197,41 +1142,6 @@ package flixel
 				}
 			}
 		}
-		
-		/**
-		 * Used by the game object to call <code>update()</code> on all the plugins.
-		 */
-		static internal function updatePlugins():void
-		{
-			var plugin:FlxBasic;
-			var pluginList:Array = FlxG.plugins;
-			var i:uint = 0;
-			var l:uint = pluginList.length;
-			while(i < l)
-			{
-				plugin = pluginList[i++] as FlxBasic;
-				if(plugin.exists && plugin.active)
-					plugin.update();
-			}
-		}
-		
-		/**
-		 * Used by the game object to call <code>draw()</code> on all the plugins.
-		 */
-		static internal function drawPlugins():void
-		{
-			var plugin:FlxBasic;
-			var pluginList:Array = FlxG.plugins;
-			var i:uint = 0;
-			var l:uint = pluginList.length;
-			while(i < l)
-			{
-				plugin = pluginList[i++] as FlxBasic;
-				if(plugin.exists && plugin.visible)
-					plugin.draw();
-			}
-		}
-		
 		
 		/*     --- Deprecated members in Flixel v2.57 ---     */
 		/*  To be removed after developers have had time to adjust to the new changes. */

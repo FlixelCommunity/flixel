@@ -32,8 +32,9 @@ package flixel.system.debug
 		public var watch:Watch;
 		/**
 		 * Container for the record, stop and play buttons.
+		 * TODO: move this hack to FlxReplay, adding the proper signals.
 		 */
-		public var vcr:VCR;
+		public static var vcr:VCR;
 		/**
 		 * Container for the visual debug mode toggle.
 		 */

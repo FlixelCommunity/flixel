@@ -1,6 +1,8 @@
 package flixel.system.debug
 {
 	import flixel.FlxG;
+	import flixel.plugin.FlxPlugin;
+	import flixel.plugin.replay.FlxReplay;
 	import flixel.util.FlxU;
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
@@ -269,7 +271,7 @@ package flixel.system.debug
 				return;
 			}
 			
-			FlxG.loadReplay(fileContents);
+			getReplayManager().loadReplay(fileContents);
 		}
 		
 		/**
@@ -308,7 +310,7 @@ package flixel.system.debug
 		{
 			if(_play.visible)
 				onPlay();
-			FlxG.recordReplay(StandardMode);
+			getReplayManager().recordReplay(StandardMode);
 		}
 		
 		/**
@@ -317,7 +319,7 @@ package flixel.system.debug
 		 */
 		public function stopRecording():void
 		{
-			var data:String = FlxG.stopRecording();
+			var data:String = getReplayManager().stopRecording();
 			if((data != null) && (data.length > 0))
 			{
 				_file = new FileReference();
@@ -375,7 +377,7 @@ package flixel.system.debug
 		 */
 		public function onStop():void
 		{
-			FlxG.stopReplay();
+			getReplayManager().stopReplay();
 		}
 		
 		/**
@@ -388,7 +390,7 @@ package flixel.system.debug
 		 */
 		public function onRestart(StandardMode:Boolean=false):void
 		{
-			if(FlxG.reloadReplay(StandardMode))
+			if(getReplayManager().reloadReplay(StandardMode))
 			{
 				_recordOff.visible = false;
 				_recordOn.visible = false;
@@ -593,6 +595,11 @@ package flixel.system.debug
 				_step.alpha = 1.0;
 			else if(!_overStep && (_step.alpha != 0.8))
 				_step.alpha = 0.8;
+		}
+		
+		protected function getReplayManager():FlxReplay
+		{
+			return FlxG.getPlugin(FlxReplay) as FlxReplay;
 		}
 	}
 }

@@ -4,13 +4,14 @@ package flixel.plugin.pathdisplay
 	import flixel.FlxG;
 	import flixel.FlxBasic;
 	import flixel.util.FlxPath;
+	import flixel.plugin.FlxPlugin;
 	
 	/**
 	 * A simple manager for tracking and drawing FlxPath debug data to the screen.
 	 * 
 	 * @author	Adam Atomic
 	 */
-	public class DebugPathDisplay extends FlxBasic
+	public class DebugPathDisplay implements FlxPlugin
 	{
 		protected var _paths:Array;
 		
@@ -20,13 +21,19 @@ package flixel.plugin.pathdisplay
 		public function DebugPathDisplay()
 		{
 			_paths = new Array();
-			active = false; //don't call update on this plugin
+			
+			// Tell Flixel to invoke the draw() method after the current
+			// state has been drawn on the screen.
+			FlxG.signals.postDraw.add(draw);
+			
+			// Subscribe to game reset events.
+			FlxG.signals.reset.add(handleGameReset);
 		}
 		
 		/**
 		 * Clean up memory.
 		 */
-		override public function destroy():void
+		public function destroy():void
 		{
 			clear();
 			_paths = null;
@@ -34,20 +41,26 @@ package flixel.plugin.pathdisplay
 		}
 		
 		/**
-		 * Called by <code>FlxG.drawPlugins()</code> after the game state has been drawn.
+		 * Called when the game is reset.
+		 */
+		private function handleGameReset() :void
+		{
+				clear();
+		}
+		
+		/**
+		 * Called after the game state has been drawn.
 		 * Cycles through cameras and calls <code>drawDebug()</code> on each one.
 		 */
-		override public function draw():void
+		public function draw():void
 		{
-			if(!FlxG.visualDebug || ignoreDrawDebug)
+			if(!FlxG.visualDebug)
 				return;	
 			
-			if(cameras == null)
-				cameras = FlxG.cameras;
 			var i:uint = 0;
-			var l:uint = cameras.length;
+			var l:uint = FlxG.cameras.length;
 			while(i < l)
-				drawDebug(cameras[i++]);
+				drawDebug(FlxG.cameras[i++]);
 		}
 		
 		/**
@@ -57,7 +70,7 @@ package flixel.plugin.pathdisplay
 		 * 
 		 * @param	Camera	Which <code>FlxCamera</code> object to draw the debug data to.
 		 */
-		override public function drawDebug(Camera:FlxCamera=null):void
+		public function drawDebug(Camera:FlxCamera=null):void
 		{
 			if(Camera == null)
 				Camera = FlxG.camera;

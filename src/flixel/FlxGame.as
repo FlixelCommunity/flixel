@@ -15,8 +15,6 @@ package flixel
 	import flash.utils.getTimer;
 	
 	import flixel.plugin.replay.FlxReplay;
-	import flixel.plugin.timer.TimerManager;
-	import flixel.plugin.timer.FlxTimer;
 	import flixel.util.FlxMath;
 	import flixel.system.FlxSave;
 	import flixel.system.debug.FlxDebugger;
@@ -131,40 +129,6 @@ package flixel
 		internal var _debuggerUp:Boolean;
 		
 		/**
-		 * Container for a game replay object.
-		 */
-		internal var _replay:FlxReplay;
-		/**
-		 * Flag for whether a playback of a recording was requested.
-		 */
-		internal var _replayRequested:Boolean;
-		/**
-		 * Flag for whether a new recording was requested.
-		 */
-		internal var _recordingRequested:Boolean;
-		/**
-		 * Flag for whether a replay is currently playing.
-		 */
-		internal var _replaying:Boolean;
-		/**
-		 * Flag for whether a new recording is being made.
-		 */
-		internal var _recording:Boolean;
-		/**
-		 * Array that keeps track of keypresses that can cancel a replay.
-		 * Handy for skipping cutscenes or getting out of attract modes!
-		 */
-		internal var _replayCancelKeys:Array;
-		/**
-		 * Helps time out a replay if necessary.
-		 */
-		internal var _replayTimer:int;
-		/**
-		 * This function, if set, is triggered when the callback stops playing.
-		 */
-		internal var _replayCallback:Function;
-
-		/**
 		 * Instantiate a new game object.
 		 * 
 		 * @param	GameSizeX		The width of your game in game pixels, not necessarily final display pixels (see Zoom).
@@ -197,13 +161,6 @@ package flixel
 				flash.ui.Mouse.hide();
 			forceDebugger = false;
 			_debuggerUp = false;
-			
-			//replay data
-			_replay = new FlxReplay();
-			_replayRequested = false;
-			_recordingRequested = false;
-			_replaying = false;
-			_recording = false;
 			
 			//then get ready to create the game object for real
 			_iState = InitialState;
@@ -287,8 +244,7 @@ package flixel
 					}
 				}
 			}
-			if(_replaying)
-				return;
+			
 			FlxG.keys.handleKeyUp(FlashEvent);
 		}
 		
@@ -301,28 +257,7 @@ package flixel
 		{
 			if(_debuggerUp && _debugger.watch.editing)
 				return;
-			if(_replaying && (_replayCancelKeys != null) && (_debugger == null) && (FlashEvent.keyCode != 192) && (FlashEvent.keyCode != 220))
-			{
-				var replayCancelKey:String;
-				var i:uint = 0;
-				var l:uint = _replayCancelKeys.length;
-				while(i < l)
-				{
-					replayCancelKey = _replayCancelKeys[i++];
-					if((replayCancelKey == "ANY") || (FlxG.keys.getKeyCode(replayCancelKey) == FlashEvent.keyCode))
-					{
-						if(_replayCallback != null)
-						{
-							_replayCallback();
-							_replayCallback = null;
-						}
-						else
-							FlxG.stopReplay();
-						break;
-					}
-				}
-				return;
-			}
+
 			FlxG.keys.handleKeyDown(FlashEvent);
 		}
 		
@@ -340,28 +275,7 @@ package flixel
 				if(_debugger.watch.editing)
 					_debugger.watch.submit();
 			}
-			if(_replaying && (_replayCancelKeys != null))
-			{
-				var replayCancelKey:String;
-				var i:uint = 0;
-				var l:uint = _replayCancelKeys.length;
-				while(i < l)
-				{
-					replayCancelKey = _replayCancelKeys[i++] as String;
-					if((replayCancelKey == "MOUSE") || (replayCancelKey == "ANY"))
-					{
-						if(_replayCallback != null)
-						{
-							_replayCallback();
-							_replayCallback = null;
-						}
-						else
-							FlxG.stopReplay();
-						break;
-					}
-				}
-				return;
-			}
+			
 			FlxG.mouse.handleMouseDown(FlashEvent);
 		}
 		
@@ -372,7 +286,7 @@ package flixel
 		 */
 		protected function handleMouseUp(FlashEvent:MouseEvent):void
 		{
-			if((_debuggerUp && _debugger.hasMouse) || _replaying)
+			if(_debuggerUp && _debugger.hasMouse)
 				return;
 			FlxG.mouse.handleMouseUp(FlashEvent);
 		}
@@ -384,7 +298,7 @@ package flixel
 		 */
 		protected function handleMouseWheel(FlashEvent:MouseEvent):void
 		{
-			if((_debuggerUp && _debugger.hasMouse) || _replaying)
+			if(_debuggerUp && _debugger.hasMouse)
 				return;
 			FlxG.mouse.handleMouseWheel(FlashEvent);
 		}
@@ -435,24 +349,13 @@ package flixel
 			updateSoundTray(elapsedMS);
 			if(!_lostFocus)
 			{
-				if((_debugger != null) && _debugger.vcr.paused)
+				_accumulator += elapsedMS;
+				if(_accumulator > _maxAccumulation)
+					_accumulator = _maxAccumulation;
+				while(_accumulator >= _step)
 				{
-					if(_debugger.vcr.stepRequested)
-					{
-						_debugger.vcr.stepRequested = false;
-						step();
-					}
-				}
-				else
-				{
-					_accumulator += elapsedMS;
-					if(_accumulator > _maxAccumulation)
-						_accumulator = _maxAccumulation;
-					while(_accumulator >= _step)
-					{
-						step();
-						_accumulator = _accumulator - _step; 
-					}
+					step();
+					_accumulator = _accumulator - _step; 
 				}
 				
 				FlxBasic._VISIBLECOUNT = 0;
@@ -485,10 +388,8 @@ package flixel
 			if(_debugger != null)
 				_debugger.watch.removeAll();
 			
-			//Clear any timers left in the timer manager
-			var timerManager:TimerManager = FlxTimer.manager;
-			if(timerManager != null)
-				timerManager.clear();
+			// Notify everybody about the state switch.
+			FlxG.signals.beforeStateSwitch.dispatch();
 			
 			//Destroy the old state (if there is an old state)
 			if(_state != null)
@@ -512,31 +413,8 @@ package flixel
 			{
 				_requestedReset = false;
 				_requestedState = new _iState();
-				_replayTimer = 0;
-				_replayCancelKeys = null;
+
 				FlxG.reset();
-			}
-			
-			//handle replay-related requests
-			if(_recordingRequested)
-			{
-				_recordingRequested = false;
-				_replay.create(FlxG.random.seed);
-				_recording = true;
-				if(_debugger != null)
-				{
-					_debugger.vcr.recording();
-					FlxG.log("FLIXEL: starting new flixel gameplay record.");
-				}
-			}
-			else if(_replayRequested)
-			{
-				_replayRequested = false;
-				_replay.rewind();
-				FlxG.random.seed = _replay.seed;
-				if(_debugger != null)
-					_debugger.vcr.playing();
-				_replaying = true;
 			}
 			
 			//handle state switching requests
@@ -545,45 +423,11 @@ package flixel
 			
 			//finally actually step through the game physics
 			FlxBasic._ACTIVECOUNT = 0;
-			if(_replaying)
-			{
-				_replay.playNextFrame();
-				if(_replayTimer > 0)
-				{
-					_replayTimer -= _step;
-					if(_replayTimer <= 0)
-					{
-						if(_replayCallback != null)
-						{
-							_replayCallback();
-							_replayCallback = null;
-						}
-						else
-							FlxG.stopReplay();
-					}
-				}
-				if(_replaying && _replay.finished)
-				{
-					FlxG.stopReplay();
-					if(_replayCallback != null)
-					{
-						_replayCallback();
-						_replayCallback = null;
-					}
-				}
-				if(_debugger != null)
-					_debugger.vcr.updateRuntime(_step);
-			}
-			else
-				FlxG.updateInput();
-			if(_recording)
-			{
-				_replay.recordFrame();
-				if(_debugger != null)
-					_debugger.vcr.updateRuntime(_step);
-			}
+			
+			FlxG.updateInput();
 			update();
 			FlxG.mouse.wheel = 0;
+			
 			if(_debuggerUp)
 				_debugger.perf.activeObjects(FlxBasic._ACTIVECOUNT);
 		}
@@ -631,7 +475,7 @@ package flixel
 			
 			FlxG.elapsed = FlxG.timeScale*(_step/1000);
 			FlxG.updateSounds();
-			FlxG.updatePlugins();
+			FlxG.signals.preUpdate.dispatch();
 			_state.update();
 			FlxG.updateCameras();
 			
@@ -647,7 +491,7 @@ package flixel
 			var mark:uint = getTimer();
 			FlxG.lockCameras();
 			_state.draw();
-			FlxG.drawPlugins();
+			FlxG.signals.postDraw.dispatch();
 			FlxG.unlockCameras();
 			if(_debuggerUp)
 				_debugger.perf.flixelDraw(getTimer()-mark);
