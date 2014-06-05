@@ -1,6 +1,7 @@
 package flixel
 {
 	import flash.utils.getTimer;
+	import flixel.system.debug.FlxDebugger;
 	import flixel.util.FlxRandom;
 	import flixel.util.FlxU;
 	import flixel.system.FlxSound;
@@ -1141,6 +1142,15 @@ package flixel
 					cam._flashSprite.visible = cam.visible;
 				}
 			}
+		}
+		
+		/**
+		 * Access the game debugger. Using this reference it's possible to show/hide
+		 * the debug console, for instance.
+		 */
+		static public function get debugger():FlxDebugger
+		{
+			return _game._debugger;
 		}
 		
 		/*     --- Deprecated members in Flixel v2.57 ---     */
