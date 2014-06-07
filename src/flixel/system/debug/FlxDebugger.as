@@ -16,7 +16,7 @@ package flixel.system.debug
 	 * Most of the functionality is in the debug folder widgets,
 	 * but this class instantiates the widgets and handles their basic formatting and arrangement.
 	 */
-	public class FlxDebugger extends Sprite
+	public class FlxDebugger 
 	{
 		/**
 		 * Container for the performance monitor widget.
@@ -56,6 +56,10 @@ package flixel.system.debug
 		 * Internal, used to space out windows from the edges.
 		 */
 		protected var _gutter:uint;
+		/**
+		 * Internal, contains all overlays used by the debugger, e.g. console window.
+		 */
+		protected var _overlays:Sprite;
 		
 		/**
 		 * Instantiates the debugger overlay.
@@ -69,8 +73,10 @@ package flixel.system.debug
 			visible = false;
 			hasMouse = false;
 			_screen = new Point(Width,Height);
+			_overlays = new Sprite();
+			_overlays.visible = false;
 
-			addChild(new Bitmap(new BitmapData(Width,15,true,0x7f000000)));
+			_overlays.addChild(new Bitmap(new BitmapData(Width, 15, true, 0x7f000000)));
 			
 			var txt:TextField = new TextField();
 			txt.x = 2;
@@ -85,35 +91,35 @@ package flixel.system.debug
 			else
 				str += " [release]";
 			txt.text = str;
-			addChild(txt);
+			_overlays.addChild(txt);
 			
 			_gutter = 8;
 			var screenBounds:Rectangle = new Rectangle(_gutter,15+_gutter/2,_screen.x-_gutter*2,_screen.y-_gutter*1.5-15);
 			
 			log = new Log("log",0,0,true,screenBounds);
-			addChild(log);
+			_overlays.addChild(log);
 			
 			watch = new Watch("watch",0,0,true,screenBounds);
-			addChild(watch);
+			_overlays.addChild(watch);
 			
 			perf = new Perf("stats",0,0,false,screenBounds);
-			addChild(perf);
+			_overlays.addChild(perf);
 			
 			vcr = new VCR();
 			vcr.x = (Width - vcr.width/2)/2;
 			vcr.y = 2;
-			addChild(vcr);
+			_overlays.addChild(vcr);
 			
 			vis = new Vis();
 			vis.x = Width-vis.width - 4;
 			vis.y = 2;
-			addChild(vis);
+			_overlays.addChild(vis);
 			
 			setLayout(FlxG.DEBUGGER_STANDARD);
 			
 			//Should help with fake mouse focus type behavior
-			addEventListener(MouseEvent.MOUSE_OVER,handleMouseOver);
-			addEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
+			_overlays.addEventListener(MouseEvent.MOUSE_OVER,handleMouseOver);
+			_overlays.addEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
 		}
 		
 		/**
@@ -125,41 +131,41 @@ package flixel.system.debug
 			
 			if (log != null)
 			{
-				removeChild(log);
+				_overlays.removeChild(log);
 				log.destroy();
 				log = null;
 			}
 			
 			if (watch != null)
 			{
-				removeChild(watch);
+				_overlays.removeChild(watch);
 				watch.destroy();
 				watch = null;
 			}
 			
 			if (perf != null)
 			{
-				removeChild(perf);
+				_overlays.removeChild(perf);
 				perf.destroy();
 				perf = null;
 			}
 			
 			if (vcr != null)
 			{
-				removeChild(vcr);
+				_overlays.removeChild(vcr);
 				vcr.destroy();
 				vcr = null;
 			}
 			
 			if (vis != null)
 			{
-				removeChild(vis);
+				_overlays.removeChild(vis);
 				vis.destroy();
 				vis = null;
 			}
 			
-			removeEventListener(MouseEvent.MOUSE_OVER,handleMouseOver);
-			removeEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
+			_overlays.removeEventListener(MouseEvent.MOUSE_OVER,handleMouseOver);
+			_overlays.removeEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
 		}
 		
 		/**
@@ -245,6 +251,28 @@ package flixel.system.debug
 					perf.reposition(_screen.x,0);
 					break;
 			}
+		}
+		
+		public function get visible():Boolean
+		{
+			return _overlays != null && _overlays.visible;
+		}
+		
+		public function set visible(Value:Boolean):void
+		{
+			if (_overlays != null)
+			{
+				_overlays.visible = Value;
+			}
+		}
+		
+		/**
+		 * The area where all overlays are contained. Every windows used by the debugger, such as the console, is
+		 * a child of this overlays area.
+		 */
+		public function get overlays():Sprite
+		{
+			return _overlays;
 		}
 	}
 }

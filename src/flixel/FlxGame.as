@@ -529,7 +529,7 @@ package flixel
 				if(FlxG.debug || forceDebugger)
 				{
 					_debugger = new FlxDebugger(FlxG.width*FlxCamera.defaultZoom,FlxG.height*FlxCamera.defaultZoom);
-					addChild(_debugger);
+					addChild(_debugger.overlays);
 				}
 				
 				//Volume display tab
