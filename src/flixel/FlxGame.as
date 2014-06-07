@@ -43,12 +43,6 @@ package flixel
 		 * @default false
 		 */
 		public var useSystemCursor:Boolean;
-		/**
-		 * Initialize and allow the flixel debugger overlay even in release mode.
-		 * Also useful if you don't use FlxPreloader!
-		 * @default false
-		 */
-		public var forceDebugger:Boolean;
 
 		/**
 		 * Current game state.
@@ -123,10 +117,6 @@ package flixel
 		 * The debugger overlay object.
 		 */
 		internal var _debugger:FlxDebugger;
-		/**
-		 * A handy boolean that keeps track of whether the debugger exists and is currently visible.
-		 */
-		internal var _debuggerUp:Boolean;
 		
 		/**
 		 * Instantiate a new game object.
@@ -159,8 +149,6 @@ package flixel
 			useSystemCursor = UseSystemCursor;
 			if(!useSystemCursor)
 				flash.ui.Mouse.hide();
-			forceDebugger = false;
-			_debuggerUp = false;
 			
 			//then get ready to create the game object for real
 			_iState = InitialState;
@@ -199,25 +187,18 @@ package flixel
 		 */
 		protected function handleKeyUp(FlashEvent:KeyboardEvent):void
 		{
-			if(_debuggerUp && _debugger.watch.editing)
+			if(_debugger.visible && _debugger.watch.editing)
 				return;
 			if(!FlxG.mobile)
 			{
-				if((_debugger != null) && ((FlashEvent.keyCode == 192) || (FlashEvent.keyCode == 220)))
+				if(_debugger.initialized && ((FlashEvent.keyCode == 192) || (FlashEvent.keyCode == 220)))
 				{
-					_debugger.visible = !_debugger.visible;
-					_debuggerUp = _debugger.visible;
-					if(_debugger.visible)
-						flash.ui.Mouse.show();
-					else if(!useSystemCursor)
-						flash.ui.Mouse.hide();
-					//_console.toggle();
+					_debugger.toggleVisility();
 					return;
 				}
 				if(useSoundHotKeys)
 				{
 					var c:int = FlashEvent.keyCode;
-					//var code:String = String.fromCharCode(FlashEvent.charCode);
 					switch(c)
 					{
 						case 48:
@@ -255,7 +236,7 @@ package flixel
 		 */
 		protected function handleKeyDown(FlashEvent:KeyboardEvent):void
 		{
-			if(_debuggerUp && _debugger.watch.editing)
+			if(_debugger.visible && _debugger.watch.editing)
 				return;
 
 			FlxG.keys.handleKeyDown(FlashEvent);
@@ -268,7 +249,7 @@ package flixel
 		 */
 		protected function handleMouseDown(FlashEvent:MouseEvent):void
 		{
-			if(_debuggerUp)
+			if(_debugger.visible)
 			{
 				if(_debugger.hasMouse)
 					return;
@@ -286,7 +267,7 @@ package flixel
 		 */
 		protected function handleMouseUp(FlashEvent:MouseEvent):void
 		{
-			if(_debuggerUp && _debugger.hasMouse)
+			if(_debugger.visible && _debugger.hasMouse)
 				return;
 			FlxG.mouse.handleMouseUp(FlashEvent);
 		}
@@ -298,7 +279,7 @@ package flixel
 		 */
 		protected function handleMouseWheel(FlashEvent:MouseEvent):void
 		{
-			if(_debuggerUp && _debugger.hasMouse)
+			if(_debugger.visible && _debugger.hasMouse)
 				return;
 			FlxG.mouse.handleMouseWheel(FlashEvent);
 		}
@@ -310,7 +291,7 @@ package flixel
 		 */
 		protected function onFocus(FlashEvent:Event=null):void
 		{
-			if(!_debuggerUp && !useSystemCursor)
+			if(!_debugger.visible && !useSystemCursor)
 				flash.ui.Mouse.hide();
 			FlxG.resetInput();
 			_lostFocus = _focus.visible = false;
@@ -361,7 +342,7 @@ package flixel
 				FlxBasic._VISIBLECOUNT = 0;
 				draw();
 				
-				if(_debuggerUp)
+				if(_debugger.visible)
 				{
 					_debugger.perf.flash(elapsedMS);
 					_debugger.perf.visibleObjects(FlxBasic._VISIBLECOUNT);
@@ -385,7 +366,7 @@ package flixel
 			FlxG.clearBitmapCache();
 			
 			//Clear the debugger overlay's Watch window
-			if(_debugger != null)
+			if(_debugger.initialized)
 				_debugger.watch.removeAll();
 			
 			// Notify everybody about the state switch.
@@ -428,7 +409,7 @@ package flixel
 			update();
 			FlxG.mouse.wheel = 0;
 			
-			if(_debuggerUp)
+			if(_debugger.visible)
 				_debugger.perf.activeObjects(FlxBasic._ACTIVECOUNT);
 		}
 
@@ -479,7 +460,7 @@ package flixel
 			_state.update();
 			FlxG.updateCameras();
 			
-			if(_debuggerUp)
+			if(_debugger.visible)
 				_debugger.perf.flixelUpdate(getTimer()-mark);
 		}
 		
@@ -493,7 +474,7 @@ package flixel
 			_state.draw();
 			FlxG.signals.postDraw.dispatch();
 			FlxG.unlockCameras();
-			if(_debuggerUp)
+			if(_debugger.visible)
 				_debugger.perf.flixelDraw(getTimer()-mark);
 		}
 		
@@ -526,11 +507,8 @@ package flixel
 			if(!FlxG.mobile)
 			{
 				//Debugger overlay
-				if(FlxG.debug || forceDebugger)
-				{
-					_debugger = new FlxDebugger(FlxG.width*FlxCamera.defaultZoom,FlxG.height*FlxCamera.defaultZoom);
-					addChild(_debugger.overlays);
-				}
+				_debugger = new FlxDebugger(FlxG.width*FlxCamera.defaultZoom,FlxG.height*FlxCamera.defaultZoom,useSystemCursor,FlxG.debug);
+				addChild(_debugger.overlays);				
 				
 				//Volume display tab
 				createSoundTray();
@@ -640,6 +618,21 @@ package flixel
 			_focus.addChild(logo);
 
 			addChild(_focus);
+		}
+		
+		/*     --- Deprecated members in Flixel v2.57 ---     */
+		/*  To be removed after developers have had time to adjust to the new changes. */
+		
+		/**
+		 * Initialize and allow the flixel debugger overlay even in release mode.
+		 * Also useful if you don't use FlxPreloader!
+		 * 
+		 * @default false
+		 * @deprecated This property is deprecated. Use <code>FlxG.debug</code> instead.
+		 */
+		public function set forceDebugger(Value:Boolean):void
+		{
+			throw ReferenceError("forceDebugger is deprecated, use FlxG.debug instead.");
 		}
 	}
 }
