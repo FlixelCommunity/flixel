@@ -3,6 +3,7 @@ package flixel.plugin.interactivedebug.tools
 	import flash.display.*;
 	import flixel.FlxBasic;
 	import flixel.FlxG;
+	import flixel.FlxGroup;
 	import flixel.FlxSprite;
 	import flixel.FlxState;
 	import flixel.plugin.interactivedebug.InteractiveDebug;
@@ -38,7 +39,7 @@ package flixel.plugin.interactivedebug.tools
 				mouse.x = FlxG.mouse.x;
 				mouse.y = FlxG.mouse.y;
 				
-				item = getGameItemAt(mouse);
+				item = pinpointItemInGroup(FlxG.state.members, mouse);
 				
 				if (item != null)
 				{
@@ -53,23 +54,31 @@ package flixel.plugin.interactivedebug.tools
 			brain.selectedItems.add(Item);
 		}
 		
-		private function getGameItemAt(Cursor:FlxPoint):FlxBasic
+		private function pinpointItemInGroup(Members:Array,Cursor:FlxPoint):FlxBasic
 		{
 			var i:uint = 0;
-			var members:Array = FlxG.state.members;
-			var l:uint = members.length;
+			var l:uint = Members.length;
 			var b:FlxBasic;
 			var target:FlxBasic;
 			
 			while (i < l)
 			{
-				b = members[i++];
-				
-				// TODO: improve this test. Check for other types besides FlxSprite
-				if (b != null && (b is FlxSprite) && (b as FlxSprite).overlapsPoint(Cursor, true))
+				b = Members[i++];
+
+				if (b != null)
 				{
-					target = b;
-					break;
+					if (b is FlxGroup)
+					{
+						target = pinpointItemInGroup((b as FlxGroup).members, Cursor);
+					}
+					else if((b is FlxSprite) && (b as FlxSprite).overlapsPoint(Cursor, true))
+					{
+						target = b;
+					}
+					if (target != null)
+					{
+						break;
+					}
 				}
 			}
 			

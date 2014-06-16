@@ -84,7 +84,7 @@ package flixel.plugin.interactivedebug
 				{
 					// Render a red rectangle centered at the selected item
 					gfx.lineStyle(2, 0xff0000);
-					gfx.drawRect(item.x - FlxG.camera.scroll.x, item.y - FlxG.camera.scroll.y, item.width * 1.3, item.height * 1.3);
+					gfx.drawRect(item.x - FlxG.camera.scroll.x, item.y - FlxG.camera.scroll.y, item.width * 1.0, item.height * 1.0);
 					
 					// Position the label above the selected item and show
 					// its class name.
