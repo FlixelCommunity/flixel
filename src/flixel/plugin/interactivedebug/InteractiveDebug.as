@@ -3,10 +3,9 @@ package flixel.plugin.interactivedebug
 	import flash.display.Graphics;
 	import flixel.*;
 	import flixel.plugin.FlxPlugin;
-	import flixel.plugin.interactivedebug.tools.Pointer;
+	import flixel.plugin.interactivedebug.tools.*;
 	import flixel.ui.FlxText;
-	import flixel.util.FlxPoint;
-	import flixel.util.FlxU;
+	import flixel.util.*;
 	
 	/**
 	 * A plugin to visually and interactively debug a game while it is running.
@@ -46,6 +45,7 @@ package flixel.plugin.interactivedebug
 		private function addTools():void
 		{
 			_toolsPanel.addTool(new Pointer(this));
+			_toolsPanel.addTool(new Eraser(this));
 		}
 		
 		/**
