@@ -45,7 +45,16 @@ package flixel.plugin.interactivedebug.tools
 				{
 					handleItemClick(item);
 				}
+				else
+				{
+					clearSelection();
+				}
 			}
+		}
+		
+		private function clearSelection():void
+		{
+			brain.selectedItems.clear();
 		}
 		
 		private function handleItemClick(Item:FlxBasic):void
