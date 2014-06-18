@@ -7,6 +7,8 @@ package flixel.plugin.interactivedebug.tools
 	import flixel.FlxSprite;
 	import flixel.FlxState;
 	import flixel.plugin.interactivedebug.InteractiveDebug;
+	import flixel.tile.FlxTile;
+	import flixel.tile.FlxTilemap;
 	import flixel.util.FlxPoint;
 	
 	/**

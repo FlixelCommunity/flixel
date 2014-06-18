@@ -52,7 +52,7 @@ package flixel.plugin.interactivedebug.tools
 			var i:uint;
 			var members:Array = brain.selectedItems.members;
 			var l:uint = members.length;
-			var item:FlxSprite;
+			var item:FlxObject;
 			var dx:Number = FlxG.mouse.x - _lastCursorPosition.x;
 			var dy:Number = FlxG.mouse.y - _lastCursorPosition.y;
 			

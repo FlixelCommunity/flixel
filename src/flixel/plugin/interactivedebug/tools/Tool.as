@@ -23,6 +23,11 @@ package flixel.plugin.interactivedebug.tools
 			
 		}
 		
+		public function draw():void
+		{
+			
+		}
+		
 		public function activate():void
 		{
 		}

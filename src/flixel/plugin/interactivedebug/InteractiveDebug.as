@@ -10,6 +10,14 @@ package flixel.plugin.interactivedebug
 	/**
 	 * A plugin to visually and interactively debug a game while it is running.
 	 * 
+	 * TODO:
+	 * - Make Tool#init(brain) instead of passing that in the constructor
+	 * - Make tools setIcon() instead of using _icon or something
+	 * - Move _selectedItems from brain to Pointer tool (make tools able to communicate with brain.getTool(Class).
+	 * - Create update/draw methods for tools?
+	 * - Add signals to tools, so Pointer can dispatch when an item was selected?
+	 * - Make ToolsPanel only contain the tool icons, not the tools itself, it should be the brain's responsability
+	 * 
 	 * @author	Fernando Bevilacqua (dovyski@gmail.com)
 	 */
 	public class InteractiveDebug implements FlxPlugin
@@ -72,7 +80,7 @@ package flixel.plugin.interactivedebug
 		{
 			var i:uint = 0;
 			var l:uint = _selectedItems.members.length;
-			var item:FlxSprite;
+			var item:FlxObject;
 			
 			//Set up our global flash graphics object to draw out the debug stuff
 			var gfx:Graphics = FlxG.flashGfx;
@@ -98,6 +106,8 @@ package flixel.plugin.interactivedebug
 			
 			// Draw the rectangles to the main camera buffer.
 			FlxG.camera.buffer.draw(FlxG.flashGfxSprite);
+			
+			_toolsPanel.draw();
 		}
 		
 		public function get selectedItems():FlxGroup { return _selectedItems; }

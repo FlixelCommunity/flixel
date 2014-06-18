@@ -85,6 +85,21 @@ package flixel.plugin.interactivedebug
 		}
 		
 		/**
+		 * Draws anything the tools need
+		 */
+		public function draw():void
+		{
+			var tool:Tool;
+			var i:int;
+			
+			for (i = 0; i < numChildren; i++)
+			{
+				tool = getChildAt(i) as Tool;
+				tool.draw();
+			}
+		}
+		
+		/**
 		 * Clean up memory.
 		 */
 		public function destroy():void
