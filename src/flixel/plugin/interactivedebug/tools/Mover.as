@@ -16,12 +16,10 @@ package flixel.plugin.interactivedebug.tools
 		private var _dragging:Boolean;
 		private var _lastCursorPosition:FlxPoint;
 		
-		public function Mover(Brain:InteractiveDebug)
+		public function Mover()
 		{
-			super(Brain);
-			icon = new ImgBounds();
-			addChild(icon);
-			
+			setClickableIcon(new ImgBounds());
+
 			_dragging = false;
 			_lastCursorPosition = new FlxPoint(FlxG.mouse.x, FlxG.mouse.y);
 		}
@@ -49,8 +47,9 @@ package flixel.plugin.interactivedebug.tools
 		
 		private function doDragging():void
 		{
+			var selectedItems:FlxGroup = findSelectedItemsByPointer();
 			var i:uint;
-			var members:Array = brain.selectedItems.members;
+			var members:Array = selectedItems.members; // TODO: implement some dependency? If Pointer is not loaded, this line will crash.
 			var l:uint = members.length;
 			var item:FlxObject;
 			var dx:Number = FlxG.mouse.x - _lastCursorPosition.x;
@@ -75,6 +74,12 @@ package flixel.plugin.interactivedebug.tools
 		private function stopDragging():void
 		{
 			_dragging = false;
+		}
+		
+		private function findSelectedItemsByPointer():FlxGroup
+		{
+			var tool:Pointer = brain.getTool(Pointer) as Pointer;
+			return tool != null ? tool.selectedItems : null;
 		}
 	}
 }

@@ -47,6 +47,7 @@ package flixel.plugin.interactivedebug
 			var availableTools:Array = [
 				Pointer,
 				Eraser,
+				Mover,
 			];
 			var tool:Tool;
 			var i:uint;
