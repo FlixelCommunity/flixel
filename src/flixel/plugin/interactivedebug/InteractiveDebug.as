@@ -55,6 +55,7 @@ package flixel.plugin.interactivedebug
 			_toolsPanel.addTool(new Pointer(this));
 			_toolsPanel.addTool(new Eraser(this));
 			_toolsPanel.addTool(new Mover(this));
+			_toolsPanel.addTool(new Tile(this));
 		}
 		
 		/**
