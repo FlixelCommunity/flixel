@@ -38,7 +38,7 @@ package flixel.plugin.interactivedebug.tools
 			
 			super.update();
 			
-			if (FlxG.mouse.justPressed() && isActive())
+			if ((FlxG.mouse.justReleased() || FlxG.mouse.justPressed()) && isActive())
 			{
 				_mouse.x = FlxG.mouse.x;
 				_mouse.y = FlxG.mouse.y;
@@ -49,8 +49,9 @@ package flixel.plugin.interactivedebug.tools
 				{
 					handleItemClick(item);
 				}
-				else
+				else if(FlxG.mouse.justPressed())
 				{
+					// User clicked an empty space, so it's time to unselect everything.
 					clearSelection();
 				}
 			}
@@ -97,7 +98,21 @@ package flixel.plugin.interactivedebug.tools
 		
 		private function handleItemClick(Item:FlxBasic):void
 		{
-			_selectedItems.add(Item);
+			// Is it the first thing selected or are we adding things using Ctrl?
+			if(_selectedItems.length == 0 || FlxG.keys.CONTROL)
+			{
+				// Yeah, that's the case. Just add the new thing to the selection.
+				_selectedItems.add(Item);
+			}
+			else
+			{
+				// There is something already selected
+				if (_selectedItems.members.indexOf(Item) == -1)
+				{
+					clearSelection();
+				}
+				_selectedItems.add(Item);
+			}
 		}
 		
 		private function pinpointItemInGroup(Members:Array,Cursor:FlxPoint):FlxBasic
