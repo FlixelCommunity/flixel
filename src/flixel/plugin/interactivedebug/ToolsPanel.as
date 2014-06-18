@@ -59,52 +59,32 @@ package flixel.plugin.interactivedebug
 			if (_activeTool)
 			{
 				_activeTool.deactivate();
+				changeIconStatus(Item, false);
 			}
 			
-			Item.icon.scaleX = 1.1;
-			Item.icon.scaleY = 1.1;
-			Item.icon.rotation = 5;
-			
-			_activeTool = Item;
-			_activeTool.activate();
-		}
-		
-		/**
-		 * Updates all tools.
-		 */
-		public function update():void
-		{
-			var tool:Tool;
-			var i:int;
-			
-			for (i = 0; i < numChildren; i++)
+			if (_activeTool != Item)
 			{
-				tool = getChildAt(i) as Tool;
-				tool.update();
+				changeIconStatus(Item, true);
+				
+				_activeTool = Item;
+				_activeTool.activate();
 			}
-		}
-		
-		/**
-		 * Draws anything the tools need
-		 */
-		public function draw():void
-		{
-			var tool:Tool;
-			var i:int;
-			
-			for (i = 0; i < numChildren; i++)
+			else
 			{
-				tool = getChildAt(i) as Tool;
-				tool.draw();
+				_activeTool = null;
 			}
 		}
 		
-		/**
-		 * Clean up memory.
-		 */
-		public function destroy():void
+		private function changeIconStatus(Item:Tool, Status:Boolean):void
 		{
-			// TODO: implement this method.
+			Item.icon.scaleX = Status ? 1.1 : 1.0;
+			Item.icon.scaleY = Status ? 1.1 : 1.0;
+			Item.icon.rotation = Status ? 5 : 0;
+		}
+		
+		public function get activeTool():Tool
+		{
+			return _activeTool;
 		}
 	}
 }

@@ -1,15 +1,11 @@
 package flixel.plugin.interactivedebug.tools
 {
-	import flash.display.*;
-	import flixel.FlxBasic;
-	import flixel.FlxG;
-	import flixel.FlxGroup;
-	import flixel.FlxSprite;
-	import flixel.FlxState;
 	import flixel.plugin.interactivedebug.InteractiveDebug;
-	import flixel.tile.FlxTile;
-	import flixel.tile.FlxTilemap;
-	import flixel.util.FlxPoint;
+	import flash.display.*;
+	import flixel.*;
+	import flixel.tile.*;
+	import flixel.ui.*;
+	import flixel.util.*;
 	
 	/**
 	 * A tool to use the mouse cursor to select game elements.
@@ -20,28 +16,34 @@ package flixel.plugin.interactivedebug.tools
 	{		
 		[Embed(source="../../../assets/vis/bounds.png")] protected var ImgBounds:Class;
 		
-		private var mouse:FlxPoint;
+		private var _mouse:FlxPoint;
+		private var _selectedItems:FlxGroup;
+		private var _label:FlxText;
 		
-		public function Pointer(Brain:InteractiveDebug)
+		public function Pointer()
 		{
-			super(Brain);
-			icon = new ImgBounds();
-			addChild(icon);
+			setClickableIcon(new ImgBounds());
 			
-			mouse = new FlxPoint();
+			_mouse = new FlxPoint();
+			_selectedItems = new FlxGroup();
+			_label = new FlxText(0, 0, 200);
+			_label.color = 0xffff0000;
+			_label.scrollFactor.x = 0;
+			_label.scrollFactor.y = 0;
 		}
 		
 		override public function update():void 
 		{
 			var item :FlxBasic;
+			
 			super.update();
 			
-			if (FlxG.mouse.justPressed())
+			if (FlxG.mouse.justPressed() && isActive())
 			{
-				mouse.x = FlxG.mouse.x;
-				mouse.y = FlxG.mouse.y;
+				_mouse.x = FlxG.mouse.x;
+				_mouse.y = FlxG.mouse.y;
 				
-				item = pinpointItemInGroup(FlxG.state.members, mouse);
+				item = pinpointItemInGroup(FlxG.state.members, _mouse);
 				
 				if (item != null)
 				{
@@ -54,15 +56,48 @@ package flixel.plugin.interactivedebug.tools
 			}
 		}
 		
+		override public function draw():void 
+		{
+			var i:uint = 0;
+			var l:uint = _selectedItems.members.length;
+			var item:FlxObject;
+			
+			//Set up our global flash graphics object to draw out the debug stuff
+			var gfx:Graphics = FlxG.flashGfx;
+			gfx.clear();
+
+			super.draw();
+			
+			while (i < l)
+			{
+				item = _selectedItems.members[i++];
+				if (item != null && item.onScreen(FlxG.camera))
+				{
+					// Render a red rectangle centered at the selected item
+					gfx.lineStyle(2, 0xff0000);
+					gfx.drawRect(item.x - FlxG.camera.scroll.x, item.y - FlxG.camera.scroll.y, item.width * 1.0, item.height * 1.0);
+					
+					// Position the label above the selected item and show
+					// its class name.
+					_label.x = item.x - FlxG.camera.scroll.x
+					_label.y = item.y - FlxG.camera.scroll.y - 10;
+					_label.text = FlxU.getClassName(item);
+					_label.draw();
+				}
+			}
+			
+			// Draw the rectangles to the main camera buffer.
+			FlxG.camera.buffer.draw(FlxG.flashGfxSprite);
+		}
+		
 		private function clearSelection():void
 		{
-			brain.selectedItems.clear();
+			_selectedItems.clear();
 		}
 		
 		private function handleItemClick(Item:FlxBasic):void
 		{
-			FlxG.log("handleItemClick("+Item+")");
-			brain.selectedItems.add(Item);
+			_selectedItems.add(Item);
 		}
 		
 		private function pinpointItemInGroup(Members:Array,Cursor:FlxPoint):FlxBasic
@@ -95,5 +130,7 @@ package flixel.plugin.interactivedebug.tools
 			
 			return target;
 		}
+		
+		public function get selectedItems():FlxGroup { return _selectedItems; }
 	}
 }
