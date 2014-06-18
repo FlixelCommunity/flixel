@@ -1,6 +1,7 @@
 package flixel.plugin.interactivedebug.tools
 {
 	import flash.display.*;
+	import flash.geom.Point;
 	import flixel.FlxBasic;
 	import flixel.FlxG;
 	import flixel.FlxGroup;
@@ -18,20 +19,21 @@ package flixel.plugin.interactivedebug.tools
 	{		
 		[Embed(source="../../../assets/vis/bounds.png")] protected var ImgBounds:Class;
 		
-		public function Eraser(Brain:InteractiveDebug)
+		public function Eraser()
 		{
-			super(Brain);
-			icon = new ImgBounds();
-			addChild(icon);
+			setClickableIcon(new ImgBounds());
 		}
 		
 		override public function update():void 
 		{
+			var selectedItems :FlxGroup = findSelectedItemsByPointer();
+			
 			super.update();
 			
-			if (FlxG.keys.justPressed("DELETE"))
+			if (FlxG.keys.justPressed("DELETE") && selectedItems != null)
 			{
-				findAndDelete(brain.selectedItems, FlxG.keys.pressed("SHIFT"));
+				findAndDelete(selectedItems, FlxG.keys.pressed("SHIFT"));
+				selectedItems.clear();
 			}
 		}
 		
@@ -54,7 +56,6 @@ package flixel.plugin.interactivedebug.tools
 					}
 					else
 					{
-						brain.selectedItems.remove(item);
 						item.kill();
 						
 						if (RemoveFromMemory)
@@ -86,7 +87,7 @@ package flixel.plugin.interactivedebug.tools
 					else if(b == Item)
 					{
 						ParentGroup.remove(b);
-						FlxG.log("Gotcha!" + Item + "," + ParentGroup);
+						FlxG.log("Deleted:" + ParentGroup + "::" + Item);
 					}
 				}
 			}
@@ -121,6 +122,12 @@ package flixel.plugin.interactivedebug.tools
 			}
 			
 			return target;
+		}
+		
+		private function findSelectedItemsByPointer():FlxGroup
+		{
+			var tool:Pointer = brain.getTool(Pointer) as Pointer;
+			return tool != null ? tool.selectedItems : null;
 		}
 	}
 }

@@ -46,6 +46,7 @@ package flixel.plugin.interactivedebug
 		{
 			var availableTools:Array = [
 				Pointer,
+				Eraser,
 			];
 			var tool:Tool;
 			var i:uint;
@@ -105,6 +106,24 @@ package flixel.plugin.interactivedebug
 				tool = _tools[i];
 				tool.draw();
 			}
+		}
+		
+		public function getTool(ClassName:Class):Tool
+		{
+			var tool:Tool;
+			var i:uint;
+			var l:uint = _tools.length;
+			
+			for (i = 0; i < l; i++)
+			{
+				if (_tools[i] is ClassName)
+				{
+					tool = _tools[i];
+					break;
+				}
+			}
+			
+			return tool;
 		}
 	}
 }
