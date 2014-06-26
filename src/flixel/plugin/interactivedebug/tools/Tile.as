@@ -18,11 +18,9 @@ package flixel.plugin.interactivedebug.tools
 
 		private var _tileHightligh:FlxSprite;
 		
-		public function Tile(Brain:InteractiveDebug)
+		public function Tile()
 		{
-			super(Brain);
-			icon = new ImgBounds();
-			addChild(icon);
+			setClickableIcon(new ImgBounds());
 			
 			// TODO: get tile width/height from selected tilemap
 			_tileHightligh = new FlxSprite();
