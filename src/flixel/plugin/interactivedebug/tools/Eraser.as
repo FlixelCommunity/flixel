@@ -17,11 +17,11 @@ package flixel.plugin.interactivedebug.tools
 	 */
 	public class Eraser extends Tool
 	{		
-		[Embed(source="../../../assets/vis/bounds.png")] protected var ImgBounds:Class;
+		[Embed(source="../assets/eraser.png")] protected var ImgEraser:Class;
 		
 		public function Eraser()
 		{
-			setClickableIcon(new ImgBounds());
+			setClickableIcon(new ImgEraser());
 		}
 		
 		override public function update():void 

@@ -11,14 +11,14 @@ package flixel.plugin.interactivedebug.tools
 	 */
 	public class Mover extends Tool
 	{		
-		[Embed(source="../../../assets/vis/bounds.png")] protected var ImgBounds:Class;
+		[Embed(source="../assets/mover.png")] protected var ImgMover:Class;
 
 		private var _dragging:Boolean;
 		private var _lastCursorPosition:FlxPoint;
 		
 		public function Mover()
 		{
-			setClickableIcon(new ImgBounds());
+			setClickableIcon(new ImgMover());
 
 			_dragging = false;
 			_lastCursorPosition = new FlxPoint(FlxG.mouse.x, FlxG.mouse.y);

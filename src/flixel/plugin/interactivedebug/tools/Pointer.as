@@ -14,7 +14,7 @@ package flixel.plugin.interactivedebug.tools
 	 */
 	public class Pointer extends Tool
 	{		
-		[Embed(source="../../../assets/vis/bounds.png")] protected var ImgBounds:Class;
+		[Embed(source="../assets/pointer.png")] protected var ImgPointer:Class;
 		
 		private var _mouse:FlxPoint;
 		private var _selectedItems:FlxGroup;
@@ -22,7 +22,7 @@ package flixel.plugin.interactivedebug.tools
 		
 		public function Pointer()
 		{
-			setClickableIcon(new ImgBounds());
+			setClickableIcon(new ImgPointer());
 			
 			_mouse = new FlxPoint();
 			_selectedItems = new FlxGroup();

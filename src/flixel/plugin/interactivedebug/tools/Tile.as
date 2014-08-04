@@ -14,13 +14,13 @@ package flixel.plugin.interactivedebug.tools
 	 */
 	public class Tile extends Tool
 	{		
-		[Embed(source="../../../assets/vis/bounds.png")] protected var ImgBounds:Class;
+		[Embed(source="../assets/tile.png")] protected var ImgTile:Class;
 
 		private var _tileHightligh:FlxSprite;
 		
 		public function Tile()
 		{
-			setClickableIcon(new ImgBounds());
+			setClickableIcon(new ImgTile());
 			
 			// TODO: get tile width/height from selected tilemap
 			_tileHightligh = new FlxSprite();
