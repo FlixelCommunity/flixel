@@ -259,6 +259,8 @@ package flixel.plugin.replay
 		 */
 		protected function handlePreUpdate():void
 		{
+			var _step :uint = (FlxG.elapsed * 1000) / FlxG.timeScale;
+			
 			//handle replay-related requests
 			if(_recordingRequested)
 			{
@@ -282,11 +284,7 @@ package flixel.plugin.replay
 				_replaying = true;
 			}
 			
-			// TODO: if replaying, FlxG.updateInput() should be skipped.
-			// TODO: get _step from FlxG.
-			var _step :Number = 0.16;
-			
-			if(_replaying)
+			if(_replaying && !vcr.paused)
 			{
 				playNextFrame();
 				if(_replayTimer > 0)
