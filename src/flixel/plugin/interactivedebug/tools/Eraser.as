@@ -26,13 +26,27 @@ package flixel.plugin.interactivedebug.tools
 		
 		override public function update():void 
 		{
-			var selectedItems :FlxGroup = findSelectedItemsByPointer();
-			
 			super.update();
 			
-			if (FlxG.keys.justPressed("DELETE") && selectedItems != null)
+			if (FlxG.keys.justPressed("DELETE"))
 			{
-				findAndDelete(selectedItems, FlxG.keys.pressed("SHIFT"));
+				doDeletion(FlxG.keys.pressed("SHIFT"));
+			}
+		}
+		
+		override public function activate():void 
+		{
+			super.activate();
+			doDeletion(false);
+		}
+		
+		private function doDeletion(RemoveFromMemory:Boolean):void
+		{
+			var selectedItems :FlxGroup = findSelectedItemsByPointer();
+			
+			if (selectedItems != null)
+			{
+				findAndDelete(selectedItems, RemoveFromMemory);
 				selectedItems.clear();
 			}
 		}
@@ -87,7 +101,7 @@ package flixel.plugin.interactivedebug.tools
 					else if(b == Item)
 					{
 						ParentGroup.remove(b);
-						FlxG.log("Deleted:" + ParentGroup + "::" + Item);
+						FlxG.log("InteractiveDebug: deleted " + Item);
 					}
 				}
 			}

@@ -28,6 +28,13 @@ package flixel.plugin.interactivedebug.tools
 		{
 			super.update();
 			
+			if (!isActive() && !FlxG.keys.SHIFT)
+			{
+				// Tool is not active nor its hotkey is pressed.
+				// Nothing to do here.
+				return;
+			}
+			
 			if (FlxG.mouse.justPressed() && !_dragging)
 			{
 				startDragging();

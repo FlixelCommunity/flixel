@@ -48,7 +48,7 @@ package flixel.plugin.interactivedebug
 				Pointer,
 				Eraser,
 				Mover,
-				Tile,
+				//Tile,
 			];
 			var tool:Tool;
 			var i:uint;

@@ -11,8 +11,9 @@ package flixel.plugin.interactivedebug
 	 */
 	public class ToolsPanel extends Sprite
 	{
+		private const ALPHA_TOOL_INACTIVE:Number = 0.7;
+		private const ALPHA_TOOL_ACTIVE:Number = 3.0;
 		private const ALPHA_MOUSE_OVER_TOOL:Number = 1.0;
-		private const ALPHA_MOUSE_OUT_TOOL:Number = 0.8;
 		
 		private var _offsetY :Number;
 		private var _activeTool :Tool;
@@ -26,7 +27,7 @@ package flixel.plugin.interactivedebug
 		public function addTool(Instance :Tool):void
 		{
 			Instance.y = _offsetY;
-			Instance.alpha = ALPHA_MOUSE_OUT_TOOL;
+			Instance.alpha = ALPHA_TOOL_INACTIVE;
 			
 			addChild(Instance);
 			_offsetY += Instance.height + 8;
@@ -39,13 +40,17 @@ package flixel.plugin.interactivedebug
 		protected function mouseOverTool(E:MouseEvent):void
 		{
 			var tool:Tool = E.currentTarget as Tool;
-			tool.icon.alpha = ALPHA_MOUSE_OVER_TOOL;
+			
+			if (tool != _activeTool)
+			{
+				tool.icon.alpha = ALPHA_MOUSE_OVER_TOOL;
+			}
 		}
 		
 		protected function mouveOutTool(E:MouseEvent):void
 		{
 			var tool:Tool = E.currentTarget as Tool;
-			tool.icon.alpha = ALPHA_MOUSE_OUT_TOOL;
+			tool.icon.alpha = tool == _activeTool ? ALPHA_TOOL_ACTIVE : ALPHA_TOOL_INACTIVE;
 		}
 		
 		protected function mouseClickTool(E:MouseEvent):void
@@ -59,7 +64,7 @@ package flixel.plugin.interactivedebug
 			if (_activeTool)
 			{
 				_activeTool.deactivate();
-				changeIconStatus(Item, false);
+				changeIconStatus(_activeTool, false);
 			}
 			
 			if (_activeTool != Item)
@@ -77,9 +82,7 @@ package flixel.plugin.interactivedebug
 		
 		private function changeIconStatus(Item:Tool, Status:Boolean):void
 		{
-			Item.icon.scaleX = Status ? 1.1 : 1.0;
-			Item.icon.scaleY = Status ? 1.1 : 1.0;
-			Item.icon.rotation = Status ? 5 : 0;
+			Item.icon.alpha = Status ? ALPHA_TOOL_ACTIVE : ALPHA_TOOL_INACTIVE;
 		}
 		
 		public function get activeTool():Tool
