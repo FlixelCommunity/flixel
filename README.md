@@ -1,6 +1,6 @@
 # Flixel Community #
 
-[Flixel Community](http://flixelcommunity.github.com) is an open source game-making library that is completely free for personal or commercial use. Written entirely in ActionScript 3, and designed to be used with free development tools, it's easy to learn, extend and customize. 
+[Flixel Community](http://flixelcommunity.org) is an open source game-making library that is completely free for personal or commercial use. Written entirely in ActionScript 3, and designed to be used with free development tools, it's easy to learn, extend and customize. 
 
 ## Features ##
 
@@ -25,7 +25,7 @@
 
 
 ##Quick start##
-Check [Flixel Community](http://flixelcommunity.github.com) website for tutorials.
+Check [Flixel Community](http://flixelcommunity.org) website for tutorials.
 
 ##Contributing##
 
