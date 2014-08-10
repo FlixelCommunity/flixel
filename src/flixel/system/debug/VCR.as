@@ -494,7 +494,7 @@ package flixel.system.debug
 		 */
 		override protected function checkOver():Boolean 
 		{
-			return super.checkOver();
+			super.checkOver();
 			
 			_overOpen = _overRecord = _overRestart = _overPause = _overStep = false;
 			if((mouseX < 0) || (mouseX > width) || (mouseY < 0) || (mouseY > 15))
