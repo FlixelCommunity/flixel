@@ -13,7 +13,7 @@ package flixel.system.debug
 	 * 
 	 * @author Adam Atomic
 	 */
-	public class Vis extends Sprite
+	public class Vis extends FlxToolbar
 	{
 		[Embed(source="../../assets/vis/bounds.png")] protected var ImgBounds:Class;
 
@@ -31,9 +31,7 @@ package flixel.system.debug
 			_bounds = new ImgBounds();
 			addChild(_bounds);
 			
-			unpress();
-			checkOver();
-			updateGUI();
+			updateGUIFromMouse();
 			
 			addEventListener(Event.ENTER_FRAME,init);
 		}
@@ -41,7 +39,7 @@ package flixel.system.debug
 		/**
 		 * Clean up memory.
 		 */
-		public function destroy():void
+		override public function destroy():void 
 		{
 			if (_bounds) removeChild(_bounds);
 			_bounds = null;
@@ -52,6 +50,8 @@ package flixel.system.debug
 				parent.removeEventListener(MouseEvent.MOUSE_DOWN,handleMouseDown);
 				parent.removeEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
 			}
+			
+			super.destroy();
 		}
 		
 		//***ACTUAL BUTTON BEHAVIORS***//
@@ -67,41 +67,14 @@ package flixel.system.debug
 		//***EVENT HANDLERS***//
 		
 		/**
-		 * Just sets up basic mouse listeners, a la FlxWindow.
-		 * 
-		 * @param	E	Flash event.
-		 */
-		protected function init(E:Event=null):void
-		{
-			if(root == null)
-				return;
-			removeEventListener(Event.ENTER_FRAME,init);
-			
-			parent.addEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
-			parent.addEventListener(MouseEvent.MOUSE_DOWN,handleMouseDown);
-			parent.addEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
-		}
-		
-		/**
-		 * If the mouse moves, check to see if any buttons should be highlighted.
-		 * 
-		 * @param	E	Flash mouse event.
-		 */
-		protected function handleMouseMove(E:MouseEvent=null):void
-		{
-			if(!checkOver())
-				unpress();
-			updateGUI();
-		}
-		
-		/**
 		 * If the mouse is pressed down, check to see if the user started pressing down a specific button.
 		 * 
 		 * @param	E	Flash mouse event.
 		 */
-		protected function handleMouseDown(E:MouseEvent=null):void
+		override protected function handleMouseDown(E:MouseEvent = null):void 
 		{
-			unpress();
+			super.handleMouseDown(E);
+			
 			if(_overBounds)
 				_pressingBounds = true;
 		}
@@ -112,13 +85,14 @@ package flixel.system.debug
 		 * 
 		 * @param	E	Flash mouse event.
 		 */
-		protected function handleMouseUp(E:MouseEvent=null):void
+		override protected function handleMouseUp(E:MouseEvent=null):void
 		{
+			super.handleMouseUp();
+			
 			if(_overBounds && _pressingBounds)
 				onBounds();
-			unpress();
-			checkOver();
-			updateGUI();
+			
+			updateGUIFromMouse();
 		}
 		
 		//***MISC GUI MGMT STUFF***//
@@ -129,29 +103,42 @@ package flixel.system.debug
 		 * 
 		 * @return	Whether the mouse was over any buttons or not.
 		 */
-		protected function checkOver():Boolean
-		{
+		override protected function checkOver():Boolean
+		{	
+			super.checkOver();
+			
 			_overBounds = false;
-			if((mouseX < 0) || (mouseX > width) || (mouseY < 0) || (mouseY > height))
+			
+			if ((mouseX < 0) || (mouseX > width) || (mouseY < 0) || (mouseY > height))
+			{
 				return false;
-			if((mouseX > _bounds.x) || (mouseX < _bounds.x + _bounds.width))
+			}
+			
+			if ((mouseX > _bounds.x) || (mouseX < _bounds.x + _bounds.width))
+			{
 				_overBounds = true;
+			}
+			
 			return true;
 		}
 		
 		/**
 		 * Sets all the pressed state variables for the buttons to false.
 		 */
-		protected function unpress():void
+		override protected function unpress():void 
 		{
+			super.unpress();
+			
 			_pressingBounds = false;
 		}
 		
 		/**
 		 * Figures out what buttons to highlight based on the _overWhatever and _pressingWhatever variables.
 		 */
-		protected function updateGUI():void
+		override protected function updateGUI():void 
 		{
+			super.updateGUI();
+			
 			if(FlxG.visualDebug)
 			{
 				if(_overBounds && (_bounds.alpha != 1.0))
