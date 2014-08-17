@@ -18,6 +18,11 @@ package flixel
 	import flixel.util.FlxMath;
 	import flixel.system.FlxSave;
 	import flixel.system.debug.FlxDebugger;
+	
+	// TODO: clean this up
+	import flixel.system.render.blitting.FlxBlittingRender;
+	import flixel.system.render.FlxRender;
+	import flixel.system.render.genome2d.FlxGenome2DRender;
 
 	/**
 	 * FlxGame is the heart of all flixel games, and contains a bunch of basic game loops and things.
@@ -50,6 +55,10 @@ package flixel
 		 */
 		public var forceDebugger:Boolean;
 
+		/**
+		 * TODO: add docs about render
+		 */
+		protected var _render:FlxRender;
 		/**
 		 * Current game state.
 		 */
@@ -167,7 +176,7 @@ package flixel
 			_requestedState = null;
 			_requestedReset = true;
 			_created = false;
-			addEventListener(Event.ENTER_FRAME, create);
+			addEventListener(Event.ADDED_TO_STAGE, create);
 		}
 		
 		/**
@@ -490,7 +499,7 @@ package flixel
 		{
 			var mark:uint = getTimer();
 			FlxG.lockCameras();
-			_state.draw();
+			//_state.draw();
 			FlxG.signals.postDraw.dispatch();
 			FlxG.unlockCameras();
 			if(_debuggerUp)
@@ -506,7 +515,7 @@ package flixel
 		{
 			if(root == null)
 				return;
-			removeEventListener(Event.ENTER_FRAME, create);
+			removeEventListener(Event.ADDED_TO_STAGE, create);
 			_total = getTimer();
 			
 			//Set up the view window and double buffering
@@ -541,8 +550,11 @@ package flixel
 				createFocusScreen();
 			}
 			
-			//Finally, set up an event for the actual game loop stuff.
-			addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			// TODO: init render based on Class coming from FlxGame constructor
+			_render = new FlxGenome2DRender(this, function():void {			
+				//Finally, set up an event for the actual game loop stuff.
+				addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			});
 		}
 		
 		/**
