@@ -1,6 +1,7 @@
 package flixel
 {
 	import flash.utils.getTimer;
+	import flixel.system.render.FlxRender;
 	import flixel.util.FlxRandom;
 	import flixel.util.FlxU;
 	import flixel.system.FlxSound;
@@ -699,6 +700,15 @@ package flixel
 		static public function get state():FlxState
 		{
 			return _game._state;
+		}
+		
+		/**
+		 * TODO: Render: add docs
+		 * Read-only: access the game render.
+		 */
+		static public function get render():FlxRender
+		{
+			return _game._render;
 		}
 		
 		/**

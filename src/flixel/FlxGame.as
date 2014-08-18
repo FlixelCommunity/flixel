@@ -58,7 +58,7 @@ package flixel
 		/**
 		 * TODO: add docs about render
 		 */
-		protected var _render:FlxRender;
+		internal var _render:FlxRender;
 		/**
 		 * Current game state.
 		 */
@@ -551,7 +551,7 @@ package flixel
 			
 			// TODO: add docs
 			// TODO: init render based on Class coming from FlxGame constructor
-			_render = new FlxGenome2DRender();
+			_render = new FlxBlittingRender();
 			_render.init(this, onEnterFrame);
 		}
 		

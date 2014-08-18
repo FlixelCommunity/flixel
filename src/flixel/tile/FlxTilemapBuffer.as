@@ -113,7 +113,7 @@ package flixel.tile
 		 */
 		public function draw(Camera:FlxCamera,FlashPoint:Point):void
 		{
-			Camera.buffer.copyPixels(_pixels,_flashRect,FlashPoint,null,null,true);
+			FlxG.render.copyPixelsToBuffer(Camera, _pixels,_flashRect,FlashPoint,null,null,true);
 		}
 	}
 }

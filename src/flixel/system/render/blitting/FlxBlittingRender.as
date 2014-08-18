@@ -1,6 +1,12 @@
 package flixel.system.render.blitting 
 {
+	import flash.display.BitmapData;
+	import flash.display.IBitmapDrawable;
 	import flash.events.Event;
+	import flash.geom.ColorTransform;
+	import flash.geom.Matrix;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flixel.*;
 	import flixel.system.render.FlxRender;
 	
@@ -36,8 +42,8 @@ package flixel.system.render.blitting
 				cam = cams[i++] as FlxCamera;
 				if((cam == null) || !cam.exists || !cam.visible)
 					continue;
-				if(FlxG.useBufferLocking)
-					cam.buffer.lock();
+				//if(FlxG.useBufferLocking)
+					//cam.buffer.lock(); TODO: fix it
 				cam.fill(cam.bgColor);
 				cam.screen.dirty = true;
 			}
@@ -58,9 +64,41 @@ package flixel.system.render.blitting
 				if((cam == null) || !cam.exists || !cam.visible)
 					continue;
 				cam.drawFX();
-				if(FlxG.useBufferLocking)
-					cam.buffer.unlock();
+				//if(FlxG.useBufferLocking)
+					//cam.buffer.unlock(); TODO: fix it
 			}
+		}
+		
+		/**
+		 * TODO: Render: add docs.
+		 * 
+		 * @param	Camera
+		 * @param	sourceBitmapData
+		 * @param	sourceRect
+		 * @param	destPoint
+		 * @param	alphaBitmapData
+		 * @param	alphaPoint
+		 * @param	mergeAlpha
+		 */
+		public function copyPixelsToBuffer(Camera:FlxCamera, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData=null, alphaPoint:Point=null, mergeAlpha:Boolean=false):void
+		{
+			Camera.buffer.copyPixels(sourceBitmapData, sourceRect, destPoint, alphaBitmapData, alphaPoint, mergeAlpha);
+		}
+		
+		/**
+		 * TODO: Render: add docs.
+		 * 
+		 * @param	Camera
+		 * @param	source
+		 * @param	matrix
+		 * @param	colorTransform
+		 * @param	blendMode
+		 * @param	clipRect
+		 * @param	smoothing
+		 */
+		public function drawToBuffer(Camera:FlxCamera, source:IBitmapDrawable, matrix:Matrix=null, colorTransform:ColorTransform=null, blendMode:String=null, clipRect:Rectangle=null, smoothing:Boolean=false):void
+		{
+			Camera.buffer.draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
 		}
 	}
 }

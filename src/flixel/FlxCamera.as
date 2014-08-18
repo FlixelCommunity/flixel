@@ -98,6 +98,7 @@ package flixel
 		public var scroll:FlxPoint;
 		/**
 		 * The actual bitmap data of the camera display itself.
+		 * TODO: Render: Check if it is necessary.
 		 */
 		public var buffer:BitmapData;
 		/**
