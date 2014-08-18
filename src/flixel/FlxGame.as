@@ -551,7 +551,7 @@ package flixel
 			
 			// TODO: add docs
 			// TODO: init render based on Class coming from FlxGame constructor
-			_render = new FlxBlittingRender();
+			_render = new FlxGenome2DRender();
 			_render.init(this, onEnterFrame);
 		}
 		
