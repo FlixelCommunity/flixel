@@ -1,6 +1,7 @@
 package flixel.system.render 
 {
 	import flixel.FlxGame;
+	import flixel.FlxState;
 	
 	/**
 	 * TODO: add docs
@@ -15,5 +16,12 @@ package flixel.system.render
 		 * @param	StartGameCallback
 		 */
 		function init(Game:FlxGame, UpdateCallback:Function):void;
+		
+		/**
+		 * TODO: add docs
+		 * 
+		 * @param	State
+		 */
+		function draw(State:FlxState):void;
 	}
 }

@@ -708,7 +708,7 @@ package flixel
 		/**
 		 * Internal helper function, handles the actual drawing of all the special effects.
 		 */
-		internal function drawFX():void
+		public function drawFX():void
 		{
 			var alphaComponent:Number;
 			

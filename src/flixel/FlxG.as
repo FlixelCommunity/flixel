@@ -1080,47 +1080,6 @@ package flixel
 		}
 		
 		/**
-		 * Called by the game object to lock all the camera buffers and clear them for the next draw pass.
-		 */
-		static internal function lockCameras():void
-		{
-			var cam:FlxCamera;
-			var cams:Array = FlxG.cameras;
-			var i:uint = 0;
-			var l:uint = cams.length;
-			while(i < l)
-			{
-				cam = cams[i++] as FlxCamera;
-				if((cam == null) || !cam.exists || !cam.visible)
-					continue;
-				if(useBufferLocking)
-					cam.buffer.lock();
-				cam.fill(cam.bgColor);
-				cam.screen.dirty = true;
-			}
-		}
-		
-		/**
-		 * Called by the game object to draw the special FX and unlock all the camera buffers.
-		 */
-		static internal function unlockCameras():void
-		{
-			var cam:FlxCamera;
-			var cams:Array = FlxG.cameras;
-			var i:uint = 0;
-			var l:uint = cams.length;
-			while(i < l)
-			{
-				cam = cams[i++] as FlxCamera;
-				if((cam == null) || !cam.exists || !cam.visible)
-					continue;
-				cam.drawFX();
-				if(useBufferLocking)
-					cam.buffer.unlock();
-			}
-		}
-		
-		/**
 		 * Called by the game object to update the cameras and their tracking/special effects logic.
 		 */
 		static internal function updateCameras():void

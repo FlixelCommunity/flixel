@@ -498,10 +498,9 @@ package flixel
 		protected function draw():void
 		{
 			var mark:uint = getTimer();
-			FlxG.lockCameras();
-			_state.draw();
+			_render.draw(_state);
 			FlxG.signals.postDraw.dispatch();
-			FlxG.unlockCameras();
+
 			if(_debuggerUp)
 				_debugger.perf.flixelDraw(getTimer()-mark);
 		}

@@ -8,6 +8,7 @@ package flixel.system.render.genome2d
 	import flash.geom.Rectangle;
 	import flixel.FlxG;
 	import flixel.FlxGame;
+	import flixel.FlxState;
 	import flixel.system.render.FlxRender;
 	
 	/**
@@ -48,7 +49,7 @@ package flixel.system.render.genome2d
 			genome.onPreRender.add(updateCallback);
 		}
 		
-		private function preRenderHandler():void
+		public function draw(State:FlxState):void
 		{
 			var context:IContext = genome.getContext();
 			context.draw(texture, 50, 50);
