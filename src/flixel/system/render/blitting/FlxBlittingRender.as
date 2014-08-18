@@ -1,5 +1,6 @@
 package flixel.system.render.blitting 
 {
+	import flash.events.Event;
 	import flixel.FlxGame;
 	import flixel.system.render.FlxRender;
 	
@@ -7,15 +8,11 @@ package flixel.system.render.blitting
 	 * TODO: add docs
 	 * @author Dovyski
 	 */
-	public class FlxBlittingRender extends FlxRender
+	public class FlxBlittingRender implements FlxRender
 	{
-		
-		public function FlxBlittingRender(Game:FlxGame, StartGameCallback:Function) 
+		public function init(Game:FlxGame, UpdateCallback:Function):void 
 		{
-			super(Game, StartGameCallback);
-			
-			// Nothing to init here, just tell Flixel the render is ready to roll!
-			StartGameCallback();
+			Game.stage.addEventListener(Event.ENTER_FRAME, UpdateCallback);
 		}
 	}
 }

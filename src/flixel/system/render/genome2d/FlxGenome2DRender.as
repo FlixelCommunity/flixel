@@ -17,17 +17,16 @@ package flixel.system.render.genome2d
 	 * 
 	 * @author Dovyski
 	 */
-	public class FlxGenome2DRender extends FlxRender
+	public class FlxGenome2DRender implements FlxRender
 	{
-		[Embed(source="../../../../../../../Testing/src/Ground.png")] private var TexturePNG:Class;
+		[Embed(source="../../../../../../../FlixelSandbox/assets/bunny.png")] private var TexturePNG:Class;
 		
 		private var texture:GTexture;
 		private var genome:Genome2D;
-		private var startGameCallback:Function;
+		private var updateCallback:Function;
 		
-		public function FlxGenome2DRender(Game:FlxGame, StartGameCallback:Function) 
+		public function init(Game:FlxGame, UpdateCallback:Function):void
 		{
-			super(Game, StartGameCallback);
 			
 			var config:GContextConfig = new GContextConfig(Game.stage, new Rectangle(0,0,Game.stage.stageWidth,Game.stage.stageHeight));
 			 
@@ -36,7 +35,7 @@ package flixel.system.render.genome2d
 			genome.onInitialized.addOnce(genomeInitializedHandler);
 			genome.init(config);
 			
-			startGameCallback = StartGameCallback;
+			updateCallback = UpdateCallback;
 		}
 		
 		private function genomeInitializedHandler():void
@@ -45,9 +44,8 @@ package flixel.system.render.genome2d
 			texture = GTextureFactory.createFromEmbedded("texture", TexturePNG);
 			
 			// Add a callback into the rendering pipeline
-			genome.onPreRender.add(preRenderHandler);
-			
-			startGameCallback();
+			// TODO: add docs explaining how it works. 
+			genome.onPreRender.add(updateCallback);
 		}
 		
 		private function preRenderHandler():void

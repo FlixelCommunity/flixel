@@ -6,10 +6,14 @@ package flixel.system.render
 	 * TODO: add docs
 	 * @author Dovyski
 	 */
-	public class FlxRender 
+	public interface FlxRender 
 	{
-		public function FlxRender(Game:FlxGame, StartGameCallback:Function) 
-		{
-		}
+		/**
+		 * TODO: add docs
+		 * 
+		 * @param	Game
+		 * @param	StartGameCallback
+		 */
+		function init(Game:FlxGame, UpdateCallback:Function):void;
 	}
 }

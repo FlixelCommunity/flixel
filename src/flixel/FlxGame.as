@@ -499,7 +499,7 @@ package flixel
 		{
 			var mark:uint = getTimer();
 			FlxG.lockCameras();
-			//_state.draw();
+			_state.draw();
 			FlxG.signals.postDraw.dispatch();
 			FlxG.unlockCameras();
 			if(_debuggerUp)
@@ -550,11 +550,10 @@ package flixel
 				createFocusScreen();
 			}
 			
+			// TODO: add docs
 			// TODO: init render based on Class coming from FlxGame constructor
-			_render = new FlxGenome2DRender(this, function():void {			
-				//Finally, set up an event for the actual game loop stuff.
-				addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			});
+			_render = new FlxGenome2DRender();
+			_render.init(this, onEnterFrame);
 		}
 		
 		/**
