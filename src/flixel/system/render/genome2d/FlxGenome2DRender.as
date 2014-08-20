@@ -83,9 +83,6 @@ package flixel.system.render.genome2d
 				texture = GTextureFactory.createFromBitmapData("texture2", sourceBitmapData);
 			}
 			context.draw(texture, destPoint.x * Camera.zoom, destPoint.y * Camera.zoom, Camera.zoom, Camera.zoom);
-			
-			//context.drawSource(texture, sourceX, sourceY, sourceWidth, sourceHeight, x, y, scaleX, scaleY, rotation, red, green, blue, alpha, blendMode, filter);
-			//FlxG.log("HOW?!");
 		}
 		
 		/**
@@ -105,12 +102,10 @@ package flixel.system.render.genome2d
 			var context:IContext = genome.getContext();
 			
 			if(texture == null) {
-				texture = GTextureFactory.createFromEmbedded("texture2", TexturePNG);
+				texture = GTextureFactory.createFromBitmapData("texture2", source as BitmapData);
 			}
-			context.draw(texture, 10, 10);
-			
-			//context.drawSource(texture, sourceX, sourceY, sourceWidth, sourceHeight, x, y, scaleX, scaleY, rotation, red, green, blue, alpha, blendMode, filter);
-			FlxG.log("here?");
+
+			context.drawMatrix(texture, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, matrix.tx * Camera.zoom, matrix.ty * Camera.zoom);
 		}
 	}
 }
