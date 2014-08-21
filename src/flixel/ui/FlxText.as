@@ -286,6 +286,9 @@ package flixel.ui
 			if((framePixels == null) || (framePixels.width != _pixels.width) || (framePixels.height != _pixels.height))
 				framePixels = new BitmapData(_pixels.width,_pixels.height,true,0);
 			framePixels.copyPixels(_pixels,_flashRect,_flashPointZero);
+
+			// TODO: Render: add docs
+			refreshTexture();
 		}
 		
 		/**

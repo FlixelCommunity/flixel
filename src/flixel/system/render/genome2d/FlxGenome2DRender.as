@@ -75,7 +75,7 @@ package flixel.system.render.genome2d
 		public function copyPixelsToBuffer(Camera:FlxCamera, sourceTexture:GTexture, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void
 		{
 			var context:IContext = genome.getContext();
-			context.drawSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destPoint.x * Camera.zoom, destPoint.y * Camera.zoom, Camera.zoom, Camera.zoom);
+			context.drawSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destPoint.x * Camera.zoom + sourceRect.width, destPoint.y * Camera.zoom + sourceRect.height, Camera.zoom, Camera.zoom);
 		}
 		
 		/**

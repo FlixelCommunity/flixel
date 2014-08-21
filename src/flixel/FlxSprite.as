@@ -78,10 +78,6 @@ package flixel
 		 */
 		public var texture:GTexture;
 		/**
-		 * TODO: Render: add docs.
-		 */
-		public var dirtyTexture:Boolean;
-		/**
 		 * Set this flag to true to force the sprite to update during the draw() call.
 		 * NOTE: Rarely if ever necessary, most sprite operations will flip this flag automatically.
 		 */
@@ -257,6 +253,12 @@ package flixel
 			_callback = null;
 			framePixels = null;
 			
+			if (texture)
+			{
+				texture.dispose();
+				texture = null;
+			}
+			
 			super.destroy();
 		}
 		
@@ -299,7 +301,6 @@ package flixel
 			}
 			height = frameHeight = Height;
 			resetHelpers();
-			dirtyTexture = true;
 			return this;
 		}
 		
@@ -439,6 +440,8 @@ package flixel
 			var maxFramesX:uint = FlxMath.floor(widthHelper / frameWidth);
 			var maxFramesY:uint = FlxMath.floor(_pixels.height / frameHeight);
 			_maxFrames = maxFramesX * maxFramesY;
+			
+			refreshTexture();
 		}
 		
 		/**
@@ -490,7 +493,11 @@ package flixel
 				else //Advanced render
 				{
 					_matrix.identity();
-					_matrix.translate(-origin.x,-origin.y);
+					// TODO: Render: improve this
+					if(FlxG.render is FlxBlittingRender)
+					{
+						_matrix.translate( -origin.x, -origin.y);
+					}
 					_matrix.scale(scale.x,scale.y);
 					if((angle != 0) && (_bakedRotation <= 0))
 						_matrix.rotate(angle * 0.017453293);
@@ -528,6 +535,7 @@ package flixel
 				_flashRect2.width = _pixels.width;
 				_flashRect2.height = _pixels.height;
 				calcFrame();
+				refreshTexture();
 				return;
 			}
 			
@@ -539,6 +547,7 @@ package flixel
 				_matrix.rotate(Brush.angle * 0.017453293);
 			_matrix.translate(X+Brush.origin.x,Y+Brush.origin.y);
 			_pixels.draw(bitmapData,_matrix,null,Brush.blend,null,Brush.antialiasing);
+			refreshTexture();
 			calcFrame();
 		}
 		
@@ -568,7 +577,7 @@ package flixel
 			//Cache line to bitmap
 			_pixels.draw(FlxG.flashGfxSprite);
 			dirty = true;
-			dirtyTexture = true;
+			refreshTexture();
 		}
 		
 		/**
@@ -582,7 +591,7 @@ package flixel
 			if(_pixels != framePixels)
 			{	
 				dirty = true;
-				dirtyTexture = true;
+				refreshTexture();
 			}
 		}
 		
@@ -750,13 +759,16 @@ package flixel
 						if(FetchPositions)
 							positions.push(new FlxPoint(column,row));
 						dirty = true;
-						dirtyTexture = true;
 					}
 					column++;
 				}
 				row++;
 			}
 			
+			if (dirty)
+			{
+				refreshTexture();
+			}
 			return positions;
 		}
 		
@@ -1042,12 +1054,21 @@ package flixel
 			if(_callback != null)
 				_callback(((_curAnim != null)?(_curAnim.name):null),_curFrame,_curIndex);
 			dirty = false;
-			
+		}
+		
+		/**
+		 * TODO: Render: add docs
+		 */
+		protected function refreshTexture():void
+		{
 			// TODO: check using something like FlxG.render.type == FlxRender.GENOME2D
-			if (dirtyTexture && FlxG.render is FlxGenome2DRender)
+			if (FlxG.render is FlxGenome2DRender)
 			{
+				if (texture != null)
+				{
+					texture.dispose();
+				}
 				texture = GTextureFactory.createFromBitmapData("FlxSprite" + Math.random(), _pixels);
-				dirtyTexture = false;
 			}
 		}
 	}
