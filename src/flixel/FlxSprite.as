@@ -1,11 +1,15 @@
 package flixel
 {
+	import com.genome2d.textures.factories.GTextureFactory;
+	import com.genome2d.textures.GTexture;
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flixel.system.render.blitting.FlxBlittingRender;
+	import flixel.system.render.genome2d.FlxGenome2DRender;
 	
 	import flixel.animation.FlxAnimation;
 	import flixel.util.FlxMath;
@@ -69,6 +73,14 @@ package flixel
 		 * The actual Flash <code>BitmapData</code> object representing the current display state of the sprite.
 		 */
 		public var framePixels:BitmapData;
+		/**
+		 * TODO: Render: add docs.
+		 */
+		public var texture:GTexture;
+		/**
+		 * TODO: Render: add docs.
+		 */
+		public var dirtyTexture:Boolean;
 		/**
 		 * Set this flag to true to force the sprite to update during the draw() call.
 		 * NOTE: Rarely if ever necessary, most sprite operations will flip this flag automatically.
@@ -287,6 +299,7 @@ package flixel
 			}
 			height = frameHeight = Height;
 			resetHelpers();
+			dirtyTexture = true;
 			return this;
 		}
 		
@@ -472,7 +485,7 @@ package flixel
 				{
 					_flashPoint.x = _point.x;
 					_flashPoint.y = _point.y;
-					FlxG.render.copyPixelsToBuffer(camera,framePixels,_flashRect,_flashPoint,null,null,true);
+					FlxG.render.copyPixelsToBuffer(camera,texture,framePixels,_flashRect,_flashPoint,null,null,true);
 				}
 				else //Advanced render
 				{
@@ -482,7 +495,7 @@ package flixel
 					if((angle != 0) && (_bakedRotation <= 0))
 						_matrix.rotate(angle * 0.017453293);
 					_matrix.translate(_point.x+origin.x,_point.y+origin.y);
-					FlxG.render.drawToBuffer(camera,framePixels,_matrix,null,blend,null,antialiasing);
+					FlxG.render.drawToBuffer(camera,texture,framePixels,_flashRect,_matrix,null,blend,null,antialiasing);
 				}
 				
 				_VISIBLECOUNT++;
@@ -555,6 +568,7 @@ package flixel
 			//Cache line to bitmap
 			_pixels.draw(FlxG.flashGfxSprite);
 			dirty = true;
+			dirtyTexture = true;
 		}
 		
 		/**
@@ -566,7 +580,10 @@ package flixel
 		{
 			_pixels.fillRect(_flashRect2,Color);
 			if(_pixels != framePixels)
+			{	
 				dirty = true;
+				dirtyTexture = true;
+			}
 		}
 		
 		/**
@@ -733,6 +750,7 @@ package flixel
 						if(FetchPositions)
 							positions.push(new FlxPoint(column,row));
 						dirty = true;
+						dirtyTexture = true;
 					}
 					column++;
 				}
@@ -1012,13 +1030,25 @@ package flixel
 			//Update display bitmap
 			_flashRect.x = indexX;
 			_flashRect.y = indexY;
-			framePixels.copyPixels(_pixels,_flashRect,_flashPointZero);
-			_flashRect.x = _flashRect.y = 0;
-			if(_colorTransform != null)
-				framePixels.colorTransform(_flashRect,_colorTransform);
+			
+			// TODO: Render: improve this block
+			if (FlxG.render is FlxBlittingRender)
+			{
+				framePixels.copyPixels(_pixels,_flashRect,_flashPointZero);
+				_flashRect.x = _flashRect.y = 0; // TODO: Render: this line breaks GPU render.
+				if(_colorTransform != null)
+					framePixels.colorTransform(_flashRect,_colorTransform);
+			}
 			if(_callback != null)
 				_callback(((_curAnim != null)?(_curAnim.name):null),_curFrame,_curIndex);
 			dirty = false;
+			
+			// TODO: check using something like FlxG.render.type == FlxRender.GENOME2D
+			if (dirtyTexture && FlxG.render is FlxGenome2DRender)
+			{
+				texture = GTextureFactory.createFromBitmapData("FlxSprite" + Math.random(), _pixels);
+				dirtyTexture = false;
+			}
 		}
 	}
 }

@@ -1,5 +1,6 @@
 package flixel.system.render 
 {
+	import com.genome2d.textures.GTexture;
 	import flash.display.BitmapData;
 	import flash.display.IBitmapDrawable;
 	import flash.geom.ColorTransform;
@@ -36,6 +37,7 @@ package flixel.system.render
 		 * TODO: find a better name for this method.
 		 * 
 		 * @param	Camera
+		 * @param	sourceTexture
 		 * @param	sourceBitmapData
 		 * @param	sourceRect
 		 * @param	destPoint
@@ -43,20 +45,22 @@ package flixel.system.render
 		 * @param	alphaPoint
 		 * @param	mergeAlpha
 		 */
-		function copyPixelsToBuffer(Camera:FlxCamera, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void;
+		function copyPixelsToBuffer(Camera:FlxCamera, sourceTexture:GTexture ,sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void;
 		
 		/**
 		 * TODO: Render: add docs.
 		 * TODO: find a better name for this method.
 		 * 
 		 * @param	Camera
+		 * @param	sourceTexture
 		 * @param	source
+		 * @param	sourceRect
 		 * @param	matrix
 		 * @param	colorTransform
 		 * @param	blendMode
 		 * @param	clipRect
 		 * @param	smoothing
 		 */
-		function drawToBuffer(Camera:FlxCamera, source:IBitmapDrawable, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void;
+		function drawToBuffer(Camera:FlxCamera, sourceTexture:GTexture, source:IBitmapDrawable, sourceRect:Rectangle, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void;
 	}
 }

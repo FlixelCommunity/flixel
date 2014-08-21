@@ -1,5 +1,6 @@
 package flixel.system.render.blitting 
 {
+	import com.genome2d.textures.GTexture;
 	import flash.display.BitmapData;
 	import flash.display.IBitmapDrawable;
 	import flash.events.Event;
@@ -80,7 +81,7 @@ package flixel.system.render.blitting
 		 * @param	alphaPoint
 		 * @param	mergeAlpha
 		 */
-		public function copyPixelsToBuffer(Camera:FlxCamera, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData=null, alphaPoint:Point=null, mergeAlpha:Boolean=false):void
+		public function copyPixelsToBuffer(Camera:FlxCamera, sourceTexture:GTexture,sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void
 		{
 			Camera.buffer.copyPixels(sourceBitmapData, sourceRect, destPoint, alphaBitmapData, alphaPoint, mergeAlpha);
 		}
@@ -96,7 +97,7 @@ package flixel.system.render.blitting
 		 * @param	clipRect
 		 * @param	smoothing
 		 */
-		public function drawToBuffer(Camera:FlxCamera, source:IBitmapDrawable, matrix:Matrix=null, colorTransform:ColorTransform=null, blendMode:String=null, clipRect:Rectangle=null, smoothing:Boolean=false):void
+		public function drawToBuffer(Camera:FlxCamera, sourceTexture:GTexture, source:IBitmapDrawable, sourceRect:Rectangle, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void
 		{
 			Camera.buffer.draw(source, matrix, colorTransform, blendMode, clipRect, smoothing);
 		}

@@ -26,9 +26,6 @@ package flixel.system.render.genome2d
 	 */
 	public class FlxGenome2DRender implements FlxRender
 	{
-		[Embed(source="../../../../../../../FlixelSandbox/assets/bunny.png")] private var TexturePNG:Class;
-		
-		private var texture:GTexture;
 		private var genome:Genome2D;
 		private var updateCallback:Function;
 		
@@ -75,14 +72,10 @@ package flixel.system.render.genome2d
 		 * @param	alphaPoint
 		 * @param	mergeAlpha
 		 */
-		public function copyPixelsToBuffer(Camera:FlxCamera, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void
+		public function copyPixelsToBuffer(Camera:FlxCamera, sourceTexture:GTexture, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void
 		{
 			var context:IContext = genome.getContext();
-			
-			if(texture == null) {
-				texture = GTextureFactory.createFromBitmapData("texture2", sourceBitmapData);
-			}
-			context.draw(texture, destPoint.x * Camera.zoom, destPoint.y * Camera.zoom, Camera.zoom, Camera.zoom);
+			context.drawSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, destPoint.x * Camera.zoom, destPoint.y * Camera.zoom, Camera.zoom, Camera.zoom);
 		}
 		
 		/**
@@ -91,21 +84,18 @@ package flixel.system.render.genome2d
 		 * 
 		 * @param	Camera
 		 * @param	source
+		 * @param	sourceRect
 		 * @param	matrix
 		 * @param	colorTransform
 		 * @param	blendMode
 		 * @param	clipRect
 		 * @param	smoothing
 		 */
-		public function drawToBuffer(Camera:FlxCamera, source:IBitmapDrawable, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void
+		public function drawToBuffer(Camera:FlxCamera, sourceTexture:GTexture, source:IBitmapDrawable, sourceRect:Rectangle, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void
 		{
 			var context:IContext = genome.getContext();
-			
-			if(texture == null) {
-				texture = GTextureFactory.createFromBitmapData("texture2", source as BitmapData);
-			}
-
-			context.drawMatrix(texture, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, matrix.tx * Camera.zoom, matrix.ty * Camera.zoom);
+			// TODO: fix matrix rotation using wrong pivot.
+			context.drawMatrixSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, matrix.tx * Camera.zoom, matrix.ty * Camera.zoom);
 		}
 	}
 }
