@@ -381,7 +381,7 @@ package flixel.tile
 					_flashRect = _rects[columnIndex] as Rectangle;
 					if(_flashRect != null)
 					{
-						Buffer.pixels.copyPixels(_tiles,_flashRect,_flashPoint,null,null,true);
+						Buffer.enqueue(_flashRect,_flashPoint);
 						if(FlxG.visualDebug && !ignoreDrawDebug)
 						{
 							tile = _tileObjects[_data[columnIndex]];
@@ -393,7 +393,7 @@ package flixel.tile
 									debugTile = _debugTilePartial; //pink
 								else
 									debugTile = _debugTileSolid; //green
-								Buffer.pixels.copyPixels(debugTile,_debugRect,_flashPoint,null,null,true);
+								//Buffer.pixels.copyPixels(debugTile,_debugRect,_flashPoint,null,null,true); TODO: Render: implement this debug buffer
 							}
 						}
 					}
@@ -431,7 +431,7 @@ package flixel.tile
 			{
 				camera = cameras[i];
 				if(_buffers[i] == null)
-					_buffers[i] = new FlxTilemapBuffer(_tileWidth,_tileHeight,widthInTiles,heightInTiles,camera);
+					_buffers[i] = new FlxTilemapBuffer(_tiles,_tileWidth,_tileHeight,widthInTiles,heightInTiles,camera);
 				buffer = _buffers[i++] as FlxTilemapBuffer;
 				if(!buffer.dirty)
 				{

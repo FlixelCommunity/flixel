@@ -1,8 +1,11 @@
 package flixel.tile
 {
+	import com.genome2d.textures.factories.GTextureFactory;
+	import com.genome2d.textures.GTexture;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flixel.system.render.genome2d.FlxGenome2DRender;
 	
 	import flixel.FlxG;
 	import flixel.FlxCamera;
@@ -47,18 +50,30 @@ package flixel.tile
 
 		protected var _pixels:BitmapData;	
 		protected var _flashRect:Rectangle;
+		
+		/**
+		 * TODO: Render: add docs
+		 */
+		protected var _queue :Array;
+		protected var _queueSize :uint;
+		protected var _tiles :BitmapData;
+		protected var _texture :GTexture; // TODO: remove this?
+		protected var _point :Point;
 
 		/**
 		 * Instantiates a new camera-specific buffer for storing the visual tilemap data.
 		 *  
+		 * @param Tiles			TODO: Render: add docs
 		 * @param TileWidth		The width of the tiles in this tilemap.
 		 * @param TileHeight	The height of the tiles in this tilemap.
 		 * @param WidthInTiles	How many tiles wide the tilemap is.
 		 * @param HeightInTiles	How many tiles tall the tilemap is.
 		 * @param Camera		Which camera this buffer relates to.
 		 */
-		public function FlxTilemapBuffer(TileWidth:Number,TileHeight:Number,WidthInTiles:uint,HeightInTiles:uint,Camera:FlxCamera=null)
+		public function FlxTilemapBuffer(Tiles:BitmapData,TileWidth:Number,TileHeight:Number,WidthInTiles:uint,HeightInTiles:uint,Camera:FlxCamera=null)
 		{
+			var i:int = 0, l:int;
+			
 			if(Camera == null)
 				Camera = FlxG.camera;
 
@@ -69,11 +84,27 @@ package flixel.tile
 			if(rows > HeightInTiles)
 				rows = HeightInTiles;
 			
-			_pixels = new BitmapData(columns*TileWidth,rows*TileHeight,true,0);
+			_pixels = new BitmapData(columns*TileWidth,rows*TileHeight,true,0); // TODO: Render: this is no longer necessary, but it might have a better performance on blitting render.
 			width = _pixels.width;
 			height = _pixels.height;			
 			_flashRect = new Rectangle(0,0,width,height);
 			dirty = true;
+			
+			// TODO: Render: add docs
+			l = rows * columns;
+			_queue = new Array(l);
+			while (i < l)
+			{
+				_queue[i++] = { 'flashRect': new Rectangle(), 'flashPoint': new Point() };
+			}
+			_queueSize = 0;
+			
+			_tiles = Tiles;
+			_point = new Point();
+			if (FlxG.render is FlxGenome2DRender)
+			{
+				_texture = GTextureFactory.createFromBitmapData("tiles" + Math.random(), _tiles);
+			}
 		}
 		
 		/**
@@ -92,7 +123,12 @@ package flixel.tile
 		 */
 		public function fill(Color:uint=0):void
 		{
-			_pixels.fillRect(_flashRect,Color);
+			// TODO: check if this fillRect is really necessary.
+			if (_pixels != null)
+			{
+				_pixels.fillRect(_flashRect, Color);
+			}
+			_queueSize = 0;
 		}
 		
 		/**
@@ -100,9 +136,17 @@ package flixel.tile
 		 * 
 		 * @return	The buffer bitmap data.
 		 */
-		public function get pixels():BitmapData
+		public function enqueue(FlashRect:Rectangle, FlashPoint:Point):void
 		{
-			return _pixels;
+			_queue[_queueSize].flashRect.x = FlashRect.x;
+			_queue[_queueSize].flashRect.y = FlashRect.y;
+			_queue[_queueSize].flashRect.width = FlashRect.width;
+			_queue[_queueSize].flashRect.height = FlashRect.height;
+			
+			_queue[_queueSize].flashPoint.x = FlashPoint.x;
+			_queue[_queueSize].flashPoint.y = FlashPoint.y;
+			
+			_queueSize++;
 		}
 		
 		/**
@@ -113,7 +157,17 @@ package flixel.tile
 		 */
 		public function draw(Camera:FlxCamera,FlashPoint:Point):void
 		{
-			FlxG.render.copyPixelsToBuffer(Camera, null, _pixels,_flashRect,FlashPoint,null,null,true);
+			var i:uint = 0;
+
+			while (i < _queueSize)
+			{
+				_point.x = FlashPoint.x + _queue[i].flashPoint.x;
+				_point.y = FlashPoint.y + _queue[i].flashPoint.y;
+				
+				FlxG.render.copyPixelsToBuffer(Camera, _texture, _tiles, _queue[i].flashRect, _point, null, null, true);
+				
+				i++;
+			}
 		}
 	}
 }
