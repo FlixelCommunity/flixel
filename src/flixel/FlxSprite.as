@@ -431,8 +431,7 @@ package flixel
 			if((framePixels == null) || (framePixels.width != width) || (framePixels.height != height))
 				framePixels = new BitmapData(width,height);
 			origin.make(frameWidth*0.5,frameHeight*0.5);
-			framePixels.copyPixels(_pixels,_flashRect,_flashPointZero);
-			if(_colorTransform != null) framePixels.colorTransform(_flashRect,_colorTransform);
+			calcFramePixels();
 			_curIndex = 0;
 			_numFrames = 0;
 			
@@ -493,11 +492,7 @@ package flixel
 				else //Advanced render
 				{
 					_matrix.identity();
-					// TODO: Render: improve this
-					if(FlxG.render is FlxBlittingRender)
-					{
-						_matrix.translate( -origin.x, -origin.y);
-					}
+					_matrix.translate(-origin.x,-origin.y);
 					_matrix.scale(scale.x,scale.y);
 					if((angle != 0) && (_bakedRotation <= 0))
 						_matrix.rotate(angle * 0.017453293);
@@ -521,11 +516,21 @@ package flixel
 		 */
 		public function stamp(Brush:FlxSprite,X:int=0,Y:int=0):void
 		{
-			Brush.drawFrame();
-			var bitmapData:BitmapData = Brush.framePixels;
+			var bitmapData:BitmapData;
+			
+			Brush.drawFrame(true);
+			
+			// If we are drawing things in GPU mode, Brush.framePixels might not be updated.
+			// Let's ensure framePixels is updated by calling calcFramePixels().
+			if (!(FlxG.render is FlxBlittingRender))
+			{
+				Brush.calcFramePixels(); 
+			}
+			
+			bitmapData = Brush.framePixels;
 			
 			//Simple draw
-			if(((Brush.angle == 0) || (Brush._bakedRotation > 0)) && (Brush.scale.x == 1) && (Brush.scale.y == 1) && (Brush.blend == null))
+			if(Brush.isSimpleRender())
 			{
 				_flashPoint.x = X;
 				_flashPoint.y = Y;
@@ -547,8 +552,8 @@ package flixel
 				_matrix.rotate(Brush.angle * 0.017453293);
 			_matrix.translate(X+Brush.origin.x,Y+Brush.origin.y);
 			_pixels.draw(bitmapData,_matrix,null,Brush.blend,null,Brush.antialiasing);
-			refreshTexture();
 			calcFrame();
+			refreshTexture();
 		}
 		
 		/**
@@ -1016,6 +1021,14 @@ package flixel
 			_point.y = _point.y - offset.y;
 			_flashPoint.x = (TargetPoint.x - Camera.scroll.x) - _point.x;
 			_flashPoint.y = (TargetPoint.y - Camera.scroll.y) - _point.y;
+			
+			if (!(FlxG.render is FlxBlittingRender))
+			{
+				// TODO: Render: improve this. It is copying pixels for every call to pixelsOverlapsPoint() when blitting is not the render.
+				// Update framePixels to the most recent data.
+				calcFramePixels();
+			}
+			
 			return framePixels.hitTest(_flashPointZero,Mask,_flashPoint);
 		}
 		
@@ -1043,17 +1056,30 @@ package flixel
 			_flashRect.x = indexX;
 			_flashRect.y = indexY;
 			
-			// TODO: Render: improve this block
+			// TODO: Render: improve this block?
 			if (FlxG.render is FlxBlittingRender)
 			{
-				framePixels.copyPixels(_pixels,_flashRect,_flashPointZero);
+				calcFramePixels();
 				_flashRect.x = _flashRect.y = 0; // TODO: Render: this line breaks GPU render.
-				if(_colorTransform != null)
-					framePixels.colorTransform(_flashRect,_colorTransform);
 			}
+			
 			if(_callback != null)
 				_callback(((_curAnim != null)?(_curAnim.name):null),_curFrame,_curIndex);
 			dirty = false;
+		}
+		
+		/**
+		 * Internal function to update the current frame pixels. It copies the pixels from <code>_pixels</code> to
+		 * <code>framePixels</code> based on the animation and drawing info (current frame, colorTransform, etc).
+		 */
+		protected function calcFramePixels():void
+		{
+			framePixels.copyPixels(_pixels, _flashRect, _flashPointZero);
+			
+			if (_colorTransform != null)
+			{
+				framePixels.colorTransform(_flashRect, _colorTransform);
+			}
 		}
 		
 		/**
