@@ -75,6 +75,8 @@ package flixel.system.render.genome2d
 		public function copyPixelsToBuffer(Camera:FlxCamera, sourceTexture:GTexture, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void
 		{
 			var context:IContext = genome.getContext();
+			
+			context.setBackgroundColor(Camera.bgColor);
 			context.drawSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, (destPoint.x + sourceRect.width/2) * Camera.zoom, (destPoint.y + sourceRect.height/2) * Camera.zoom, Camera.zoom, Camera.zoom);
 		}
 		
@@ -94,6 +96,8 @@ package flixel.system.render.genome2d
 		public function drawToBuffer(Camera:FlxCamera, sourceTexture:GTexture, source:IBitmapDrawable, sourceRect:Rectangle, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void
 		{
 			var context:IContext = genome.getContext();
+
+			context.setBackgroundColor(Camera.bgColor);
 			// TODO: fix matrix rotation using wrong pivot.
 			context.drawMatrixSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, matrix.tx * Camera.zoom, matrix.ty * Camera.zoom);
 		}
