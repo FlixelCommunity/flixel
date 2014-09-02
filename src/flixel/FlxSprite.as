@@ -201,7 +201,6 @@ package flixel
 			_color = 0x00ffffff;
 			blend = null;
 			antialiasing = false;
-			cameras = null;
 			
 			finished = false;
 			_facing = RIGHT;
@@ -455,8 +454,10 @@ package flixel
 		
 		/**
 		 * Called by game loop, updates then blits or renders current frame of animation to the screen
+		 * 
+		 * @param	Camera	The camera where the object will draw itself to.
 		 */
-		override public function draw():void
+		override public function draw(Camera:FlxCamera):void
 		{
 			if(_flickerTimer != 0)
 			{
@@ -468,42 +469,33 @@ package flixel
 			if(dirty)	//rarely 
 				calcFrame();
 			
-			if(cameras == null)
-				cameras = FlxG.cameras;
-			var camera:FlxCamera;
-			var i:uint = 0;
-			var l:uint = cameras.length;
-			while(i < l)
+			if(!onScreen(Camera))
+				return;
+			_point.x = x - int(Camera.scroll.x*scrollFactor.x) - offset.x;
+			_point.y = y - int(Camera.scroll.y*scrollFactor.y) - offset.y;
+			_point.x += (_point.x > 0)?0.0000001:-0.0000001;
+			_point.y += (_point.y > 0)?0.0000001:-0.0000001;
+			
+			if(isSimpleRender())
 			{
-				camera = cameras[i++];
-				if(!onScreen(camera))
-					continue;
-				_point.x = x - int(camera.scroll.x*scrollFactor.x) - offset.x;
-				_point.y = y - int(camera.scroll.y*scrollFactor.y) - offset.y;
-				_point.x += (_point.x > 0)?0.0000001:-0.0000001;
-				_point.y += (_point.y > 0)?0.0000001:-0.0000001;
-				
-				if(isSimpleRender())
-				{
-					_flashPoint.x = _point.x;
-					_flashPoint.y = _point.y;
-					FlxG.render.copyPixelsToBuffer(camera,texture,framePixels,_flashRect,_flashPoint,null,null,true);
-				}
-				else //Advanced render
-				{
-					_matrix.identity();
-					_matrix.translate(-origin.x,-origin.y);
-					_matrix.scale(scale.x,scale.y);
-					if((angle != 0) && (_bakedRotation <= 0))
-						_matrix.rotate(angle * 0.017453293);
-					_matrix.translate(_point.x+origin.x,_point.y+origin.y);
-					FlxG.render.drawToBuffer(camera,texture,framePixels,_flashRect,_matrix,null,blend,null,antialiasing);
-				}
-				
-				_VISIBLECOUNT++;
-				if(FlxG.visualDebug && !ignoreDrawDebug)
-					drawDebug(camera);
+				_flashPoint.x = _point.x;
+				_flashPoint.y = _point.y;
+				FlxG.render.copyPixelsToBuffer(Camera,texture,framePixels,_flashRect,_flashPoint,null,null,true);
 			}
+			else //Advanced render
+			{
+				_matrix.identity();
+				_matrix.translate(-origin.x,-origin.y);
+				_matrix.scale(scale.x,scale.y);
+				if((angle != 0) && (_bakedRotation <= 0))
+					_matrix.rotate(angle * 0.017453293);
+				_matrix.translate(_point.x+origin.x,_point.y+origin.y);
+				FlxG.render.drawToBuffer(Camera,texture,framePixels,_flashRect,_matrix,null,blend,null,antialiasing);
+			}
+			
+			_VISIBLECOUNT++;
+			if(FlxG.visualDebug && !ignoreDrawDebug)
+				drawDebug(Camera);
 		}
 		
 		/**

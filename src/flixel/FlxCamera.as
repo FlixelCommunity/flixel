@@ -1,11 +1,15 @@
 package flixel
 {
+	import com.genome2d.textures.factories.GTextureFactory;
+	import com.genome2d.textures.GTexture;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flixel.system.render.genome2d.FlxGenome2DRender;
+	import flixel.util.FlxU;
 	
 	import flixel.util.FlxMath;
 	import flixel.util.FlxPoint;
@@ -102,10 +106,14 @@ package flixel
 		 */
 		public var buffer:BitmapData;
 		/**
+		 * TODO: Render: add docs
+		 */
+		public var texture:GTexture;
+		/**
 		 * The natural background color of the camera. Defaults to FlxG.bgColor.
 		 * NOTE: can be transparent for crazy FX!
 		 */
-		public var bgColor:uint;
+		protected var _bgColor:uint;
 		/**
 		 * Sometimes it's easier to just work with a <code>FlxSprite</code> than it is to work
 		 * directly with the <code>BitmapData</code> buffer.  This sprite reference will
@@ -287,6 +295,13 @@ package flixel
 			_fxShakeComplete = null;
 			_fxShakeOffset = null;
 			_fill = null;
+			
+			if (texture != null)
+			{
+				texture.dispose();
+				texture = null;
+			}
+			
 			super.destroy();
 		}
 		
@@ -632,6 +647,45 @@ package flixel
 			colorTransform.greenMultiplier = (_color>>8&0xff)*0.00392;
 			colorTransform.blueMultiplier = (_color&0xff)*0.00392;
 			_flashBitmap.transform.colorTransform = colorTransform;
+		}
+		
+		/**
+		 * The natural background color of the camera. Defaults to <code>FlxG.bgColor</code>.
+		 * NOTE: can be transparent for crazy FX!
+		 */
+		
+		public function set bgColor(Color:uint):void
+		{
+			_bgColor = Color;
+			
+			if (texture != null)
+			{
+				texture.dispose();
+				texture = null;
+			}
+			
+			if (FlxG.render is FlxGenome2DRender)
+			{
+				var bitmapData:BitmapData = new BitmapData(width, height, false, Color);
+				texture = GTextureFactory.createFromBitmapData("FlxCamera" + Math.random(), bitmapData);
+			}
+		}
+		
+		/**
+		 * The natural background color of the camera. Defaults to <code>FlxG.bgColor</code>.
+		 * NOTE: can be transparent for crazy FX!
+		 */
+		public function get bgColor():uint
+		{
+			return _bgColor;
+		}
+		
+		/**
+		 * TODO: Render: add docs
+		 */
+		public function get colorTransform():ColorTransform
+		{
+			return _flashBitmap.transform.colorTransform;
 		}
 		
 		/**

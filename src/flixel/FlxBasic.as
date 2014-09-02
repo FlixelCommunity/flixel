@@ -38,13 +38,6 @@ package flixel
 		 */
 		public var alive:Boolean;
 		/**
-		 * An array of camera objects that this object will use during <code>draw()</code>.
-		 * This value will initialize itself during the first draw to automatically
-		 * point at the main camera list out in <code>FlxG</code> unless you already set it.
-		 * You can also change it afterward too, very flexible!
-		 */
-		public var cameras:Array;
-		/**
 		 * Setting this to true will prevent the object from appearing
 		 * when the visual debug mode in the debugger overlay is toggled on.
 		 */
@@ -94,23 +87,17 @@ package flixel
 		}
 		
 		/**
-		 * Override this function to control how the object is drawn.
+		 * Override this function to control how the object is drawn. The Flixel render will call 
+		 * this function for every each active camera found in <code>FlxG.cameras</code>.
 		 * Overriding <code>draw()</code> is rarely necessary, but can be very useful.
+		 * 
+		 * @param	Camera	The camera where the object will draw itself to.
 		 */
-		public function draw():void
+		public function draw(Camera:FlxCamera):void
 		{
-			if(cameras == null)
-				cameras = FlxG.cameras;
-			var camera:FlxCamera;
-			var i:uint = 0;
-			var l:uint = cameras.length;
-			while(i < l)
-			{
-				camera = cameras[i++];
-				_VISIBLECOUNT++;
-				if(FlxG.visualDebug && !ignoreDrawDebug)
-					drawDebug(camera);
-			}
+			_VISIBLECOUNT++;
+			if(FlxG.visualDebug && !ignoreDrawDebug)
+				drawDebug(Camera);
 		}
 		
 		/**

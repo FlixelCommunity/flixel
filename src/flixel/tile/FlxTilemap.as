@@ -80,6 +80,10 @@ package flixel.tile
 		 */
 		protected var _buffers:Array;
 		/**
+		 * Internal, the index of the current buffer being used to render the tilemap.
+		 */
+		protected var _currentBuffer:uint;
+		/**
 		 * Internal representation of the actual tile data, as a large 1D array of integers.
 		 */
 		protected var _data:Array;
@@ -133,11 +137,11 @@ package flixel.tile
 		{
 			super();
 			_buffers = new Array();
+			_currentBuffer = 0;
 			_flashPoint = new Point();
 			immovable = true;
 			moves = false;
 			
-			cameras = null;
 			_debugTileNotSolid = null;
 			_debugTilePartial = null;
 			_debugTileSolid = null;
@@ -201,6 +205,7 @@ package flixel.tile
 				while(i < l)
 					(_buffers[i++] as FlxTilemapBuffer).destroy();
 				_buffers = [];
+				_currentBuffer = 0;
 			}
 		}
 		
@@ -334,6 +339,9 @@ package flixel.tile
 				_lastVisualDebug = FlxG.visualDebug;
 				setDirty();
 			}
+			
+			// Rewind the drawing buffer pointer.
+			_currentBuffer = 0;
 		}
 
 		/**
@@ -410,9 +418,11 @@ package flixel.tile
 		}
 		
 		/**
-		 * Draws the tilemap buffers to the cameras and handles flickering.
+		 * Draws the tilemap buffers to the camera and handles flickering.
+		 * 
+		 * @param	Camera	The camera where the object will draw itself to.
 		 */
-		override public function draw():void
+		override public function draw(Camera:FlxCamera):void
 		{
 			if(_flickerTimer != 0)
 			{
@@ -421,36 +431,28 @@ package flixel.tile
 					return;
 			}
 			
-			if(cameras == null)
-				cameras = FlxG.cameras;
-			var camera:FlxCamera;
 			var buffer:FlxTilemapBuffer;
-			var i:uint = 0;
-			var l:uint = cameras.length;
-			while(i < l)
+
+			if(_buffers[_currentBuffer] == null)
+				_buffers[_currentBuffer] = new FlxTilemapBuffer(_tiles,_tileWidth,_tileHeight,widthInTiles,heightInTiles,Camera);
+			buffer = _buffers[_currentBuffer++] as FlxTilemapBuffer;
+			if(!buffer.dirty)
 			{
-				camera = cameras[i];
-				if(_buffers[i] == null)
-					_buffers[i] = new FlxTilemapBuffer(_tiles,_tileWidth,_tileHeight,widthInTiles,heightInTiles,camera);
-				buffer = _buffers[i++] as FlxTilemapBuffer;
-				if(!buffer.dirty)
-				{
-					_point.x = x - int(camera.scroll.x*scrollFactor.x) + buffer.x; //copied from getScreenXY()
-					_point.y = y - int(camera.scroll.y*scrollFactor.y) + buffer.y;
-					buffer.dirty = (_point.x > 0) || (_point.y > 0) || (_point.x + buffer.width < camera.width) || (_point.y + buffer.height < camera.height);
-				}
-				if(buffer.dirty)
-				{
-					drawTilemap(buffer,camera);
-					buffer.dirty = false;
-				}
-				_flashPoint.x = x - int(camera.scroll.x*scrollFactor.x) + buffer.x; //copied from getScreenXY()
-				_flashPoint.y = y - int(camera.scroll.y*scrollFactor.y) + buffer.y;
-				_flashPoint.x += (_flashPoint.x > 0)?0.0000001:-0.0000001;
-				_flashPoint.y += (_flashPoint.y > 0)?0.0000001:-0.0000001;
-				buffer.draw(camera,_flashPoint);
-				_VISIBLECOUNT++;
+				_point.x = x - int(Camera.scroll.x*scrollFactor.x) + buffer.x; //copied from getScreenXY()
+				_point.y = y - int(Camera.scroll.y*scrollFactor.y) + buffer.y;
+				buffer.dirty = (_point.x > 0) || (_point.y > 0) || (_point.x + buffer.width < Camera.width) || (_point.y + buffer.height < Camera.height);
 			}
+			if(buffer.dirty)
+			{
+				drawTilemap(buffer,Camera);
+				buffer.dirty = false;
+			}
+			_flashPoint.x = x - int(Camera.scroll.x*scrollFactor.x) + buffer.x; //copied from getScreenXY()
+			_flashPoint.y = y - int(Camera.scroll.y*scrollFactor.y) + buffer.y;
+			_flashPoint.x += (_flashPoint.x > 0)?0.0000001:-0.0000001;
+			_flashPoint.y += (_flashPoint.y > 0)?0.0000001:-0.0000001;
+			buffer.draw(Camera,_flashPoint);
+			_VISIBLECOUNT++;
 		}
 		
 		/**

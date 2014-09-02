@@ -116,8 +116,10 @@ package flixel
 		
 		/**
 		 * Automatically goes through and calls render on everything you added.
+		 * 
+		 * @param	Camera	Which camera to draw the visuals to.
 		 */
-		override public function draw():void
+		override public function draw(Camera:FlxCamera):void
 		{
 			var basic:FlxBasic;
 			var i:uint = 0;
@@ -125,7 +127,7 @@ package flixel
 			{
 				basic = members[i++] as FlxBasic;
 				if((basic != null) && basic.exists && basic.visible)
-					basic.draw();
+					basic.draw(Camera);
 			}
 		}
 		

@@ -214,8 +214,7 @@ package flixel.ui
 			// (ignore checkbox behavior for now).
 			if(FlxG.mouse.visible)
 			{
-				if(cameras == null)
-					cameras = FlxG.cameras;
+				var cameras:Array = FlxG.cameras;
 				var camera:FlxCamera;
 				var i:uint = 0;
 				var l:uint = cameras.length;
@@ -280,15 +279,16 @@ package flixel.ui
 		
 		/**
 		 * Just draws the button graphic and text label to the screen.
+		 * 
+		 * @param	Camera	The camera where the object will draw itself to.
 		 */
-		override public function draw():void
+		override public function draw(Camera:FlxCamera):void
 		{
-			super.draw();
+			super.draw(Camera);
 			if(label != null)
 			{
 				label.scrollFactor = scrollFactor;
-				label.cameras = cameras;
-				label.draw();
+				label.draw(Camera);
 			}
 		}
 		

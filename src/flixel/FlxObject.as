@@ -325,7 +325,6 @@ package flixel
 			_point = null;
 			_rect = null;
 			last = null;
-			cameras = null;
 			if(path != null)
 				path.destroy();
 			path = null;
@@ -403,23 +402,16 @@ package flixel
 		
 		/**
 		 * Rarely called, and in this case just increments the visible objects count and calls <code>drawDebug()</code> if necessary.
+		 * 
+		 * @param	Camera	Which camera to draw the debug visuals to.
 		 */
-		override public function draw():void
+		override public function draw(Camera:FlxCamera):void
 		{
-			if(cameras == null)
-				cameras = FlxG.cameras;
-			var camera:FlxCamera;
-			var i:uint = 0;
-			var l:uint = cameras.length;
-			while(i < l)
-			{
-				camera = cameras[i++];
-				if(!onScreen(camera))
-					continue;
-				_VISIBLECOUNT++;
-				if(FlxG.visualDebug && !ignoreDrawDebug)
-					drawDebug(camera);
-			}
+			if(!onScreen(Camera))
+				return;
+			_VISIBLECOUNT++;
+			if(FlxG.visualDebug && !ignoreDrawDebug)
+				drawDebug(Camera);
 		}
 		
 		/**
