@@ -126,7 +126,7 @@ package flixel
 			while(i < length)
 			{
 				basic = members[i++] as FlxBasic;
-				if((basic != null) && basic.exists && basic.visible)
+				if((basic != null) && basic.exists && basic.visible && (basic.cameras == null || basic.cameras.indexOf(Camera) != -1))
 					basic.draw(Camera);
 			}
 		}

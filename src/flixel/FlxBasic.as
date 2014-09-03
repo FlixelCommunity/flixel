@@ -38,6 +38,13 @@ package flixel
 		 */
 		public var alive:Boolean;
 		/**
+		 * An array of camera objects that this object will use during <code>draw()</code>.
+		 * This value will initialize itself during the first draw to automatically
+		 * point at the main camera list out in <code>FlxG</code> unless you already set it.
+		 * You can also change it afterward too, very flexible!
+		 */
+		public var cameras:Array;
+		/**
 		 * Setting this to true will prevent the object from appearing
 		 * when the visual debug mode in the debugger overlay is toggled on.
 		 */
@@ -61,7 +68,14 @@ package flixel
 		 * <code>destroy()</code> on class members if necessary.
 		 * Don't forget to call <code>super.destroy()</code>!
 		 */
-		public function destroy():void {}
+		public function destroy():void
+		{
+			if (cameras != null)
+			{
+				cameras.length = 0;
+				cameras = null;
+			}
+		}
 		
 		/**
 		 * Pre-update is called right before <code>update()</code> on each object in the game loop.
