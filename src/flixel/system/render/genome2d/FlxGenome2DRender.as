@@ -78,7 +78,7 @@ package flixel.system.render.genome2d
 					continue;
 					
 				context.setMaskRect(new Rectangle(camera.x * camera.zoom, camera.y * camera.zoom, camera.width * camera.zoom, camera.height * camera.zoom)); // TODO: Render: improve rectangle allocation
-				context.draw(camera.texture, (camera.x + camera.width / 2) * camera.zoom, (camera.y + camera.height / 2) * camera.zoom, camera.zoom, camera.zoom, 0, camera.colorTransform.redMultiplier, camera.colorTransform.greenMultiplier, camera.colorTransform.blueMultiplier);
+				context.draw(camera.texture, (camera.fxShakeOffset.x + camera.x + camera.width / 2) * camera.zoom, (camera.fxShakeOffset.y + camera.y + camera.height / 2) * camera.zoom, camera.zoom, camera.zoom, 0, camera.colorTransform.redMultiplier, camera.colorTransform.greenMultiplier, camera.colorTransform.blueMultiplier);
 				
 				var j:uint = 0;
 				while (j < State.members.length)
@@ -122,7 +122,7 @@ package flixel.system.render.genome2d
 			
 			context.setBackgroundColor(Camera.bgColor);
 			context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom)); // TODO: improve rectangle allocation
-			context.drawSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, (Camera.x + destPoint.x + sourceRect.width/2) * Camera.zoom, (Camera.y + destPoint.y + sourceRect.height/2) * Camera.zoom, Camera.zoom, Camera.zoom);
+			context.drawSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, (Camera.fxShakeOffset.x + Camera.x + destPoint.x + sourceRect.width/2) * Camera.zoom, (Camera.fxShakeOffset.y + Camera.y + destPoint.y + sourceRect.height/2) * Camera.zoom, Camera.zoom, Camera.zoom);
 		}
 		
 		/**
@@ -144,7 +144,7 @@ package flixel.system.render.genome2d
 
 			context.setBackgroundColor(Camera.bgColor);
 			context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom));
-			context.drawMatrixSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, matrix.tx * Camera.zoom, matrix.ty * Camera.zoom);
+			context.drawMatrixSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, (matrix.tx + Camera.fxShakeOffset.x) * Camera.zoom, (matrix.ty + Camera.fxShakeOffset.y)* Camera.zoom);
 		}
 	}
 }

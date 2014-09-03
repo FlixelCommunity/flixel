@@ -304,7 +304,7 @@ package flixel
 			
 			if (texture != null)
 			{
-				texture.dispose();
+				texture.dispose(); // TODO: Render: instead of using a texture here, use the Render's internal buffer.
 				texture = null;
 			}
 			
@@ -729,6 +729,15 @@ package flixel
 		public function set fxColorAcumulator(Value:uint):void
 		{
 			_fxColorAcumulator = Value;
+		}
+		
+		/**
+		 * The amount of movement the camera is currently shaking in each axis when the <code>shake()</code>
+		 * effect has been activated.
+		 */
+		public function get fxShakeOffset():FlxPoint
+		{
+			return _fxShakeOffset;
 		}
 		
 		/**

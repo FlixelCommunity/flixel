@@ -1,6 +1,7 @@
 package flixel
 {
 	import flash.utils.getTimer;
+	import flixel.system.render.blitting.FlxBlittingRender;
 	import flixel.system.render.FlxRender;
 	import flixel.util.FlxRandom;
 	import flixel.util.FlxU;
@@ -749,7 +750,10 @@ package flixel
 		 */
 		static public function addCamera(NewCamera:FlxCamera):FlxCamera
 		{
-			FlxG._game.addChildAt(NewCamera._flashSprite,FlxG._game.getChildIndex(FlxG._game._mouse));
+			if (FlxG.render is FlxBlittingRender)
+			{
+				FlxG._game.addChildAt(NewCamera._flashSprite,FlxG._game.getChildIndex(FlxG._game._mouse));
+			}
 			FlxG.cameras.push(NewCamera);
 			return NewCamera;
 		}
@@ -762,10 +766,13 @@ package flixel
 		 */
 		static public function removeCamera(Camera:FlxCamera,Destroy:Boolean=true):void
 		{
-			if(Camera && FlxG._game.contains(Camera._flashSprite))
+			if(Camera && FlxG.cameras.indexOf(Camera) != -1)
 			{
 				FlxG.cameras.splice(FlxG.cameras.indexOf(Camera), 1);
-				FlxG._game.removeChild(Camera._flashSprite);
+				if (Camera._flashSprite.parent != null)
+				{
+					Camera._flashSprite.parent.removeChild(Camera._flashSprite);
+				}
 			}
 			else 
 				FlxG.log("Error removing camera, not part of game.");
@@ -788,7 +795,10 @@ package flixel
 			while(i < l)
 			{
 				cam = FlxG.cameras[i++] as FlxCamera;
-				FlxG._game.removeChild(cam._flashSprite);
+				if (cam._flashSprite.parent != null)
+				{
+					cam._flashSprite.parent.removeChild(cam._flashSprite);
+				}
 				cam.destroy();
 			}
 			FlxG.cameras.length = 0;
