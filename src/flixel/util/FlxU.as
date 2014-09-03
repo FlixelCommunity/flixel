@@ -48,6 +48,35 @@ package flixel.util
 		{
 			return (((Alpha>1)?Alpha:(Alpha * 255)) & 0xFF) << 24 | (Red & 0xFF) << 16 | (Green & 0xFF) << 8 | (Blue & 0xFF);
 		}
+		
+		/**
+		 * Blend two ARGB colors togheter, creating a new one.
+		 * 
+		 * @param   ColorA  An ARGB color to be blended.
+		 * @param   ColorB  An ARGB color to be blended.
+		 * 
+		 * @return  The resulting blended color as a <code>uint</code>.
+		 */
+		static public function blendColors(ColorA:uint, ColorB:uint):uint
+		{
+			// Ideas from here: http://stackoverflow.com/a/3233351/29827
+			var aa:uint = (ColorA >> 24) & 0xFF;
+			var ar:uint = (ColorA >> 16) & 0xFF;
+			var ag:uint = (ColorA >> 8)  & 0xFF;
+			var ab:uint = (ColorA >> 0)  & 0xFF;
+			
+			var ba:uint = (ColorB >> 24) & 0xFF;
+			var br:uint = (ColorB >> 16) & 0xFF;
+			var bg:uint = (ColorB >> 8)  & 0xFF;
+			var bb:uint = (ColorB >> 0)  & 0xFF;
+			
+			var ra:uint = (aa + ba) & 0xFF;
+			var rr:uint = (ar + br) & 0xFF;
+			var rg:uint = (ag + bg) & 0xFF;
+			var rb:uint = (ab + bb) & 0xFF;
+			
+			return (ra << 24) | (rr << 16) | (rg << 8) | rb;
+		}
 
 		/**
 		 * Generate a Flash <code>uint</code> color from HSB components.

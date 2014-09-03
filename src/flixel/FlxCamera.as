@@ -8,6 +8,7 @@ package flixel
 	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flixel.system.render.blitting.FlxBlittingRender;
 	import flixel.system.render.genome2d.FlxGenome2DRender;
 	import flixel.util.FlxU;
 	
@@ -190,6 +191,11 @@ package flixel
 		 * Internal, used to control the "fade" special effect.
 		 */
 		protected var _fxFadeAlpha:Number;
+		/**
+		 * Internal, used to accumulate the colors being added to the buffer when
+		 * color effects are acting, e.g. alpha and flash.
+		 */
+		protected var _fxColorAcumulator:uint;
 		/**
 		 * Internal, used to control the "shake" special effect.
 		 */
@@ -706,6 +712,26 @@ package flixel
 		}
 		
 		/**
+		 * The current color being added to the buffer because of any visual effect (e.g. flash or fade).
+		 * When an effect is in place, such as after calling <code>fade()</code>, the effect's color
+		 * must be added to the camera buffer. When there are more than one active effect, their color
+		 * is accumulated (blended) and drawn to the camera buffer.
+		 * This property stores the current accumulated color being draw to the buffer.
+		 */
+		public function get fxColorAcumulator():uint
+		{
+			return _fxColorAcumulator;
+		}
+		
+		/**
+		 * TODO: Render: add docs
+		 */
+		public function set fxColorAcumulator(Value:uint):void
+		{
+			_fxColorAcumulator = Value;
+		}
+		
+		/**
 		 * The scale of the camera object, irrespective of zoom.
 		 * Currently yields weird display results,
 		 * since cameras aren't nested in an extra display object yet.
@@ -748,7 +774,15 @@ package flixel
 		 */
 		public function fill(Color:uint,BlendAlpha:Boolean=true):void
 		{
-			var alpha:uint = Color >>> 24;
+			var alpha:uint;
+			
+			// If the current render is not blitting there is no need
+			// to fill buffers and stuff, because only _fxColorAcumulator will be
+			// used to draw the effects.
+			if (!(FlxG.render is FlxBlittingRender)) return;			
+			
+			alpha = Color >> 24 & 0xFF;
+
 			if(alpha == 255 || !BlendAlpha)
 			{
 				buffer.fillRect(_flashRect,Color);
@@ -766,19 +800,30 @@ package flixel
 		public function drawFX():void
 		{
 			var alphaComponent:Number;
+			var color:uint;
 			
 			//Draw the "flash" special effect onto the buffer
 			if(_fxFlashAlpha > 0.0)
 			{
 				alphaComponent = _fxFlashColor>>24;
-				fill((uint(((alphaComponent <= 0)?0xff:alphaComponent)*_fxFlashAlpha)<<24)+(_fxFlashColor&0x00ffffff));
+				color = (uint(((alphaComponent <= 0)?0xff:alphaComponent)*_fxFlashAlpha)<<24)+(_fxFlashColor&0x00ffffff);
+				
+				// Update the FX color accumulator 
+				_fxColorAcumulator = FlxU.blendColors(_fxColorAcumulator, color);
+
+				fill(color);
 			}
 			
 			//Draw the "fade" special effect onto the buffer
 			if(_fxFadeAlpha > 0.0)
 			{
 				alphaComponent = _fxFadeColor>>24;
-				fill((uint(((alphaComponent <= 0)?0xff:alphaComponent)*_fxFadeAlpha)<<24)+(_fxFadeColor&0x00ffffff));
+				color = (uint(((alphaComponent <= 0)?0xff:alphaComponent)*_fxFadeAlpha)<<24)+(_fxFadeColor&0x00ffffff);
+
+				// Update the FX color accumulator 
+				_fxColorAcumulator = FlxU.blendColors(_fxColorAcumulator, color);
+				
+				fill(color);
 			}
 			
 			if((_fxShakeOffset.x != 0) || (_fxShakeOffset.y != 0))
@@ -786,6 +831,19 @@ package flixel
 				_flashSprite.x = x + _flashOffsetX + _fxShakeOffset.x;
 				_flashSprite.y = y + _flashOffsetY + _fxShakeOffset.y;
 			}
+		}
+		
+		/**
+		 * Tell if the camera has any active color FX such as flash or fade.
+		 * If this function returns <code>true</code>, you can use <code>fxColorAcumulator</code>
+		 * to find out the current accumulated color being added to the camera buffer
+		 * because of the effects.
+		 * 
+		 * @return <code>true</code> if the camera is performing any color effect as flash or fade, or <code>false</code> if no color effect is in place.
+		 */
+		public function hasActiveColorFX():Boolean
+		{
+			return _fxFadeAlpha > 0.0 || _fxFlashAlpha > 0.0;
 		}
 	}
 }

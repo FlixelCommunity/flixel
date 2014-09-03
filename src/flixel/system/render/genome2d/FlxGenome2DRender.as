@@ -32,11 +32,13 @@ package flixel.system.render.genome2d
 	{
 		private var genome:Genome2D;
 		private var updateCallback:Function;
+		private var textureFX:GTexture;
+		private var config:GContextConfig;
 		
 		public function init(Game:FlxGame, UpdateCallback:Function):void
 		{
 			
-			var config:GContextConfig = new GContextConfig(Game.stage, new Rectangle(0,0,Game.stage.stageWidth,Game.stage.stageHeight));
+			config = new GContextConfig(Game.stage, new Rectangle(0,0,Game.stage.stageWidth,Game.stage.stageHeight));
 			 
 			// Initialize Genome2D
 			genome = Genome2D.getInstance();
@@ -50,6 +52,10 @@ package flixel.system.render.genome2d
 		{
 			// We will create a single texture from an embedded bitmap
 			//texture = GTextureFactory.createFromEmbedded("texture", TexturePNG);
+			
+			// Blank screen to be used to draw camera effects (flash, fade, etc)
+			var blankBitmap:BitmapData = new BitmapData(config.viewRect.width, config.viewRect.width, true, 0xFFFFFFFF);
+			textureFX = GTextureFactory.createFromBitmapData("textureFX" + Math.random(), blankBitmap);
 			
 			// Add a callback into the rendering pipeline
 			// TODO: add docs explaining how it works. 
@@ -72,7 +78,7 @@ package flixel.system.render.genome2d
 					continue;
 					
 				context.setMaskRect(new Rectangle(camera.x * camera.zoom, camera.y * camera.zoom, camera.width * camera.zoom, camera.height * camera.zoom)); // TODO: Render: improve rectangle allocation
-				context.draw(camera.texture, camera.x + camera.width / 2, camera.y + camera.height / 2, 1, 1, 0, camera.colorTransform.redMultiplier, camera.colorTransform.greenMultiplier, camera.colorTransform.blueMultiplier);
+				context.draw(camera.texture, (camera.x + camera.width / 2) * camera.zoom, (camera.y + camera.height / 2) * camera.zoom, camera.zoom, camera.zoom, 0, camera.colorTransform.redMultiplier, camera.colorTransform.greenMultiplier, camera.colorTransform.blueMultiplier);
 				
 				var j:uint = 0;
 				while (j < State.members.length)
@@ -86,6 +92,15 @@ package flixel.system.render.genome2d
 				}
 				
 				camera.drawFX();
+				
+				if (camera.hasActiveColorFX())
+				{
+					context.setMaskRect(new Rectangle(camera.x * camera.zoom, camera.y * camera.zoom, camera.width * camera.zoom, camera.height * camera.zoom)); // TODO: Render: improve rectangle allocation
+					// TODO: make camera's fxColorAcumulator a FlxColor and read it using camera.fxColor.r, camera.fxColor.b, etc.
+					context.draw(textureFX, (camera.x + camera.width / 2) * camera.zoom, (camera.y + camera.height / 2) * camera.zoom, camera.zoom, camera.zoom, 0, ((camera.fxColorAcumulator >> 16) & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 8) & 0xFF) / 255.0, (camera.fxColorAcumulator & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 24) & 0xFF) / 255.0, GBlendMode.NORMAL);
+				}
+				
+				camera.fxColorAcumulator = 0;
 			}
 		}
 		
