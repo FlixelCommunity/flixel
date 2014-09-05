@@ -7,6 +7,7 @@ package flixel.system.render.genome2d
 	import com.genome2d.Genome2D;
 	import com.genome2d.textures.factories.GTextureFactory;
 	import com.genome2d.textures.GTexture;
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.BlendMode;
 	import flash.display.IBitmapDrawable;
@@ -34,6 +35,9 @@ package flixel.system.render.genome2d
 		private var updateCallback:Function;
 		private var textureFX:GTexture;
 		private var config:GContextConfig;
+		private var debugBuffer:BitmapData;
+		private var debugBufferContainer:Bitmap;
+		private var m:Matrix;
 		
 		public function init(Game:FlxGame, UpdateCallback:Function):void
 		{
@@ -46,6 +50,18 @@ package flixel.system.render.genome2d
 			genome.init(config);
 			
 			updateCallback = UpdateCallback;
+			
+			// Initialize the debug buffer, used to draw things using blitting when GPU textures
+			// are not available (e.g. dynamic debug lines).
+			
+			debugBuffer = new BitmapData(Game.stage.stageWidth, Game.stage.stageHeight, true, 0xFF000000);
+			debugBufferContainer = new Bitmap(debugBuffer);
+			
+			Game.parent.addChild(debugBufferContainer);
+			debugBufferContainer.visible = false;
+			
+			// TODO: improve this!
+			m = new Matrix();
 		}
 		
 		private function genomeInitializedHandler():void
@@ -69,6 +85,9 @@ package flixel.system.render.genome2d
 			var camera:FlxCamera;
 			var basic:FlxBasic;
 			var i:uint = 0;
+			
+			// TODO: improve this! it's being called for every draw call, but it is required only when the debug buffer is in use.
+			debugBuffer.fillRect(config.viewRect, 0x00000000);
 			
 			while(i < l)
 			{
@@ -122,7 +141,7 @@ package flixel.system.render.genome2d
 			
 			context.setBackgroundColor(Camera.bgColor);
 			context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom)); // TODO: improve rectangle allocation
-			context.drawSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, (Camera.fxShakeOffset.x + Camera.x + destPoint.x + sourceRect.width/2) * Camera.zoom, (Camera.fxShakeOffset.y + Camera.y + destPoint.y + sourceRect.height/2) * Camera.zoom, Camera.zoom, Camera.zoom);
+			context.drawSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, (Camera.fxShakeOffset.x + Camera.x + destPoint.x + sourceRect.width / 2) * Camera.zoom, (Camera.fxShakeOffset.y + Camera.y + destPoint.y + sourceRect.height / 2) * Camera.zoom, Camera.zoom, Camera.zoom);
 		}
 		
 		/**
@@ -140,11 +159,41 @@ package flixel.system.render.genome2d
 		 */
 		public function drawToBuffer(Camera:FlxCamera, sourceTexture:GTexture, source:IBitmapDrawable, sourceRect:Rectangle, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void
 		{
-			var context:IContext = genome.getContext();
+			var context:IContext;
+			
+			if (sourceTexture == null && source != null)
+			{
+				drawToDebugBuffer(Camera, source, sourceRect, matrix, colorTransform, blendMode, clipRect, smoothing);
+			}
+			else
+			{
+				context = genome.getContext();
 
-			context.setBackgroundColor(Camera.bgColor);
-			context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom));
-			context.drawMatrixSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, (matrix.tx + Camera.fxShakeOffset.x) * Camera.zoom, (matrix.ty + Camera.fxShakeOffset.y)* Camera.zoom);
+				context.setBackgroundColor(Camera.bgColor);
+				context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom));
+				context.drawMatrixSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, (matrix.tx + Camera.fxShakeOffset.x) * Camera.zoom, (matrix.ty + Camera.fxShakeOffset.y) * Camera.zoom);
+			}
+		}
+		
+		/**
+		 * TODO: Rende: add docs.
+		 * 
+		 * @param	Camera
+		 * @param	source
+		 * @param	sourceRect
+		 * @param	matrix
+		 * @param	colorTransform
+		 * @param	blendMode
+		 * @param	clipRect
+		 * @param	smoothing
+		 */
+		private function drawToDebugBuffer(Camera:FlxCamera, source:IBitmapDrawable, sourceRect:Rectangle, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void
+		{
+			// TODO: improve this line
+			m.createBox(Camera.zoom, Camera.zoom);
+
+			debugBufferContainer.visible = true;
+			debugBuffer.draw(source, m, colorTransform, blendMode, clipRect, smoothing);
 		}
 	}
 }
