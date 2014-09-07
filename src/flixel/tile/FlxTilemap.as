@@ -1,10 +1,12 @@
 package flixel.tile
 {
+	import com.genome2d.textures.factories.GTextureFactory;
 	import flixel.FlxBasic;
 	import flixel.FlxCamera;
 	import flixel.FlxG;
 	import flixel.FlxGroup;
 	import flixel.FlxObject;
+	import flixel.system.render.blitting.FlxBlittingRender;
 	
 	import flixel.util.FlxMath;
 	import flixel.util.FlxPath;
@@ -106,16 +108,19 @@ package flixel.tile
 		
 		/**
 		 * Internal, used for rendering the debug bounding box display.
+		 * TODO: Redner: change property type to FlxTexture.
 		 */
-		protected var _debugTileNotSolid:BitmapData;
+		protected var _debugTileNotSolid:Object;
 		/**
 		 * Internal, used for rendering the debug bounding box display.
+		 * TODO: Redner: change property type to FlxTexture.
 		 */
-		protected var _debugTilePartial:BitmapData;
+		protected var _debugTilePartial:Object;
 		/**
 		 * Internal, used for rendering the debug bounding box display.
+		 * TODO: Redner: change property type to FlxTexture.
 		 */
-		protected var _debugTileSolid:BitmapData;
+		protected var _debugTileSolid:Object;
 		/**
 		 * Internal, used for rendering the debug bounding box display.
 		 */
@@ -308,9 +313,12 @@ package flixel.tile
 		/**
 		 * Internal function to clean up the map loading code.
 		 * Just generates a wireframe box the size of a tile with the specified color.
+		 * 
+		 * TODO: Render: change return type to FlxTexture
 		 */
-		protected function makeDebugTile(Color:uint):BitmapData
+		protected function makeDebugTile(Color:uint):Object
 		{
+			var tileTexture:Object = {'bitmap': null, 'texture': null};// TODO: Render: change to FlxTexture
 			var debugTile:BitmapData = new BitmapData(_tileWidth,_tileHeight,true,0);
 
 			var gfx:Graphics = FlxG.flashGfx;
@@ -323,7 +331,14 @@ package flixel.tile
 			gfx.lineTo(0,0);
 			
 			debugTile.draw(FlxG.flashGfxSprite);
-			return debugTile;
+			tileTexture.bitmapData = debugTile;
+			
+			if (!(FlxG.render is FlxBlittingRender))
+			{
+				tileTexture.texture = GTextureFactory.createFromBitmapData("debugTile" + Math.random(), debugTile);
+			}
+			
+			return tileTexture;
 		}
 		
 		/**
@@ -378,7 +393,7 @@ package flixel.tile
 			var column:uint;
 			var columnIndex:uint;
 			var tile:FlxTile;
-			var debugTile:BitmapData;
+			var debugTile:Object; // TODO: Render: change to FlxTexture
 			while(row < screenRows)
 			{
 				columnIndex = rowIndex;
@@ -401,7 +416,8 @@ package flixel.tile
 									debugTile = _debugTilePartial; //pink
 								else
 									debugTile = _debugTileSolid; //green
-								//Buffer.pixels.copyPixels(debugTile,_debugRect,_flashPoint,null,null,true); TODO: Render: implement this debug buffer
+
+								Buffer.enqueue(_debugRect, _flashPoint, debugTile);
 							}
 						}
 					}

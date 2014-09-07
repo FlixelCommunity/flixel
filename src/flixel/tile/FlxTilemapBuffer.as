@@ -95,7 +95,7 @@ package flixel.tile
 			_queue = new Array(l);
 			while (i < l)
 			{
-				_queue[i++] = { 'flashRect': new Rectangle(), 'flashPoint': new Point() };
+				_queue[i++] = { 'flashRect': new Rectangle(), 'flashPoint': new Point(), 'texture': null };
 			}
 			_queueSize = 0;
 			
@@ -133,10 +133,11 @@ package flixel.tile
 		
 		/**
 		 * Read-only, nab the actual buffer <code>BitmapData</code> object.
+		 * TODO: Render: change Texture:Object to Texture:FlxTexture
 		 * 
 		 * @return	The buffer bitmap data.
 		 */
-		public function enqueue(FlashRect:Rectangle, FlashPoint:Point):void
+		public function enqueue(FlashRect:Rectangle, FlashPoint:Point, Texture:Object = null):void
 		{
 			_queue[_queueSize].flashRect.x = FlashRect.x;
 			_queue[_queueSize].flashRect.y = FlashRect.y;
@@ -145,6 +146,8 @@ package flixel.tile
 			
 			_queue[_queueSize].flashPoint.x = FlashPoint.x;
 			_queue[_queueSize].flashPoint.y = FlashPoint.y;
+			
+			_queue[_queueSize].texture = Texture;
 			
 			_queueSize++;
 		}
@@ -164,7 +167,7 @@ package flixel.tile
 				_point.x = FlashPoint.x + _queue[i].flashPoint.x;
 				_point.y = FlashPoint.y + _queue[i].flashPoint.y;
 				
-				FlxG.render.copyPixelsToBuffer(Camera, _texture, _tiles, _queue[i].flashRect, _point, null, null, true);
+				FlxG.render.copyPixelsToBuffer(Camera, _queue[i].texture ? _queue[i].texture.texture : _texture, _queue[i].texture ? _queue[i].texture.bitmapData : null, _queue[i].flashRect, _point, null, null, true);
 				
 				i++;
 			}
