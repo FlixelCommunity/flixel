@@ -23,9 +23,14 @@ package flixel.system.render.genome2d
 	import flixel.system.render.FlxRender;
 	
 	/**
-	 * TODO: add docs
+	 * A GPU render based on Genome2D (http://genome2d.com). It uses hardware acceleration (GPU) to draw elements into the
+	 * screen, which makes it a lot faster than the blitting render. Since it is lighter on the CPU processing, it should be battery friendly
+	 * and a better fit for mobile development.
 	 * 
-	 * Tutorial from: http://blog.flash-core.com/?p=3132
+	 * This render uses Genome2D low-level API to draw everything. Genome2D's rendering pipeline is significantly different compared to a blitting 
+	 * pipeline, so a few adaptations were made to ensure performance. 
+	 * 
+	 * This render was implemented following this tutorial: http://blog.flash-core.com/?p=3132
 	 * 
 	 * @author Dovyski
 	 */
@@ -39,6 +44,12 @@ package flixel.system.render.genome2d
 		private var debugBufferContainer:Bitmap;
 		private var m:Matrix;
 		
+		/**
+		 * Initializes the render.
+		 * 
+		 * @param	Game				A reference to the game object.
+		 * @param	StartGameCallback	A callback function in the form <code>callback(e:FlashEvent=null)</code> that will be invoked by the render whenever it is ready to process the next frame.
+		 */
 		public function init(Game:FlxGame, UpdateCallback:Function):void
 		{
 			
@@ -62,6 +73,27 @@ package flixel.system.render.genome2d
 			
 			// TODO: improve this!
 			m = new Matrix();
+		}
+		
+		/**
+		 * Returns a few information about the render. That info displayed at the bottom of the performance
+		 * overlay when debug information is active.
+		 * 
+		 * @return A string containing information about the render, e.g. "Blitting" or "GPU (Genome2D)".
+		 */
+		public function get info():String
+		{
+			return "GPU Genome2D " + Genome2D.VERSION;
+		}
+		
+		/**
+		 * Tells if the render is working with blitting (copying pixels using BitmapData) or not.
+		 * 
+		 * @return <code>true</code> true if blitting is being used to display things into the screen, or <code>false</code> otherwise (using GPU).
+		 */
+		public function isBlitting():Boolean
+		{
+			return false;
 		}
 		
 		private function genomeInitializedHandler():void

@@ -12,14 +12,44 @@ package flixel.system.render.blitting
 	import flixel.system.render.FlxRender;
 	
 	/**
-	 * TODO: add docs
+	 * A CPU render based on blitting. It uses Bitmaps draw thing into the screen, copying pixels
+	 * from one place to another. It is not based on hardware acceleration, so it tends to be slower as the
+	 * number of sprites to be rendered increases.
+	 * 
 	 * @author Dovyski
 	 */
 	public class FlxBlittingRender implements FlxRender
 	{
+		/**
+		 * Initializes the render.
+		 * 
+		 * @param	Game				A reference to the game object.
+		 * @param	StartGameCallback	A callback function in the form <code>callback(e:FlashEvent=null)</code> that will be invoked by the render whenever it is ready to process the next frame.
+		 */		
 		public function init(Game:FlxGame, UpdateCallback:Function):void 
 		{
 			Game.stage.addEventListener(Event.ENTER_FRAME, UpdateCallback);
+		}
+		
+		/**
+		 * Returns a few information about the render. That info displayed at the bottom of the performance
+		 * overlay when debug information is active.
+		 * 
+		 * @return A string containing information about the render, e.g. "Blitting" or "GPU (Genome2D)".
+		 */
+		public function get info():String
+		{
+			return "CPU Blitting";
+		}
+		
+		/**
+		 * Tells if the render is working with blitting (copying pixels using BitmapData) or not.
+		 * 
+		 * @return <code>true</code> true if blitting is being used to display things into the screen, or <code>false</code> otherwise (using GPU).
+		 */
+		public function isBlitting():Boolean
+		{
+			return true;
 		}
 		
 		public function draw(State:FlxState):void

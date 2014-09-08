@@ -12,18 +12,35 @@ package flixel.system.render
 	import flixel.FlxState;
 	
 	/**
-	 * TODO: add docs
+	 * Interface that defines how all renders must be structured. When Flixel has updated the current game frame, it will
+	 * invoke the render's drawing method to display everything on the screen.
+	 * 
 	 * @author Dovyski
 	 */
 	public interface FlxRender 
 	{
 		/**
-		 * TODO: add docs
+		 * Initializes the render.
 		 * 
-		 * @param	Game
-		 * @param	StartGameCallback
+		 * @param	Game				A reference to the game object.
+		 * @param	StartGameCallback	A callback function in the form <code>callback(e:FlashEvent=null)</code> that will be invoked by the render whenever it is ready to process the next frame.
 		 */
 		function init(Game:FlxGame, UpdateCallback:Function):void;
+		
+		/**
+		 * Returns a few information about the render. That info displayed at the bottom of the performance
+		 * overlay when debug information is active.
+		 * 
+		 * @return A string containing information about the render, e.g. "Blitting" or "GPU (Genome2D)".
+		 */
+		function get info():String;
+		
+		/**
+		 * Tells if the render is working with blitting (copying pixels using BitmapData) or not.
+		 * 
+		 * @return <code>true</code> true if blitting is being used to display things into the screen, or <code>false</code> otherwise (using GPU).
+		 */
+		function isBlitting():Boolean;
 		
 		/**
 		 * TODO: add docs
