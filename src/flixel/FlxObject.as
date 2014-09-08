@@ -456,7 +456,7 @@ package flixel
 			gfx.lineTo(boundingBoxX,boundingBoxY);
 			
 			//draw graphics shape to camera buffer
-			FlxG.render.drawToBuffer(Camera, null, FlxG.flashGfxSprite, null);
+			FlxG.render.drawDebug(Camera, FlxG.flashGfxSprite);
 		}
 		
 		/**

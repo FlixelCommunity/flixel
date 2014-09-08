@@ -110,7 +110,14 @@ package flixel.system.render.genome2d
 			genome.onPreRender.add(updateCallback);
 		}
 		
-		public function draw(State:FlxState):void
+		/**
+		 * Performs a graphic step, rendering all elements into the screen. Flixel will invoke this method after
+		 * it has updated all game entities. This method *should not* be invoked directly since Flixel will do
+		 * it automatically at the right time.
+		 * 
+		 * @param	State	The state whose elements will be rendered into the screen.
+		 */
+		public function step(State:FlxState):void
 		{
 			var context:IContext = genome.getContext();
 			var l:uint = FlxG.cameras.length;
@@ -156,18 +163,20 @@ package flixel.system.render.genome2d
 		}
 		
 		/**
-		 * TODO: Render: add docs.
-		 * TODO: find a better name for this method.
+		 * Draw the source object into the screen with no stretching, rotation, or color effects. 
+		 * This method renders a rectangular area of a source image to a rectangular area of the same size
+		 * at the destination point of the informed destination.
 		 * 
-		 * @param	Camera
-		 * @param	sourceBitmapData
-		 * @param	sourceRect
-		 * @param	destPoint
-		 * @param	alphaBitmapData
-		 * @param	alphaPoint
-		 * @param	mergeAlpha
+		 * @param	Camera				The camera that is being rendered to the screen at the moment.
+		 * @param	sourceTexture		TODO: encapsulate it under FlxTexture.
+		 * @param	sourceBitmapData	TODO: encapsulate it under FlxTexture.
+		 * @param	sourceRect			A rectangle that defines the area of the source image to use as input.
+		 * @param	destPoint			The destination point that represents the upper-left corner of the rectangular area where the new pixels are placed.
+		 * @param	alphaBitmapData		A secondary, alpha BitmapData object source.
+		 * @param	alphaPoint			The point in the alpha BitmapData object source that corresponds to the upper-left corner of the sourceRect parameter.
+		 * @param	mergeAlpha			To use the alpha channel, set the value to true. To copy pixels with no alpha channel, set the value to <code>false</code>
 		 */
-		public function copyPixelsToBuffer(Camera:FlxCamera, sourceTexture:GTexture, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void
+		public function copyPixels(Camera:FlxCamera, sourceTexture:GTexture, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void
 		{
 			var context:IContext = genome.getContext();
 			
@@ -177,55 +186,49 @@ package flixel.system.render.genome2d
 		}
 		
 		/**
-		 * TODO: Render: add docs.
-		 * TODO: find a better name for this method.
+		 * Draws the source display object into the screen using transformations. You can specify matrix, colorTransform, 
+		 * blendMode, and a destination clipRect parameter to control how the rendering performs.
+		 * Optionally, you can specify whether the bitmap should be smoothed when scaled (this works only if the source object
+		 * is a BitmapData object).
 		 * 
-		 * @param	Camera
-		 * @param	source
-		 * @param	sourceRect
-		 * @param	matrix
-		 * @param	colorTransform
-		 * @param	blendMode
-		 * @param	clipRect
-		 * @param	smoothing
+		 * This method is an imitation of <code>BitmapData#draw()</code>.
+		 * 
+		 * @param	Camera				The camera that is being rendered to the screen at the moment.
+		 * @param	sourceTexture		TODO: encapsulate it under FlxTexture.
+		 * @param	source				TODO: encapsulate it under FlxTexture.
+		 * @param	sourceRect			A rectangle that defines the area of the source image to use as input.
+		 * @param	matrix				A Matrix object used to scale, rotate, or translate the coordinates of the input. It's <code>null</code> by default, meaning no transformation will be applied.
+		 * @param	colorTransform		A ColorTransform object used to adjust the color values of the input during rendering. It's <code>null</code> by default, meaning no transformation will be applied.
+		 * @param	blendMode			A string value, from the <code>flash.display.BlendMode</code> class, specifying the blend mode to be applied during rendering.
+		 * @param	clipRect			A Rectangle object that defines the area of the source object to draw. If <code>null</code> is provided (default), no clipping occurs and the entire source object is drawn.
+		 * @param	smoothing			A Boolean value that determines whether a the source object is smoothed when scaled or rotated, due to a scaling or rotation in the matrix parameter.
 		 */
-		public function drawToBuffer(Camera:FlxCamera, sourceTexture:GTexture, source:IBitmapDrawable, sourceRect:Rectangle, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void
+		public function draw(Camera:FlxCamera, sourceTexture:GTexture, source:IBitmapDrawable, sourceRect:Rectangle, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void
 		{
 			var context:IContext;
 			
-			if (sourceTexture == null && source != null)
-			{
-				drawToDebugBuffer(Camera, source, sourceRect, matrix, colorTransform, blendMode, clipRect, smoothing);
-			}
-			else
-			{
-				context = genome.getContext();
+			context = genome.getContext();
 
-				context.setBackgroundColor(Camera.bgColor);
-				context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom));
-				context.drawMatrixSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, (matrix.tx + Camera.fxShakeOffset.x) * Camera.zoom, (matrix.ty + Camera.fxShakeOffset.y) * Camera.zoom);
-			}
+			context.setBackgroundColor(Camera.bgColor);
+			context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom));
+			context.drawMatrixSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, (matrix.tx + Camera.fxShakeOffset.x) * Camera.zoom, (matrix.ty + Camera.fxShakeOffset.y) * Camera.zoom);
 		}
 		
 		/**
-		 * TODO: Rende: add docs.
+		 * Draws generic graphics to the screen using a blitting debug buffer. Highly changing graphics, such as debug lines, cannot be uploaed to
+		 * the GPU every frame, so the render provides this method that renders a source object to a special buffer using blitting.
+		 * This method should be used when performance is not a concern, e.g. when debug overlays are being rendered.
 		 * 
-		 * @param	Camera
-		 * @param	source
-		 * @param	sourceRect
-		 * @param	matrix
-		 * @param	colorTransform
-		 * @param	blendMode
-		 * @param	clipRect
-		 * @param	smoothing
+		 * @param	Camera				The camera that is being rendered to the screen at the moment.
+		 * @param	source				The display object or BitmapData object to draw to the BitmapData object.
 		 */
-		private function drawToDebugBuffer(Camera:FlxCamera, source:IBitmapDrawable, sourceRect:Rectangle, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void
+		public function drawDebug(Camera:FlxCamera, source:IBitmapDrawable):void
 		{
 			// TODO: improve this line
 			m.createBox(Camera.zoom, Camera.zoom);
 
 			debugBufferContainer.visible = true;
-			debugBuffer.draw(source, m, colorTransform, blendMode, clipRect, smoothing);
+			debugBuffer.draw(source, m);
 		}
 	}
 }

@@ -507,7 +507,7 @@ package flixel
 		protected function draw():void
 		{
 			var mark:uint = getTimer();
-			_render.draw(_state);
+			_render.step(_state);
 			FlxG.signals.postDraw.dispatch();
 
 			if(_debuggerUp)

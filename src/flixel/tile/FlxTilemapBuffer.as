@@ -167,7 +167,7 @@ package flixel.tile
 				_point.x = FlashPoint.x + _queue[i].flashPoint.x;
 				_point.y = FlashPoint.y + _queue[i].flashPoint.y;
 				
-				FlxG.render.copyPixelsToBuffer(Camera, _queue[i].texture ? _queue[i].texture.texture : _texture, _queue[i].texture ? _queue[i].texture.bitmapData : _tiles, _queue[i].flashRect, _point, null, null, true);
+				FlxG.render.copyPixels(Camera, _queue[i].texture ? _queue[i].texture.texture : _texture, _queue[i].texture ? _queue[i].texture.bitmapData : _tiles, _queue[i].flashRect, _point, null, null, true);
 				
 				i++;
 			}
