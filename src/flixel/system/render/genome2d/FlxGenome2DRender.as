@@ -136,7 +136,7 @@ package flixel.system.render.genome2d
 					continue;
 					
 				context.setMaskRect(new Rectangle(camera.x * camera.zoom, camera.y * camera.zoom, camera.width * camera.zoom, camera.height * camera.zoom)); // TODO: Render: improve rectangle allocation
-				context.draw(camera.texture, (camera.fxShakeOffset.x + camera.x + camera.width / 2) * camera.zoom, (camera.fxShakeOffset.y + camera.y + camera.height / 2) * camera.zoom, camera.zoom, camera.zoom, 0, camera.colorTransform.redMultiplier, camera.colorTransform.greenMultiplier, camera.colorTransform.blueMultiplier);
+				context.draw(camera.bgTexture.gpuData, (camera.fxShakeOffset.x + camera.x + camera.width / 2) * camera.zoom, (camera.fxShakeOffset.y + camera.y + camera.height / 2) * camera.zoom, camera.zoom, camera.zoom, 0, camera.colorTransform.redMultiplier, camera.colorTransform.greenMultiplier, camera.colorTransform.blueMultiplier);
 				
 				var j:uint = 0;
 				while (j < State.members.length)
