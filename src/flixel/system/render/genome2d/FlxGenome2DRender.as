@@ -36,13 +36,38 @@ package flixel.system.render.genome2d
 	 */
 	public class FlxGenome2DRender implements FlxRender
 	{
-		private var genome:Genome2D;
-		private var updateCallback:Function;
-		private var textureFX:GTexture;
-		private var config:GContextConfig;
-		private var debugBuffer:BitmapData;
-		private var debugBufferContainer:Bitmap;
-		private var m:Matrix;
+		/**
+		 * A reference to Genome2D backend.
+		 */
+		private var _genome:Genome2D;
+		/**
+		 * A callback function in the form <code>callback(e:FlashEvent=null)</code> that will be
+		 * invoked by the render whenever it is ready to process the next frame.
+		 */
+		private var _updateCallback:Function;
+		/**
+		 * A texture that will be used to render Flixel camera FX e.g. flash and fade.
+		 */
+		private var _textureFX:GTexture;
+		/**
+		 * A reference to the configuration parameters used to init Genome2D.
+		 */
+		private var _config:GContextConfig;
+		/**
+		 * The debug buffer. Anything rendered using the <code>drawDebug()</code> method will be drawn to
+		 * this buffer using blitting. It's is required to render debug information that change every frame,
+		 * e.g. lines and bounding boxes. If this buffer doesn't exist, the render must upload the debug
+		 * drawing to the GPU every frame, which would drastically hurt performance.
+		 */
+		private var _debugBuffer:BitmapData;
+		/**
+		 * The bitmap that will be added to the screen (Flash display list) to display the debug buffer
+		 */
+		private var _debugBufferContainer:Bitmap;
+		/**
+		 * A temporary matrix to save memory during the render process.
+		 */
+		private var _matrix:Matrix;
 		
 		/**
 		 * Initializes the render.
@@ -53,26 +78,26 @@ package flixel.system.render.genome2d
 		public function init(Game:FlxGame, UpdateCallback:Function):void
 		{
 			
-			config = new GContextConfig(Game.stage, new Rectangle(0,0,Game.stage.stageWidth,Game.stage.stageHeight));
+			_config = new GContextConfig(Game.stage, new Rectangle(0,0,Game.stage.stageWidth,Game.stage.stageHeight));
 			 
 			// Initialize Genome2D
-			genome = Genome2D.getInstance();
-			genome.onInitialized.addOnce(genomeInitializedHandler);
-			genome.init(config);
+			_genome = Genome2D.getInstance();
+			_genome.onInitialized.addOnce(genomeInitializedHandler);
+			_genome.init(_config);
 			
-			updateCallback = UpdateCallback;
+			_updateCallback = UpdateCallback;
 			
 			// Initialize the debug buffer, used to draw things using blitting when GPU textures
 			// are not available (e.g. dynamic debug lines).
 			
-			debugBuffer = new BitmapData(Game.stage.stageWidth, Game.stage.stageHeight, true, 0xFF000000);
-			debugBufferContainer = new Bitmap(debugBuffer);
+			_debugBuffer = new BitmapData(Game.stage.stageWidth, Game.stage.stageHeight, true, 0xFF000000);
+			_debugBufferContainer = new Bitmap(_debugBuffer);
 			
-			Game.parent.addChild(debugBufferContainer);
-			debugBufferContainer.visible = false;
+			Game.parent.addChild(_debugBufferContainer);
+			_debugBufferContainer.visible = false;
 			
 			// TODO: improve this!
-			m = new Matrix();
+			_matrix = new Matrix();
 		}
 		
 		/**
@@ -102,12 +127,12 @@ package flixel.system.render.genome2d
 			//texture = GTextureFactory.createFromEmbedded("texture", TexturePNG);
 			
 			// Blank screen to be used to draw camera effects (flash, fade, etc)
-			var blankBitmap:BitmapData = new BitmapData(config.viewRect.width, config.viewRect.width, true, 0xFFFFFFFF);
-			textureFX = GTextureFactory.createFromBitmapData("textureFX" + Math.random(), blankBitmap);
+			var blankBitmap:BitmapData = new BitmapData(_config.viewRect.width, _config.viewRect.width, true, 0xFFFFFFFF);
+			_textureFX = GTextureFactory.createFromBitmapData("_textureFX" + Math.random(), blankBitmap);
 			
 			// Add a callback into the rendering pipeline
 			// TODO: add docs explaining how it works. 
-			genome.onPreRender.add(updateCallback);
+			_genome.onPreRender.add(_updateCallback);
 		}
 		
 		/**
@@ -119,14 +144,14 @@ package flixel.system.render.genome2d
 		 */
 		public function step(State:FlxState):void
 		{
-			var context:IContext = genome.getContext();
+			var context:IContext = _genome.getContext();
 			var l:uint = FlxG.cameras.length;
 			var camera:FlxCamera;
 			var basic:FlxBasic;
 			var i:uint = 0;
 			
 			// TODO: improve this! it's being called for every draw call, but it is required only when the debug buffer is in use.
-			debugBuffer.fillRect(config.viewRect, 0x00000000);
+			_debugBuffer.fillRect(_config.viewRect, 0x00000000);
 			
 			while(i < l)
 			{
@@ -155,7 +180,7 @@ package flixel.system.render.genome2d
 				{
 					context.setMaskRect(new Rectangle(camera.x * camera.zoom, camera.y * camera.zoom, camera.width * camera.zoom, camera.height * camera.zoom)); // TODO: Render: improve rectangle allocation
 					// TODO: make camera's fxColorAcumulator a FlxColor and read it using camera.fxColor.r, camera.fxColor.b, etc.
-					context.draw(textureFX, (camera.x + camera.width / 2) * camera.zoom, (camera.y + camera.height / 2) * camera.zoom, camera.zoom, camera.zoom, 0, ((camera.fxColorAcumulator >> 16) & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 8) & 0xFF) / 255.0, (camera.fxColorAcumulator & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 24) & 0xFF) / 255.0, GBlendMode.NORMAL);
+					context.draw(_textureFX, (camera.x + camera.width / 2) * camera.zoom, (camera.y + camera.height / 2) * camera.zoom, camera.zoom, camera.zoom, 0, ((camera.fxColorAcumulator >> 16) & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 8) & 0xFF) / 255.0, (camera.fxColorAcumulator & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 24) & 0xFF) / 255.0, GBlendMode.NORMAL);
 				}
 				
 				camera.fxColorAcumulator = 0;
@@ -178,7 +203,7 @@ package flixel.system.render.genome2d
 		 */
 		public function copyPixels(Camera:FlxCamera, sourceTexture:GTexture, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void
 		{
-			var context:IContext = genome.getContext();
+			var context:IContext = _genome.getContext();
 			
 			context.setBackgroundColor(Camera.bgColor);
 			context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom)); // TODO: improve rectangle allocation
@@ -207,7 +232,7 @@ package flixel.system.render.genome2d
 		{
 			var context:IContext;
 			
-			context = genome.getContext();
+			context = _genome.getContext();
 
 			context.setBackgroundColor(Camera.bgColor);
 			context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom));
@@ -225,10 +250,10 @@ package flixel.system.render.genome2d
 		public function drawDebug(Camera:FlxCamera, source:IBitmapDrawable):void
 		{
 			// TODO: improve this line
-			m.createBox(Camera.zoom, Camera.zoom);
+			_matrix.createBox(Camera.zoom, Camera.zoom);
 
-			debugBufferContainer.visible = true;
-			debugBuffer.draw(source, m);
+			_debugBufferContainer.visible = true;
+			_debugBuffer.draw(source, _matrix);
 		}
 	}
 }
