@@ -750,7 +750,7 @@ package flixel
 		 */
 		static public function addCamera(NewCamera:FlxCamera):FlxCamera
 		{
-			if (FlxG.render is FlxBlittingRender)
+			if (FlxG.render.isBlitting())
 			{
 				FlxG._game.addChildAt(NewCamera._flashSprite,FlxG._game.getChildIndex(FlxG._game._mouse));
 			}
