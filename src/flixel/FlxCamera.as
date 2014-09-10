@@ -304,6 +304,7 @@ package flixel
 			if (bgTexture != null)
 			{
 				bgTexture.destroy();
+				bgTexture = null;
 			}
 			
 			super.destroy();

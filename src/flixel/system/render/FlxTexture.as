@@ -31,7 +31,7 @@ package flixel.system.render {
 		{
 			if (Data != null)
 			{
-				setBtmapData(Data);
+				setBitmapData(Data);
 			}
 		}
 		
@@ -78,7 +78,11 @@ package flixel.system.render {
 		public function destroy():void
 		{
 			disposeGPUData();
-			disposeBitmapData();
+			_bitmapData = null;
+			
+			// TODO: call disposeBitmapData() here someday. In order to do that, we must know
+			// if the current bitmapData is not cached by FlxG; if it is, we cannot dispose it
+			// since it might be in use by another sprite.
 		}
 		
 		/**
@@ -144,7 +148,7 @@ package flixel.system.render {
 		 * @param	New				The new bitmapData that will be used for the texture.
 		 * @param	DestroyOldOne	A boolean indicating if the old bitmapData should be destroyed and freed from memory. Default is <code>false</code>.
 		 */
-		public function setBtmapData(New:BitmapData, DestroyOldOne:Boolean = false):void
+		public function setBitmapData(New:BitmapData, DestroyOldOne:Boolean = false):void
 		{
 			if (New == null)
 			{
