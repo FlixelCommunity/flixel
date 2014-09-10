@@ -37,10 +37,9 @@ package flixel.system.render {
 		
 		protected function uploadBitmapDataToGPU():void
 		{
-			disposeGPUData();
-			
 			if (!FlxG.render.isBlitting())
 			{
+				disposeGPUData();
 				// TODO: Move this texture creation to FlxRender?
 				_gpuData = GTextureFactory.createFromBitmapData("FlxTexture" + Math.random(), _bitmapData);
 			}

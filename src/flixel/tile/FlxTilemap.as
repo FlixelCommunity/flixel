@@ -1,12 +1,11 @@
 package flixel.tile
 {
-	import com.genome2d.textures.factories.GTextureFactory;
 	import flixel.FlxBasic;
 	import flixel.FlxCamera;
 	import flixel.FlxG;
 	import flixel.FlxGroup;
 	import flixel.FlxObject;
-	import flixel.system.render.blitting.FlxBlittingRender;
+	import flixel.system.render.FlxTexture;
 	
 	import flixel.util.FlxMath;
 	import flixel.util.FlxPath;
@@ -108,19 +107,16 @@ package flixel.tile
 		
 		/**
 		 * Internal, used for rendering the debug bounding box display.
-		 * TODO: Redner: change property type to FlxTexture.
 		 */
-		protected var _debugTileNotSolid:Object;
+		protected var _debugTileNotSolid:FlxTexture;
 		/**
 		 * Internal, used for rendering the debug bounding box display.
-		 * TODO: Redner: change property type to FlxTexture.
 		 */
-		protected var _debugTilePartial:Object;
+		protected var _debugTilePartial:FlxTexture;
 		/**
 		 * Internal, used for rendering the debug bounding box display.
-		 * TODO: Redner: change property type to FlxTexture.
 		 */
-		protected var _debugTileSolid:Object;
+		protected var _debugTileSolid:FlxTexture;
 		/**
 		 * Internal, used for rendering the debug bounding box display.
 		 */
@@ -313,12 +309,10 @@ package flixel.tile
 		/**
 		 * Internal function to clean up the map loading code.
 		 * Just generates a wireframe box the size of a tile with the specified color.
-		 * 
-		 * TODO: Render: change return type to FlxTexture
 		 */
-		protected function makeDebugTile(Color:uint):Object
+		protected function makeDebugTile(Color:uint):FlxTexture
 		{
-			var tileTexture:Object = {'bitmap': null, 'texture': null};// TODO: Render: change to FlxTexture
+			var tileTexture:FlxTexture = new FlxTexture();
 			var debugTile:BitmapData = new BitmapData(_tileWidth,_tileHeight,true,0);
 
 			var gfx:Graphics = FlxG.flashGfx;
@@ -331,12 +325,7 @@ package flixel.tile
 			gfx.lineTo(0,0);
 			
 			debugTile.draw(FlxG.flashGfxSprite);
-			tileTexture.bitmapData = debugTile;
-			
-			if (!(FlxG.render is FlxBlittingRender))
-			{
-				tileTexture.texture = GTextureFactory.createFromBitmapData("debugTile" + Math.random(), debugTile);
-			}
+			tileTexture.setBitmapData(debugTile);
 			
 			return tileTexture;
 		}
@@ -393,7 +382,7 @@ package flixel.tile
 			var column:uint;
 			var columnIndex:uint;
 			var tile:FlxTile;
-			var debugTile:Object; // TODO: Render: change to FlxTexture
+			var debugTile:FlxTexture;
 			while(row < screenRows)
 			{
 				columnIndex = rowIndex;

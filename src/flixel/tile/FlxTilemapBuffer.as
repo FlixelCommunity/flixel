@@ -1,11 +1,10 @@
 package flixel.tile
 {
-	import com.genome2d.textures.factories.GTextureFactory;
-	import com.genome2d.textures.GTexture;
 	import flash.display.BitmapData;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flixel.system.render.genome2d.FlxGenome2DRender;
+
+	import flixel.system.render.FlxTexture;
 	
 	import flixel.FlxG;
 	import flixel.FlxCamera;
@@ -52,12 +51,20 @@ package flixel.tile
 		protected var _flashRect:Rectangle;
 		
 		/**
-		 * TODO: Render: add docs
+		 * Internal, an array containing the tiles to be drawn.
 		 */
 		protected var _queue :Array;
+		/**
+		 * Internal, the current size of the drawing queue.
+		 */
 		protected var _queueSize :uint;
-		protected var _tiles :BitmapData;
-		protected var _texture :GTexture; // TODO: remove this?
+		/**
+		 * A reference to the graphics (bitmapData and GPU texture) to be used to render this tilemap buffer.
+		 */
+		protected var _texture :FlxTexture;
+		/**
+		 * Internal, a temporary point to save memory allocations during several operations.
+		 */
 		protected var _point :Point;
 
 		/**
@@ -84,13 +91,16 @@ package flixel.tile
 			if(rows > HeightInTiles)
 				rows = HeightInTiles;
 			
-			_pixels = new BitmapData(columns*TileWidth,rows*TileHeight,true,0); // TODO: Render: this is no longer necessary, but it might have a better performance on blitting render.
+			// Creates the bitmapData used to render the tilemap buffer using blitting.
+			// It is no longer necessary, but it might have a better performance on blitting render.
+			// TODO: run some tests and remove it or adapt enqueue() to use blitting when GPU-mode = false.
+			_pixels = new BitmapData(columns*TileWidth,rows*TileHeight,true,0);
 			width = _pixels.width;
 			height = _pixels.height;			
 			_flashRect = new Rectangle(0,0,width,height);
 			dirty = true;
 			
-			// TODO: Render: add docs
+			// Create the drawing queue.
 			l = rows * columns;
 			_queue = new Array(l);
 			while (i < l)
@@ -99,12 +109,9 @@ package flixel.tile
 			}
 			_queueSize = 0;
 			
-			_tiles = Tiles;
+			// Initializes the graphics
+			_texture = new FlxTexture(Tiles);
 			_point = new Point();
-			if (FlxG.render is FlxGenome2DRender)
-			{
-				_texture = GTextureFactory.createFromBitmapData("tiles" + Math.random(), _tiles);
-			}
 		}
 		
 		/**
@@ -112,7 +119,17 @@ package flixel.tile
 		 */
 		public function destroy():void
 		{
+			if (_pixels != null)
+			{
+				_pixels.dispose();
+			}
 			_pixels = null;
+			_flashRect = null;
+			_queue.length = 0;
+			_queue = null;
+			_texture.destroy();
+			_texture = null;
+			_point = null;
 		}
 		
 		/**
@@ -124,7 +141,7 @@ package flixel.tile
 		public function fill(Color:uint=0):void
 		{
 			// TODO: check if this fillRect is really necessary.
-			if (_pixels != null)
+			if (_pixels != null && FlxG.render.isBlitting())
 			{
 				_pixels.fillRect(_flashRect, Color);
 			}
@@ -133,11 +150,10 @@ package flixel.tile
 		
 		/**
 		 * Read-only, nab the actual buffer <code>BitmapData</code> object.
-		 * TODO: Render: change Texture:Object to Texture:FlxTexture
 		 * 
 		 * @return	The buffer bitmap data.
 		 */
-		public function enqueue(FlashRect:Rectangle, FlashPoint:Point, Texture:Object = null):void
+		public function enqueue(FlashRect:Rectangle, FlashPoint:Point, Texture:FlxTexture = null):void
 		{
 			_queue[_queueSize].flashRect.x = FlashRect.x;
 			_queue[_queueSize].flashRect.y = FlashRect.y;
@@ -161,14 +177,19 @@ package flixel.tile
 		public function draw(Camera:FlxCamera,FlashPoint:Point):void
 		{
 			var i:uint = 0;
+			var texture:FlxTexture;
 
 			while (i < _queueSize)
 			{
 				_point.x = FlashPoint.x + _queue[i].flashPoint.x;
 				_point.y = FlashPoint.y + _queue[i].flashPoint.y;
 				
-				FlxG.render.copyPixels(Camera, _queue[i].texture ? _queue[i].texture.texture : _texture, _queue[i].texture ? _queue[i].texture.bitmapData : _tiles, _queue[i].flashRect, _point, null, null, true);
+				// If there queue has an specific texture, use it, otherwise use the tilemaps' buffer graphic.
+				texture = _queue[i].texture ? _queue[i].texture : _texture;
 				
+				// Render the queue entry
+				FlxG.render.copyPixels(Camera, texture.gpuData, texture.bitmapData, _queue[i].flashRect, _point, null, null, true);
+
 				i++;
 			}
 		}
