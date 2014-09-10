@@ -68,6 +68,10 @@ package flixel.system.render.genome2d
 		 * A temporary matrix to save memory during the render process.
 		 */
 		private var _matrix:Matrix;
+		/**
+		 * A temporary rectangle to save memory during the render process.
+		 */
+		private var _rect:Rectangle;
 		
 		/**
 		 * Initializes the render.
@@ -98,6 +102,7 @@ package flixel.system.render.genome2d
 			
 			// TODO: improve this!
 			_matrix = new Matrix();
+			_rect = new Rectangle();
 		}
 		
 		/**
@@ -123,15 +128,11 @@ package flixel.system.render.genome2d
 		
 		private function genomeInitializedHandler():void
 		{
-			// We will create a single texture from an embedded bitmap
-			//texture = GTextureFactory.createFromEmbedded("texture", TexturePNG);
-			
 			// Blank screen to be used to draw camera effects (flash, fade, etc)
 			var blankBitmap:BitmapData = new BitmapData(_config.viewRect.width, _config.viewRect.width, true, 0xFFFFFFFF);
 			_textureFX = GTextureFactory.createFromBitmapData("_textureFX" + Math.random(), blankBitmap);
 			
 			// Add a callback into the rendering pipeline
-			// TODO: add docs explaining how it works. 
 			_genome.onPreRender.add(_updateCallback);
 		}
 		
@@ -145,26 +146,44 @@ package flixel.system.render.genome2d
 		public function step(State:FlxState):void
 		{
 			var context:IContext = _genome.getContext();
-			var l:uint = FlxG.cameras.length;
+			var totalCameras:uint = FlxG.cameras.length;
+			var totalStateMembers:uint;
 			var camera:FlxCamera;
 			var basic:FlxBasic;
 			var i:uint = 0;
+			var j:uint = 0;
+			var renderPosX :Number;
+			var renderPosY :Number;
 			
 			// TODO: improve this! it's being called for every draw call, but it is required only when the debug buffer is in use.
 			_debugBuffer.fillRect(_config.viewRect, 0x00000000);
 			
-			while(i < l)
+			while(i < totalCameras)
 			{
 				camera = FlxG.cameras[i++];
 				
 				if(camera == null || !camera.exists || !camera.visible)
 					continue;
 					
-				context.setMaskRect(new Rectangle(camera.x * camera.zoom, camera.y * camera.zoom, camera.width * camera.zoom, camera.height * camera.zoom)); // TODO: Render: improve rectangle allocation
-				context.draw(camera.bgTexture.gpuData, (camera.fxShakeOffset.x + camera.x + camera.width / 2) * camera.zoom, (camera.fxShakeOffset.y + camera.y + camera.height / 2) * camera.zoom, camera.zoom, camera.zoom, 0, camera.colorTransform.redMultiplier, camera.colorTransform.greenMultiplier, camera.colorTransform.blueMultiplier);
+				// Define the camera clip rectangle. It will ensure the render draws
+				// only what the camera should display, nothing outside this area.
+				_rect.x = camera.x * camera.zoom;
+				_rect.y = camera.y * camera.zoom;
+				_rect.width = camera.width * camera.zoom;
+				_rect.height = camera.height * camera.zoom;
+				context.setMaskRect(_rect);
 				
-				var j:uint = 0;
-				while (j < State.members.length)
+				// Calculate the rendering position based on camera position and effects (shake, etc)
+				renderPosX = (camera.fxShakeOffset.x + camera.x + camera.width / 2) * camera.zoom;
+				renderPosY = (camera.fxShakeOffset.y + camera.y + camera.height / 2) * camera.zoom;
+				
+				// Render the camera background. It's the equivalent of calling camera.fill() in the blitting render.
+				context.draw(camera.bgTexture.gpuData, renderPosX, renderPosY, camera.zoom, camera.zoom, 0, camera.colorTransform.redMultiplier, camera.colorTransform.greenMultiplier, camera.colorTransform.blueMultiplier);
+				
+				// Iterate over every entry in the state, rendering it.
+				j = 0;
+				totalStateMembers = State.members.length;
+				while (j < totalStateMembers)
 				{
 					basic = State.members[j++];
 					
@@ -174,15 +193,21 @@ package flixel.system.render.genome2d
 					}
 				}
 				
+				// Render the camera FXs.
 				camera.drawFX();
 				
 				if (camera.hasActiveColorFX())
 				{
-					context.setMaskRect(new Rectangle(camera.x * camera.zoom, camera.y * camera.zoom, camera.width * camera.zoom, camera.height * camera.zoom)); // TODO: Render: improve rectangle allocation
+					// The rendering position for the textureFX should match the camera's X and Y position, since it 
+					// doesn't move with camera effects (e.g. shaking).
+					renderPosX = (camera.x + camera.width / 2) * camera.zoom;
+					renderPosY = (camera.y + camera.height / 2) * camera.zoom;
+					
 					// TODO: make camera's fxColorAcumulator a FlxColor and read it using camera.fxColor.r, camera.fxColor.b, etc.
-					context.draw(_textureFX, (camera.x + camera.width / 2) * camera.zoom, (camera.y + camera.height / 2) * camera.zoom, camera.zoom, camera.zoom, 0, ((camera.fxColorAcumulator >> 16) & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 8) & 0xFF) / 255.0, (camera.fxColorAcumulator & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 24) & 0xFF) / 255.0, GBlendMode.NORMAL);
+					context.draw(_textureFX, renderPosX, renderPosY, camera.zoom, camera.zoom, 0, ((camera.fxColorAcumulator >> 16) & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 8) & 0xFF) / 255.0, (camera.fxColorAcumulator & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 24) & 0xFF) / 255.0, GBlendMode.NORMAL);
 				}
 				
+				// Reset the camera fxColor accumulation buffer.
 				camera.fxColorAcumulator = 0;
 			}
 		}
