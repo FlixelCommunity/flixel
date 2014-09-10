@@ -188,7 +188,7 @@ package flixel.tile
 				texture = _queue[i].texture ? _queue[i].texture : _texture;
 				
 				// Render the queue entry
-				FlxG.render.copyPixels(Camera, texture.gpuData, texture.bitmapData, _queue[i].flashRect, _point, null, null, true);
+				FlxG.render.copyPixels(Camera, texture, texture.bitmapData, _queue[i].flashRect, _point, null, null, true);
 
 				i++;
 			}

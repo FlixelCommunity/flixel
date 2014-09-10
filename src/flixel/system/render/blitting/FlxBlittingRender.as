@@ -1,6 +1,5 @@
 package flixel.system.render.blitting 
 {
-	import com.genome2d.textures.GTexture;
 	import flash.display.BitmapData;
 	import flash.display.IBitmapDrawable;
 	import flash.events.Event;
@@ -10,6 +9,7 @@ package flixel.system.render.blitting
 	import flash.geom.Rectangle;
 	import flixel.*;
 	import flixel.system.render.FlxRender;
+	import flixel.system.render.FlxTexture;
 	
 	/**
 	 * A CPU render based on blitting. It uses Bitmaps draw thing into the screen, copying pixels
@@ -90,15 +90,15 @@ package flixel.system.render.blitting
 		 * at the destination point of the informed destination.
 		 * 
 		 * @param	Camera				The camera that is being rendered to the screen at the moment.
-		 * @param	SourceTexture		TODO: encapsulate it under FlxTexture.
-		 * @param	SourceBitmapData	TODO: encapsulate it under FlxTexture.
+		 * @param	SourceTexture		A GPU texture representing the graphic to be rendered.
+		 * @param	SourceBitmapData	A bitmapData representing the graphic to be rendered.
 		 * @param	SourceRect			A rectangle that defines the area of the source image to use as input.
 		 * @param	DestPoint			The destination point that represents the upper-left corner of the rectangular area where the new pixels are placed.
 		 * @param	AlphaBitmapData		A secondary, alpha BitmapData object source.
 		 * @param	AlphaPoint			The point in the alpha BitmapData object source that corresponds to the upper-left corner of the SourceRect parameter.
 		 * @param	MergeAlpha			To use the alpha channel, set the value to true. To copy pixels with no alpha channel, set the value to <code>false</code>
 		 */
-		public function copyPixels(Camera:FlxCamera, SourceTexture:GTexture, SourceBitmapData:BitmapData, SourceRect:Rectangle, DestPoint:Point, AlphaBitmapData:BitmapData = null, AlphaPoint:Point = null, MergeAlpha:Boolean = false):void
+		public function copyPixels(Camera:FlxCamera, SourceTexture:FlxTexture, SourceBitmapData:BitmapData, SourceRect:Rectangle, DestPoint:Point, AlphaBitmapData:BitmapData = null, AlphaPoint:Point = null, MergeAlpha:Boolean = false):void
 		{
 			Camera.buffer.copyPixels(SourceBitmapData, SourceRect, DestPoint, AlphaBitmapData, AlphaPoint, MergeAlpha);
 		}
@@ -112,8 +112,8 @@ package flixel.system.render.blitting
 		 * This method is an imitation of <code>BitmapData#draw()</code>.
 		 * 
 		 * @param	Camera				The camera that is being rendered to the screen at the moment.
-		 * @param	SourceTexture		TODO: encapsulate it under FlxTexture.
-		 * @param	Source				TODO: encapsulate it under FlxTexture.
+		 * @param	SourceTexture		A GPU texture representing the graphic to be rendered.
+		 * @param	Source				A bitmapData representing the graphic to be rendered.
 		 * @param	SourceRect			A rectangle that defines the area of the source image to use as input.
 		 * @param	TransMatrix			A Matrix object used to scale, rotate, or translate the coordinates of the input. It's <code>null</code> by default, meaning no transformation will be applied.
 		 * @param	ColorTrans			A ColorTransform object used to adjust the color values of the input during rendering. It's <code>null</code> by default, meaning no transformation will be applied.
@@ -121,7 +121,7 @@ package flixel.system.render.blitting
 		 * @param	ClipRect			A Rectangle object that defines the area of the source object to draw. If <code>null</code> is provided (default), no clipping occurs and the entire source object is drawn.
 		 * @param	Smoothing			A Boolean value that determines whether a the source object is smoothed when scaled or rotated, due to a scaling or rotation in the Matrix parameter.
 		 */
-		public function draw(Camera:FlxCamera, SourceTexture:GTexture, Source:IBitmapDrawable, SourceRect:Rectangle, TransMatrix:Matrix = null, ColorTrans:ColorTransform = null, BlendMode:String = null, ClipRect:Rectangle = null, Smoothing:Boolean = false):void
+		public function draw(Camera:FlxCamera, SourceTexture:FlxTexture, Source:IBitmapDrawable, SourceRect:Rectangle, TransMatrix:Matrix = null, ColorTrans:ColorTransform = null, BlendMode:String = null, ClipRect:Rectangle = null, Smoothing:Boolean = false):void
 		{
 			Camera.buffer.draw(Source, TransMatrix, ColorTrans, BlendMode, ClipRect, Smoothing);
 		}
