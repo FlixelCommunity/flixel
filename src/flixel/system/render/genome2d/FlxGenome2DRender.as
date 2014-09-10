@@ -88,6 +88,7 @@ package flixel.system.render.genome2d
 			// Initialize Genome2D
 			_genome = Genome2D.getInstance();
 			_genome.onInitialized.addOnce(genomeInitializedHandler);
+			_genome.onFailed.addOnce(genomeFailedHandler);
 			_genome.init(_config);
 			
 			_updateCallback = UpdateCallback;
@@ -101,7 +102,6 @@ package flixel.system.render.genome2d
 			Game.parent.addChild(_debugBufferContainer);
 			_debugBufferContainer.visible = false;
 			
-			// TODO: improve this!
 			_matrix = new Matrix();
 			_rect = new Rectangle();
 		}
@@ -125,6 +125,11 @@ package flixel.system.render.genome2d
 		public function isBlitting():Boolean
 		{
 			return false;
+		}
+		
+		private function genomeFailedHandler(ErrorMessage:String):void
+		{
+			FlxG.log("FlxGenome2DRender#init() - " + ErrorMessage);
 		}
 		
 		private function genomeInitializedHandler():void
