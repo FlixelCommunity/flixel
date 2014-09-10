@@ -178,6 +178,7 @@ package flixel.system.render.genome2d
 				renderPosY = (camera.fxShakeOffset.y + camera.y + camera.height / 2) * camera.zoom;
 				
 				// Render the camera background. It's the equivalent of calling camera.fill() in the blitting render.
+				context.setBackgroundColor(camera.bgColor);
 				context.draw(camera.bgTexture.gpuData, renderPosX, renderPosY, camera.zoom, camera.zoom, 0, camera.colorTransform.redMultiplier, camera.colorTransform.greenMultiplier, camera.colorTransform.blueMultiplier);
 				
 				// Iterate over every entry in the state, rendering it.
@@ -218,21 +219,27 @@ package flixel.system.render.genome2d
 		 * at the destination point of the informed destination.
 		 * 
 		 * @param	Camera				The camera that is being rendered to the screen at the moment.
-		 * @param	sourceTexture		TODO: encapsulate it under FlxTexture.
-		 * @param	sourceBitmapData	TODO: encapsulate it under FlxTexture.
-		 * @param	sourceRect			A rectangle that defines the area of the source image to use as input.
-		 * @param	destPoint			The destination point that represents the upper-left corner of the rectangular area where the new pixels are placed.
-		 * @param	alphaBitmapData		A secondary, alpha BitmapData object source.
-		 * @param	alphaPoint			The point in the alpha BitmapData object source that corresponds to the upper-left corner of the sourceRect parameter.
-		 * @param	mergeAlpha			To use the alpha channel, set the value to true. To copy pixels with no alpha channel, set the value to <code>false</code>
+		 * @param	SourceTexture		TODO: encapsulate it under FlxTexture.
+		 * @param	SourceBitmapData	TODO: encapsulate it under FlxTexture.
+		 * @param	SourceRect			A rectangle that defines the area of the source image to use as input.
+		 * @param	DestPoint			The destination point that represents the upper-left corner of the rectangular area where the new pixels are placed.
+		 * @param	AlphaBitmapData		A secondary, alpha BitmapData object source.
+		 * @param	AlphaPoint			The point in the alpha BitmapData object source that corresponds to the upper-left corner of the SourceRect parameter.
+		 * @param	MergeAlpha			To use the alpha channel, set the value to true. To copy pixels with no alpha channel, set the value to <code>false</code>
 		 */
-		public function copyPixels(Camera:FlxCamera, sourceTexture:GTexture, sourceBitmapData:BitmapData, sourceRect:Rectangle, destPoint:Point, alphaBitmapData:BitmapData = null, alphaPoint:Point = null, mergeAlpha:Boolean = false):void
+		public function copyPixels(Camera:FlxCamera, SourceTexture:GTexture, SourceBitmapData:BitmapData, SourceRect:Rectangle, DestPoint:Point, AlphaBitmapData:BitmapData = null, AlphaPoint:Point = null, MergeAlpha:Boolean = false):void
 		{
 			var context:IContext = _genome.getContext();
 			
-			context.setBackgroundColor(Camera.bgColor);
-			context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom)); // TODO: improve rectangle allocation
-			context.drawSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, (Camera.fxShakeOffset.x + Camera.x + destPoint.x + sourceRect.width / 2) * Camera.zoom, (Camera.fxShakeOffset.y + Camera.y + destPoint.y + sourceRect.height / 2) * Camera.zoom, Camera.zoom, Camera.zoom);
+			context.drawSource(	SourceTexture,
+								SourceRect.x,
+								SourceRect.y,
+								SourceRect.width,
+								SourceRect.height,
+								(Camera.fxShakeOffset.x + Camera.x + DestPoint.x + SourceRect.width / 2) * Camera.zoom,
+								(Camera.fxShakeOffset.y + Camera.y + DestPoint.y + SourceRect.height / 2) * Camera.zoom,
+								Camera.zoom,
+								Camera.zoom);
 		}
 		
 		/**
