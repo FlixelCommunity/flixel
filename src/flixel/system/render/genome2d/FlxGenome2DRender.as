@@ -94,7 +94,7 @@ package flixel.system.render.genome2d
 			// Initialize the debug buffer, used to draw things using blitting when GPU textures
 			// are not available (e.g. dynamic debug lines).
 			
-			_debugBuffer = new BitmapData(Game.stage.stageWidth, Game.stage.stageHeight, true, 0xFF000000);
+			_debugBuffer = new BitmapData(Game.stage.stageWidth, Game.stage.stageHeight, true, 0x00000000);
 			_debugBufferContainer = new Bitmap(_debugBuffer);
 			
 			Game.parent.addChild(_debugBufferContainer);
@@ -155,8 +155,15 @@ package flixel.system.render.genome2d
 			var renderPosX :Number;
 			var renderPosY :Number;
 			
-			// TODO: improve this! it's being called for every draw call, but it is required only when the debug buffer is in use.
-			_debugBuffer.fillRect(_config.viewRect, 0x00000000);
+			if (_debugBufferContainer.visible)
+			{
+				// Debug buffer is active (visible), clear it before drawing anything.
+				_debugBuffer.fillRect(_config.viewRect, 0x00000000);
+				
+				// Disable the debug buffer for this frame. If someone calls drawDebug()
+				// during the rendering step, the debugBuffer will become visible again.
+				_debugBufferContainer.visible = false;
+			}
 			
 			while(i < totalCameras)
 			{
@@ -285,13 +292,12 @@ package flixel.system.render.genome2d
 		 * @param	Camera				The camera that is being rendered to the screen at the moment.
 		 * @param	source				The display object or BitmapData object to draw to the BitmapData object.
 		 */
-		public function drawDebug(Camera:FlxCamera, source:IBitmapDrawable):void
+		public function drawDebug(Camera:FlxCamera, Source:IBitmapDrawable):void
 		{
-			// TODO: improve this line
-			_matrix.createBox(Camera.zoom, Camera.zoom);
+			_matrix.createBox(Camera.zoom, Camera.zoom, 0, 1, 1);
 
 			_debugBufferContainer.visible = true;
-			_debugBuffer.draw(source, _matrix);
+			_debugBuffer.draw(Source, _matrix);
 		}
 	}
 }
