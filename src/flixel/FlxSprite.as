@@ -483,7 +483,10 @@ package flixel
 			else //Advanced render
 			{
 				_matrix.identity();
-				_matrix.translate(-origin.x,-origin.y);
+				if (FlxG.render.isBlitting())
+				{
+					_matrix.translate( -origin.x, -origin.y);
+				}
 				_matrix.scale(scale.x,scale.y);
 				if((angle != 0) && (_bakedRotation <= 0))
 					_matrix.rotate(angle * 0.017453293);

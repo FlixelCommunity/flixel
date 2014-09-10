@@ -244,31 +244,37 @@ package flixel.system.render.genome2d
 		
 		/**
 		 * Draws the source display object into the screen using transformations. You can specify matrix, colorTransform, 
-		 * blendMode, and a destination clipRect parameter to control how the rendering performs.
+		 * blendMode, and a destination ClipRect parameter to control how the rendering performs.
 		 * Optionally, you can specify whether the bitmap should be smoothed when scaled (this works only if the source object
 		 * is a BitmapData object).
 		 * 
 		 * This method is an imitation of <code>BitmapData#draw()</code>.
 		 * 
 		 * @param	Camera				The camera that is being rendered to the screen at the moment.
-		 * @param	sourceTexture		TODO: encapsulate it under FlxTexture.
-		 * @param	source				TODO: encapsulate it under FlxTexture.
-		 * @param	sourceRect			A rectangle that defines the area of the source image to use as input.
-		 * @param	matrix				A Matrix object used to scale, rotate, or translate the coordinates of the input. It's <code>null</code> by default, meaning no transformation will be applied.
-		 * @param	colorTransform		A ColorTransform object used to adjust the color values of the input during rendering. It's <code>null</code> by default, meaning no transformation will be applied.
-		 * @param	blendMode			A string value, from the <code>flash.display.BlendMode</code> class, specifying the blend mode to be applied during rendering.
-		 * @param	clipRect			A Rectangle object that defines the area of the source object to draw. If <code>null</code> is provided (default), no clipping occurs and the entire source object is drawn.
-		 * @param	smoothing			A Boolean value that determines whether a the source object is smoothed when scaled or rotated, due to a scaling or rotation in the matrix parameter.
+		 * @param	SourceTexture		TODO: encapsulate it under FlxTexture.
+		 * @param	Source				TODO: encapsulate it under FlxTexture.
+		 * @param	SourceRect			A rectangle that defines the area of the source image to use as input.
+		 * @param	TransMatrix			A Matrix object used to scale, rotate, or translate the coordinates of the input. It's <code>null</code> by default, meaning no transformation will be applied.
+		 * @param	ColorTrans			A ColorTransform object used to adjust the color values of the input during rendering. It's <code>null</code> by default, meaning no transformation will be applied.
+		 * @param	BlendMode			A string value, from the <code>flash.display.BlendMode</code> class, specifying the blend mode to be applied during rendering.
+		 * @param	ClipRect			A Rectangle object that defines the area of the source object to draw. If <code>null</code> is provided (default), no clipping occurs and the entire source object is drawn.
+		 * @param	Smoothing			A Boolean value that determines whether a the source object is smoothed when scaled or rotated, due to a scaling or rotation in the Matrix parameter.
 		 */
-		public function draw(Camera:FlxCamera, sourceTexture:GTexture, source:IBitmapDrawable, sourceRect:Rectangle, matrix:Matrix = null, colorTransform:ColorTransform = null, blendMode:String = null, clipRect:Rectangle = null, smoothing:Boolean = false):void
+		public function draw(Camera:FlxCamera, SourceTexture:GTexture, Source:IBitmapDrawable, SourceRect:Rectangle, TransMatrix:Matrix = null, ColorTrans:ColorTransform = null, BlendMode:String = null, ClipRect:Rectangle = null, Smoothing:Boolean = false):void
 		{
-			var context:IContext;
-			
-			context = _genome.getContext();
+			var context:IContext = _genome.getContext();
 
-			context.setBackgroundColor(Camera.bgColor);
-			context.setMaskRect(new Rectangle(Camera.x * Camera.zoom, Camera.y * Camera.zoom, Camera.width * Camera.zoom, Camera.height * Camera.zoom));
-			context.drawMatrixSource(sourceTexture, sourceRect.x, sourceRect.y, sourceRect.width, sourceRect.height, matrix.a * Camera.zoom, matrix.b * Camera.zoom, matrix.c * Camera.zoom, matrix.d * Camera.zoom, (matrix.tx + Camera.fxShakeOffset.x) * Camera.zoom, (matrix.ty + Camera.fxShakeOffset.y) * Camera.zoom);
+			context.drawMatrixSource(SourceTexture,
+									 SourceRect.x,
+									 SourceRect.y,
+									 SourceRect.width,
+									 SourceRect.height,
+									 TransMatrix.a * Camera.zoom,
+									 TransMatrix.b * Camera.zoom,
+									 TransMatrix.c * Camera.zoom,
+									 TransMatrix.d * Camera.zoom,
+									 (TransMatrix.tx + Camera.fxShakeOffset.x) * Camera.zoom,
+									 (TransMatrix.ty + Camera.fxShakeOffset.y) * Camera.zoom);
 		}
 		
 		/**
