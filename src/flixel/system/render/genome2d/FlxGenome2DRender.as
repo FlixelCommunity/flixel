@@ -191,8 +191,9 @@ package flixel.system.render.genome2d
 				renderPosY = (camera.fxShakeOffset.y + camera.y + camera.height / 2) * camera.zoom;
 				
 				// Render the camera background. It's the equivalent of calling camera.fill() in the blitting render.
+				// TODO: make camera#color a FlxColor and read it using camera.color.r, camera.color.b, etc.
 				context.setBackgroundColor(camera.bgColor);
-				context.draw(camera.bgTexture.gpuData, renderPosX, renderPosY, camera.zoom, camera.zoom, 0, camera.colorTransform.redMultiplier, camera.colorTransform.greenMultiplier, camera.colorTransform.blueMultiplier);
+				context.draw(camera.bgTexture.gpuData, renderPosX, renderPosY, camera.zoom, camera.zoom, 0, ((camera.color >> 16) & 0xFF) / 255.0, ((camera.color >> 8) & 0xFF) / 255.0, (camera.color & 0xFF) / 255.0);
 				
 				// Iterate over every entry in the state, rendering it.
 				j = 0;
@@ -217,7 +218,7 @@ package flixel.system.render.genome2d
 					renderPosX = (camera.x + camera.width / 2) * camera.zoom;
 					renderPosY = (camera.y + camera.height / 2) * camera.zoom;
 					
-					// TODO: make camera's fxColorAcumulator a FlxColor and read it using camera.fxColor.r, camera.fxColor.b, etc.
+					// TODO: make camera's fxColorAcumulator a FlxColor and read it using camera.fxColorAcumulator.r, camera.fxColorAcumulator.b, etc.
 					context.draw(_textureFX, renderPosX, renderPosY, camera.zoom, camera.zoom, 0, ((camera.fxColorAcumulator >> 16) & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 8) & 0xFF) / 255.0, (camera.fxColorAcumulator & 0xFF) / 255.0, ((camera.fxColorAcumulator >> 24) & 0xFF) / 255.0, GBlendMode.NORMAL);
 				}
 				

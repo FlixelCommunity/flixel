@@ -100,7 +100,6 @@ package flixel
 		public var scroll:FlxPoint;
 		/**
 		 * The actual bitmap data of the camera display itself.
-		 * TODO: Render: Check if it is necessary.
 		 */
 		public var buffer:BitmapData;
 		/**
@@ -680,14 +679,6 @@ package flixel
 		}
 		
 		/**
-		 * TODO: Render: add docs
-		 */
-		public function get colorTransform():ColorTransform
-		{
-			return _flashBitmap.transform.colorTransform;
-		}
-		
-		/**
 		 * Whether the camera display is smooth and filtered, or chunky and pixelated.
 		 * Default behavior is chunky-style.
 		 */
@@ -717,7 +708,11 @@ package flixel
 		}
 		
 		/**
-		 * TODO: Render: add docs
+		 * The current color being added to the buffer because of any visual effect (e.g. flash or fade).
+		 * When an effect is in place, such as after calling <code>fade()</code>, the effect's color
+		 * must be added to the camera buffer. When there are more than one active effect, their color
+		 * is accumulated (blended) and drawn to the camera buffer.
+		 * This property stores the current accumulated color being draw to the buffer.
 		 */
 		public function set fxColorAcumulator(Value:uint):void
 		{
