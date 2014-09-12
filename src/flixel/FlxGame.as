@@ -151,7 +151,7 @@ package flixel
 		 * @param	GameFramerate	How frequently the game should update (default is 60 times per second).
 		 * @param	FlashFramerate	Sets the actual display framerate for Flash player (default is 30 times per second).
 		 * @param	UseSystemCursor	Whether to use the default OS mouse pointer, or to use custom flixel ones.
-		 * @param	UseGPU			Whether to use hardware acceleration for rendering (with Genome2D). Default is <code>false</code> (meaning that flixel must use blitting to render things).
+		 * @param	UseGPU			Whether to use hardware acceleration for rendering (with Genome2D). Default is <code>false</code> (meaning that flixel will use blitting/CPU to draw things).
 		 */
 		public function FlxGame(GameSizeX:uint,GameSizeY:uint,InitialState:Class,Zoom:Number=1,GameFramerate:uint=60,FlashFramerate:uint=30,UseSystemCursor:Boolean=false,UseGPU:Boolean=false)
 		{

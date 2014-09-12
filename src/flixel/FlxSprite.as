@@ -198,6 +198,7 @@ package flixel
 			_color = 0x00ffffff;
 			blend = null;
 			antialiasing = false;
+			cameras = null;
 			
 			finished = false;
 			_facing = RIGHT;

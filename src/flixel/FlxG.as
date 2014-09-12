@@ -704,8 +704,7 @@ package flixel
 		}
 		
 		/**
-		 * TODO: Render: add docs
-		 * Read-only: access the game render.
+		 * Read-only: access the game render. You can select a CPU or a GPU render during the game creation.
 		 */
 		static public function get render():FlxRender
 		{

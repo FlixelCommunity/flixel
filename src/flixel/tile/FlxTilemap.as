@@ -143,6 +143,7 @@ package flixel.tile
 			immovable = true;
 			moves = false;
 			
+			cameras = null;
 			_debugTileNotSolid = null;
 			_debugTilePartial = null;
 			_debugTileSolid = null;
