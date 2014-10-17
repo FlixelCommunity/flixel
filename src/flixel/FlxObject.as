@@ -1154,5 +1154,86 @@ package flixel
 			else
 				return false;
 		}
+		
+		
+		/*     --- Deprecated members in Flixel v2.57 ---     */
+		/*  To be removed after developers have had time to adjust to the new changes. */
+		
+		/**
+		 * Path behavior controls: move from the start of the path to the end then stop.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.FORWARD</code> instead.
+		 */
+		static public function get PATH_FORWARD():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_FORWARD', 'FlxPath.FORWARD');
+			return FlxPath.FORWARD;
+		}
+		
+		/**
+		 * Path behavior controls: move from the end of the path to the start then stop.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.BACKWARD</code> instead.
+		 */
+		static public function get PATH_BACKWARD():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_BACKWARD', 'FlxPath.BACKWARD');
+			return FlxPath.BACKWARD;
+		}
+		
+		/**
+		 * Path behavior controls: move from the start of the path to the end then directly back to the start, and start over.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.LOOP_FORWARD</code> instead.
+		 */
+		static public function get PATH_LOOP_FORWARD():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_LOOP_FORWARD', 'FlxPath.LOOP_FORWARD');
+			return FlxPath.LOOP_FORWARD;
+		}
+		
+		/**
+		 * Path behavior controls: move from the end of the path to the start then directly back to the end, and start over.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.LOOP_BACKWARD</code> instead.
+		 */
+		static public function get PATH_LOOP_BACKWARD():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_LOOP_BACKWARD', 'FlxPath.LOOP_BACKWARD');
+			return FlxPath.LOOP_BACKWARD;
+		}
+		
+		/**
+		 * Path behavior controls: move from the start of the path to the end then turn around and go back to the start, over and over.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.YOYO</code> instead.
+		 */
+		static public function get PATH_YOYO():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_YOYO', 'FlxPath.YOYO');
+			return FlxPath.YOYO;
+		}
+		
+		/**
+		 * Path behavior controls: ignores any vertical component to the path data, only follows side to side.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.HORIZONTAL_ONLY</code> instead.
+		 */
+		static public function get PATH_HORIZONTAL_ONLY():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_HORIZONTAL_ONLY', 'FlxPath.HORIZONTAL_ONLY');
+			return FlxPath.HORIZONTAL_ONLY;
+		}
+		
+		/**
+		 * Path behavior controls: ignores any horizontal component to the path data, only follows up and down.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.VERTICAL_ONLY</code> instead.
+		 */
+		static public function get PATH_VERTICAL_ONLY():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_VERTICAL_ONLY', 'FlxPath.VERTICAL_ONLY');
+			return FlxPath.VERTICAL_ONLY;
+		}
 	}
 }
