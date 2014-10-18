@@ -20,7 +20,7 @@ package flixel.system.debug
 	 * 
 	 * @author Adam Atomic
 	 */
-	public class VCR extends Sprite
+	public class VCR extends FlxToolbar
 	{
 		[Embed(source="../../assets/vcr/open.png")] protected var ImgOpen:Class;
 		[Embed(source="../../assets/vcr/record_off.png")] protected var ImgRecordOff:Class;
@@ -132,10 +132,8 @@ package flixel.system.debug
 			
 			stepRequested = false;
 			_file = null;
-
-			unpress();
-			checkOver();
-			updateGUI();
+			
+			updateGUIFromMouse();
 			
 			addEventListener(Event.ENTER_FRAME,init);
 		}
@@ -143,8 +141,8 @@ package flixel.system.debug
 		/**
 		 * Clean up memory.
 		 */
-		public function destroy():void
-		{
+		override public function destroy():void 
+		{			
 			_file = null;
 			
 			if (_open) removeChild(_open);
@@ -166,12 +164,7 @@ package flixel.system.debug
 			if (_step) removeChild(_step);
 			_step = null;
 			
-			if (parent)
-			{
-				parent.removeEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
-				parent.removeEventListener(MouseEvent.MOUSE_DOWN,handleMouseDown);
-				parent.removeEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
-			}
+			super.destroy();
 		}
 		
 		/**
@@ -435,41 +428,14 @@ package flixel.system.debug
 		//***EVENT HANDLERS***//
 		
 		/**
-		 * Just sets up basic mouse listeners, a la FlxWindow.
-		 * 
-		 * @param	E	Flash event.
-		 */
-		protected function init(E:Event=null):void
-		{
-			if(root == null)
-				return;
-			removeEventListener(Event.ENTER_FRAME,init);
-
-			parent.addEventListener(MouseEvent.MOUSE_MOVE,handleMouseMove);
-			parent.addEventListener(MouseEvent.MOUSE_DOWN,handleMouseDown);
-			parent.addEventListener(MouseEvent.MOUSE_UP,handleMouseUp);
-		}
-		
-		/**
-		 * If the mouse moves, check to see if any buttons should be highlighted.
-		 * 
-		 * @param	E	Flash mouse event.
-		 */
-		protected function handleMouseMove(E:MouseEvent=null):void
-		{
-			if(!checkOver())
-				unpress();
-			updateGUI();
-		}
-		
-		/**
 		 * If the mouse is pressed down, check to see if the user started pressing down a specific button.
 		 * 
 		 * @param	E	Flash mouse event.
 		 */
-		protected function handleMouseDown(E:MouseEvent=null):void
+		override protected function handleMouseDown(E:MouseEvent = null):void 
 		{
-			unpress();
+			super.handleMouseDown(E);
+			
 			if(_overOpen)
 				_pressingOpen = true;
 			if(_overRecord)
@@ -488,8 +454,10 @@ package flixel.system.debug
 		 * 
 		 * @param	E	Flash mouse event.
 		 */
-		protected function handleMouseUp(E:MouseEvent=null):void
+		override protected function handleMouseUp(E:MouseEvent = null):void 
 		{
+			super.handleMouseUp(E);
+			
 			if(_overOpen && _pressingOpen)
 				onOpen();
 			else if(_overRecord && _pressingRecord)
@@ -513,9 +481,7 @@ package flixel.system.debug
 			else if(_overStep && _pressingStep)
 				onStep();
 			
-			unpress();
-			checkOver();
-			updateGUI();
+			updateGUIFromMouse();
 		}
 		
 		//***MISC GUI MGMT STUFF***//
@@ -526,8 +492,10 @@ package flixel.system.debug
 		 * 
 		 * @return	Whether the mouse was over any buttons or not.
 		 */
-		protected function checkOver():Boolean
+		override protected function checkOver():Boolean 
 		{
+			super.checkOver();
+			
 			_overOpen = _overRecord = _overRestart = _overPause = _overStep = false;
 			if((mouseX < 0) || (mouseX > width) || (mouseY < 0) || (mouseY > 15))
 				return false;
@@ -550,8 +518,10 @@ package flixel.system.debug
 		/**
 		 * Sets all the pressed state variables for the buttons to false.
 		 */
-		protected function unpress():void
+		override protected function unpress():void 
 		{
+			super.unpress();
+			
 			_pressingOpen = false;
 			_pressingRecord = false;
 			_pressingRestart = false;
@@ -562,8 +532,10 @@ package flixel.system.debug
 		/**
 		 * Figures out what buttons to highlight based on the _overWhatever and _pressingWhatever variables.
 		 */
-		protected function updateGUI():void
+		override protected function updateGUI():void 
 		{
+			super.updateGUI();
+			
 			if(_recordOn.visible)
 			{
 				_open.alpha = _restart.alpha = _pause.alpha = _step.alpha = 0.35;
