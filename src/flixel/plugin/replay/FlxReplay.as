@@ -50,6 +50,10 @@ package flixel.plugin.replay
 		 * Internal helper variable for keeping track of where we are in <code>_frames</code> during recording or replay.
 		 */
 		protected var _marker:int;
+		/**
+		 * Container for the record, stop and play buttons.
+		 */
+		protected var _vcr:VCR;
 		
 		/**
 		 * Flag for whether a playback of a recording was requested.
@@ -81,10 +85,6 @@ package flixel.plugin.replay
 		 */
 		internal var _replayCallback:Function;
 		
-		
-		// TODO: remove this hack!
-		internal var _debugger:Object;
-		
 		/**
 		 * Instantiate a new replay object.  Doesn't actually do much until you call create() or load().
 		 */
@@ -103,8 +103,11 @@ package flixel.plugin.replay
 			_replaying = false;
 			_recording = false;
 			
-			// TODO: remove this hack!
-			_debugger = {};
+			// Add buttons to record, stop, pause, etc.
+			_vcr = new VCR();
+			_vcr.x = (FlxG.debugger.width - _vcr.width/2)/2;
+			_vcr.y = 2;
+			FlxG.debugger.addOverlay(_vcr);
 			
 			// Tell Flixel to call handlePreUpdate() before the current state is updated.
 			FlxG.signals.preUpdate.add(handlePreUpdate);
@@ -117,6 +120,21 @@ package flixel.plugin.replay
 		 * Clean up memory.
 		 */
 		public function destroy():void
+		{
+			destroyFrames();
+			
+			_vcr.destroy();
+			FlxG.debugger.removeOverlay(_vcr);
+			_vcr = null;
+			
+			FlxG.signals.preUpdate.remove(handlePreUpdate);
+			FlxG.signals.beforeStateSwitch.remove(handleStateSwitch);
+		}
+		
+		/**
+		 * Destroys any existing frames to prepare for a new gameplay recording.
+		 */
+		protected function destroyFrames():void
 		{
 			if(_frames != null)
 			{
@@ -134,7 +152,7 @@ package flixel.plugin.replay
 		 */
 		public function create(Seed:Number):void
 		{
-			destroy();
+			destroyFrames();
 			init();
 			seed = Seed;
 			rewind();
@@ -265,11 +283,8 @@ package flixel.plugin.replay
 				_recordingRequested = false;
 				create(FlxG.random.seed);
 				_recording = true;
-				if(_debugger != null)
-				{
-					vcr.recording();
-					FlxG.log("FLIXEL: starting new flixel gameplay record.");
-				}
+				_vcr.recording();
+				FlxG.log("FLIXEL: starting new flixel gameplay record.");
 			}
 			else if(_replayRequested)
 			{
@@ -277,8 +292,7 @@ package flixel.plugin.replay
 				rewind();
 				FlxG.random.seed = seed;
 				FlxG.ignoreInput = true;
-				if(_debugger != null)
-					vcr.playing();
+				_vcr.playing();
 				_replaying = true;
 			}
 			
@@ -312,15 +326,13 @@ package flixel.plugin.replay
 						_replayCallback = null;
 					}
 				}
-				if(_debugger != null)
-					vcr.updateRuntime(_step);
+				_vcr.updateRuntime(_step);
 			}
 			
 			if(_recording)
 			{
 				recordFrame();
-				if(_debugger != null)
-					vcr.updateRuntime(_step);
+				_vcr.updateRuntime(_step);
 			}
 		}
 		
@@ -340,7 +352,7 @@ package flixel.plugin.replay
 		 */
 		protected function handleKeyDown(FlashEvent:KeyboardEvent):void
 		{
-			if(_replaying && (_replayCancelKeys != null) && (_debugger == null) && (FlashEvent.keyCode != 192) && (FlashEvent.keyCode != 220))
+			if(_replaying && (_replayCancelKeys != null) && (FlashEvent.keyCode != 192) && (FlashEvent.keyCode != 220))
 			{
 				var replayCancelKey:String;
 				var i:uint = 0;
@@ -438,8 +450,7 @@ package flixel.plugin.replay
 		public function stopReplay():void
 		{
 			_replaying = false;
-			if(_debugger != null)
-				vcr.stopped();
+			_vcr.stopped();
 			FlxG.resetInput();
 		}
 		
@@ -465,15 +476,8 @@ package flixel.plugin.replay
 		public function stopRecording():String
 		{
 			_recording = false;
-			if(_debugger != null)
-				vcr.stopped();
+			_vcr.stopped();
 			return save();
-		}
-		
-		// TODO: remove this hack!
-		public function get vcr():VCR
-		{
-			return FlxDebugger.vcr;
 		}
 	}
 }

@@ -32,11 +32,6 @@ package flixel.system.debug
 		 */
 		public var watch:Watch;
 		/**
-		 * Container for the record, stop and play buttons.
-		 * TODO: move this hack to FlxReplay, adding the proper signals.
-		 */
-		public static var vcr:VCR;
-		/**
 		 * Container for the visual debug mode toggle.
 		 */
 		public var vis:Vis;
@@ -133,11 +128,6 @@ package flixel.system.debug
 			perf = new Perf("stats",0,0,false,screenBounds);
 			_overlays.addChild(perf);
 			
-			vcr = new VCR();
-			vcr.x = (_screen.x - vcr.width/2)/2;
-			vcr.y = 2;
-			_overlays.addChild(vcr);
-			
 			vis = new Vis();
 			vis.x = _screen.x-vis.width - 4;
 			vis.y = 2;
@@ -176,13 +166,6 @@ package flixel.system.debug
 				_overlays.removeChild(perf);
 				perf.destroy();
 				perf = null;
-			}
-			
-			if (vcr != null)
-			{
-				_overlays.removeChild(vcr);
-				vcr.destroy();
-				vcr = null;
 			}
 			
 			if (vis != null)
