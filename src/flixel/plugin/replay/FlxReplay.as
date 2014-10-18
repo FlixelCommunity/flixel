@@ -298,7 +298,7 @@ package flixel.plugin.replay
 				_replaying = true;
 			}
 			
-			if(_replaying && !vcr.paused)
+			if(_replaying && !_vcr.paused)
 			{
 				playNextFrame();
 				if(_replayTimer > 0)
