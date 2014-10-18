@@ -506,9 +506,8 @@ package flixel
 			//Let mobile devs opt out of unnecessary overlays.
 			if(!FlxG.mobile)
 			{
-				//Debugger overlay
-				_debugger = new FlxDebugger(FlxG.width*FlxCamera.defaultZoom,FlxG.height*FlxCamera.defaultZoom,useSystemCursor,FlxG.debug);
-				addChild(_debugger.overlays);				
+				//Debugger overlay. It will auto add itself to the game's display list.
+				_debugger = new FlxDebugger(this,FlxG.width*FlxCamera.defaultZoom,FlxG.height*FlxCamera.defaultZoom,useSystemCursor,FlxG.debug);
 				
 				//Volume display tab
 				createSoundTray();

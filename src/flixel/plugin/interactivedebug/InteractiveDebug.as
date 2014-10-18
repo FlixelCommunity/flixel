@@ -29,10 +29,10 @@ package flixel.plugin.interactivedebug
 		{		
 			// Add the panel where all tools icons will be contained
 			_toolsPanel = new ToolsPanel();
-			_toolsPanel.x = FlxG.debugger.overlays.width - 15;
+			_toolsPanel.x = FlxG.debugger.width - 15;
 			_toolsPanel.y = 150;
 			
-			FlxG.debugger.overlays.addChild(_toolsPanel);
+			FlxG.debugger.addOverlay(_toolsPanel);
 			
 			// Add all interactive debug tools (pointer, eraser, etc)
 			addTools();

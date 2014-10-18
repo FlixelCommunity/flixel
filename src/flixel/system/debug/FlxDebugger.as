@@ -73,12 +73,13 @@ package flixel.system.debug
 		/**
 		 * Instantiates the debugger overlay.
 		 * 
-		 * @param Width		The width of the screen.
-		 * @param Height	The height of the screen.
-		 * @param UseSystemCursor tells if the default system mouse cursor should be used instead of custom Flixel mouse cursors.
-		 * @param Initialize If <code>true</code> (default), the debugger will initialize its interal structures and will be ready to work, otherwise it remain in a "stand-by" mode and will only initialize if <code>show()</code> is invoked.
+		 * @param OverlaysContainer	The container where the debugger can add its overlays.
+		 * @param Width				The width of the screen.
+		 * @param Height			The height of the screen.
+		 * @param UseSystemCursor 	Tells if the default system mouse cursor should be used instead of custom Flixel mouse cursors.
+		 * @param Initialize 		If <code>true</code> (default), the debugger will initialize its interal structures and will be ready to work, otherwise it remain in a "stand-by" mode and will only initialize if <code>show()</code> is invoked.
 		 */
-		public function FlxDebugger(Width:Number,Height:Number,UseSystemCursor:Boolean,Initialize:Boolean = true)
+		public function FlxDebugger(OverlaysContainer:Sprite,Width:Number,Height:Number,UseSystemCursor:Boolean,Initialize:Boolean = true)
 		{
 			super();
 			hasMouse = false;
@@ -87,6 +88,8 @@ package flixel.system.debug
 			_useSystemCursor = UseSystemCursor;
 			_overlays = new Sprite();
 			_overlays.visible = false;
+			
+			OverlaysContainer.addChild(_overlays);
 			
 			if (Initialize)
 			{
@@ -341,12 +344,52 @@ package flixel.system.debug
 		}
 		
 		/**
-		 * The area where all overlays are contained. Every windows used by the debugger, such as the console, is
-		 * a child of this overlays area.
+		 * Adds an overlay to the debugger. Every windows used by the debugger, such as the console, is
+		 * an overlay. The overlay is added at the very top of the list, so it will appear in front
+		 * of all previously added overlays. Use <code>addOverlayAt()</code> to add an overlay
+		 * to a specific position.
+ 		 * 
+		 * @param	Overlay		The overlay to be added to the debugger.
 		 */
-		public function get overlays():Sprite
+		public function addOverlay(Overlay:Sprite):void
 		{
-			return _overlays;
+			_overlays.addChild(Overlay);
+		}
+		
+		/**
+		 * Adds an overlay to the debugger at an specific position (layer) on the screen.
+		 * If you specify a currently occupied index position, the overlay object that exists at that
+		 * position and all higher positions are moved up one position in the overlays list.
+ 		 * 
+		 * @param	Overlay		The overlay to be added to the debugger.
+		 * @param	Index		The index to which the overlay is added. 
+		 */
+		public function addOverlayAt(Overlay:Sprite, Index:int):void
+		{
+			_overlays.addChildAt(Overlay, Index);
+		}
+		
+		/**
+		 * Removes an overlay from the debugger.
+		 * 
+		 * @param	Overlay		The overlay to be removed.
+		 */
+		public function removeOverlay(Overlay:Sprite):void
+		{
+			if (Overlay != null)
+			{
+				_overlays.removeChild(Overlay);
+			}
+		}
+		
+		/**
+		 * Removes an overlay by its index in the screen. 
+		 * 
+		 * @param	Index		The index from which the overlay is removed.
+		 */
+		public function removeOverlayAt(Index:int):void
+		{
+			_overlays.removeChildAt(Index);
 		}
 		
 		/**
@@ -357,6 +400,22 @@ package flixel.system.debug
 		public function get initialized():Boolean
 		{
 			return _initialized;
+		}
+		
+		/**
+		 * The width of the visual debugger area, which is the Flash Player window width.
+		 */
+		public function get width():Number
+		{
+			return _screen.x;
+		}
+		
+		/**
+		 * The height of the visual debugger area, which is the Flash Player window height.
+		 */
+		public function get height():Number
+		{
+			return _screen.y;
 		}
 	}
 }
