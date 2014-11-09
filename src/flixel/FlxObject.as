@@ -61,35 +61,6 @@ package flixel
 		static public const OVERLAP_BIAS:Number = 4;
 		
 		/**
-		 * Path behavior controls: move from the start of the path to the end then stop.
-		 */
-		static public const PATH_FORWARD:uint			= 0x000000;
-		/**
-		 * Path behavior controls: move from the end of the path to the start then stop.
-		 */
-		static public const PATH_BACKWARD:uint			= 0x000001;
-		/**
-		 * Path behavior controls: move from the start of the path to the end then directly back to the start, and start over.
-		 */
-		static public const PATH_LOOP_FORWARD:uint		= 0x000010;
-		/**
-		 * Path behavior controls: move from the end of the path to the start then directly back to the end, and start over.
-		 */
-		static public const PATH_LOOP_BACKWARD:uint		= 0x000100;
-		/**
-		 * Path behavior controls: move from the start of the path to the end then turn around and go back to the start, over and over.
-		 */
-		static public const PATH_YOYO:uint				= 0x001000;
-		/**
-		 * Path behavior controls: ignores any vertical component to the path data, only follows side to side.
-		 */
-		static public const PATH_HORIZONTAL_ONLY:uint	= 0x010000;
-		/**
-		 * Path behavior controls: ignores any horizontal component to the path data, only follows up and down.
-		 */
-		static public const PATH_VERTICAL_ONLY:uint		= 0x100000;
-		
-		/**
 		 * X position of the upper left corner of this object in world space.
 		 */
 		public var x:Number;
@@ -474,10 +445,10 @@ package flixel
 		 * 
 		 * @param	Path		The <code>FlxPath</code> you want this object to follow.
 		 * @param	Speed		How fast to travel along the path in pixels per second.
-		 * @param	Mode		Optional, controls the behavior of the object following the path using the path behavior constants.  Can use multiple flags at once, for example PATH_YOYO|PATH_HORIZONTAL_ONLY will make an object move back and forth along the X axis of the path only.
+		 * @param	Mode		Optional, controls the behavior of the object following the path using the path behavior constants.  Can use multiple flags at once, for example <code>FlxPath.YOYO|FlxPath.HORIZONTAL_ONLY</code> will make an object move back and forth along the X axis of the path only.
 		 * @param	AutoRotate	Automatically point the object toward the next node.  Assumes the graphic is pointing upward.  Default behavior is false, or no automatic rotation.
 		 */
-		public function followPath(Path:FlxPath,Speed:Number=100,Mode:uint=PATH_FORWARD,AutoRotate:Boolean=false):void
+		public function followPath(Path:FlxPath,Speed:Number=100,Mode:uint=FlxPath.FORWARD,AutoRotate:Boolean=false):void
 		{
 			if(Path.nodes.length <= 0)
 			{
@@ -491,7 +462,7 @@ package flixel
 			_pathRotate = AutoRotate;
 			
 			//get starting node
-			if((_pathMode == PATH_BACKWARD) || (_pathMode == PATH_LOOP_BACKWARD))
+			if((_pathMode == FlxPath.BACKWARD) || (_pathMode == FlxPath.LOOP_BACKWARD))
 			{
 				_pathNodeIndex = path.nodes.length-1;
 				_pathInc = -1;
@@ -533,16 +504,16 @@ package flixel
 				var oldNode:FlxPoint = path.nodes[_pathNodeIndex];
 				if(oldNode != null)
 				{
-					if((_pathMode & PATH_VERTICAL_ONLY) == 0)
+					if((_pathMode & FlxPath.VERTICAL_ONLY) == 0)
 						x = oldNode.x - width*0.5;
-					if((_pathMode & PATH_HORIZONTAL_ONLY) == 0)
+					if((_pathMode & FlxPath.HORIZONTAL_ONLY) == 0)
 						y = oldNode.y - height*0.5;
 				}
 			}
 			
 			_pathNodeIndex += _pathInc;
 			
-			if((_pathMode & PATH_BACKWARD) > 0)
+			if((_pathMode & FlxPath.BACKWARD) > 0)
 			{
 				if(_pathNodeIndex < 0)
 				{
@@ -550,12 +521,12 @@ package flixel
 					stopFollowingPath(false);
 				}
 			}
-			else if((_pathMode & PATH_LOOP_FORWARD) > 0)
+			else if((_pathMode & FlxPath.LOOP_FORWARD) > 0)
 			{
 				if(_pathNodeIndex >= path.nodes.length)
 					_pathNodeIndex = 0;
 			}
-			else if((_pathMode & PATH_LOOP_BACKWARD) > 0)
+			else if((_pathMode & FlxPath.LOOP_BACKWARD) > 0)
 			{
 				if(_pathNodeIndex < 0)
 				{
@@ -564,7 +535,7 @@ package flixel
 						_pathNodeIndex = 0;
 				}
 			}
-			else if((_pathMode & PATH_YOYO) > 0)
+			else if((_pathMode & FlxPath.YOYO) > 0)
 			{
 				if(_pathInc > 0)
 				{
@@ -613,8 +584,8 @@ package flixel
 			var deltaX:Number = node.x - _point.x;
 			var deltaY:Number = node.y - _point.y;
 			
-			var horizontalOnly:Boolean = (_pathMode & PATH_HORIZONTAL_ONLY) > 0;
-			var verticalOnly:Boolean = (_pathMode & PATH_VERTICAL_ONLY) > 0;
+			var horizontalOnly:Boolean = (_pathMode & FlxPath.HORIZONTAL_ONLY) > 0;
+			var verticalOnly:Boolean = (_pathMode & FlxPath.VERTICAL_ONLY) > 0;
 			
 			if(horizontalOnly)
 			{
@@ -1182,6 +1153,87 @@ package flixel
 			}
 			else
 				return false;
+		}
+		
+		
+		/*     --- Deprecated members in Flixel v2.57 ---     */
+		/*  To be removed after developers have had time to adjust to the new changes. */
+		
+		/**
+		 * Path behavior controls: move from the start of the path to the end then stop.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.FORWARD</code> instead.
+		 */
+		static public function get PATH_FORWARD():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_FORWARD', 'FlxPath.FORWARD');
+			return FlxPath.FORWARD;
+		}
+		
+		/**
+		 * Path behavior controls: move from the end of the path to the start then stop.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.BACKWARD</code> instead.
+		 */
+		static public function get PATH_BACKWARD():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_BACKWARD', 'FlxPath.BACKWARD');
+			return FlxPath.BACKWARD;
+		}
+		
+		/**
+		 * Path behavior controls: move from the start of the path to the end then directly back to the start, and start over.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.LOOP_FORWARD</code> instead.
+		 */
+		static public function get PATH_LOOP_FORWARD():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_LOOP_FORWARD', 'FlxPath.LOOP_FORWARD');
+			return FlxPath.LOOP_FORWARD;
+		}
+		
+		/**
+		 * Path behavior controls: move from the end of the path to the start then directly back to the end, and start over.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.LOOP_BACKWARD</code> instead.
+		 */
+		static public function get PATH_LOOP_BACKWARD():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_LOOP_BACKWARD', 'FlxPath.LOOP_BACKWARD');
+			return FlxPath.LOOP_BACKWARD;
+		}
+		
+		/**
+		 * Path behavior controls: move from the start of the path to the end then turn around and go back to the start, over and over.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.YOYO</code> instead.
+		 */
+		static public function get PATH_YOYO():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_YOYO', 'FlxPath.YOYO');
+			return FlxPath.YOYO;
+		}
+		
+		/**
+		 * Path behavior controls: ignores any vertical component to the path data, only follows side to side.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.HORIZONTAL_ONLY</code> instead.
+		 */
+		static public function get PATH_HORIZONTAL_ONLY():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_HORIZONTAL_ONLY', 'FlxPath.HORIZONTAL_ONLY');
+			return FlxPath.HORIZONTAL_ONLY;
+		}
+		
+		/**
+		 * Path behavior controls: ignores any horizontal component to the path data, only follows up and down.
+		 * 
+		 * @deprecated This property is deprecated. Use <code>FlxPath.VERTICAL_ONLY</code> instead.
+		 */
+		static public function get PATH_VERTICAL_ONLY():uint
+		{
+			FlxG.warnDeprecated('FlxObject.PATH_VERTICAL_ONLY', 'FlxPath.VERTICAL_ONLY');
+			return FlxPath.VERTICAL_ONLY;
 		}
 	}
 }
