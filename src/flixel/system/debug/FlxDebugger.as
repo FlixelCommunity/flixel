@@ -8,6 +8,7 @@ package flixel.system.debug
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
+	import flash.ui.Mouse;
 	
 	import flixel.FlxG;
 	
@@ -16,7 +17,7 @@ package flixel.system.debug
 	 * Most of the functionality is in the debug folder widgets,
 	 * but this class instantiates the widgets and handles their basic formatting and arrangement.
 	 */
-	public class FlxDebugger extends Sprite
+	public class FlxDebugger 
 	{
 		/**
 		 * Container for the performance monitor widget.
@@ -30,11 +31,6 @@ package flixel.system.debug
 		 * Container for the watch window widget.
 		 */
 		public var watch:Watch;
-		/**
-		 * Container for the record, stop and play buttons.
-		 * TODO: move this hack to FlxReplay, adding the proper signals.
-		 */
-		public static var vcr:VCR;
 		/**
 		 * Container for the visual debug mode toggle.
 		 */
@@ -56,21 +52,54 @@ package flixel.system.debug
 		 * Internal, used to space out windows from the edges.
 		 */
 		protected var _gutter:uint;
+		/**
+		 * Internal, contains all overlays used by the debugger, e.g. console window.
+		 */
+		protected var _overlays:Sprite;
+		/**
+		 * Internal, tells if the debugger was already initialized.
+		 */
+		protected var _initialized:Boolean;
+		/**
+		 * Internal, tells if the default system mouse cursor should be used instead of custom Flixel mouse cursors.
+		 */
+		protected var _useSystemCursor:Boolean;
 		
 		/**
 		 * Instantiates the debugger overlay.
 		 * 
-		 * @param Width		The width of the screen.
-		 * @param Height	The height of the screen.
+		 * @param OverlaysContainer	The container where the debugger can add its overlays.
+		 * @param Width				The width of the screen.
+		 * @param Height			The height of the screen.
+		 * @param UseSystemCursor 	Tells if the default system mouse cursor should be used instead of custom Flixel mouse cursors.
+		 * @param Initialize 		If <code>true</code> (default), the debugger will initialize its interal structures and will be ready to work, otherwise it remain in a "stand-by" mode and will only initialize if <code>show()</code> is invoked.
 		 */
-		public function FlxDebugger(Width:Number,Height:Number)
+		public function FlxDebugger(OverlaysContainer:Sprite,Width:Number,Height:Number,UseSystemCursor:Boolean,Initialize:Boolean = true)
 		{
 			super();
-			visible = false;
 			hasMouse = false;
 			_screen = new Point(Width,Height);
-
-			addChild(new Bitmap(new BitmapData(Width,15,true,0x7f000000)));
+			_initialized = false;
+			_useSystemCursor = UseSystemCursor;
+			_overlays = new Sprite();
+			_overlays.visible = false;
+			
+			OverlaysContainer.addChild(_overlays);
+			
+			if (Initialize)
+			{
+				init();
+			}
+		}
+		
+		/**
+		 * Initializes the debugger, creating all overlays.
+		 */
+		protected function init():void
+		{
+			_initialized = true;
+			
+			_overlays.addChild(new Bitmap(new BitmapData(_screen.x, 15, true, 0x7f000000)));
 			
 			var txt:TextField = new TextField();
 			txt.x = 2;
@@ -85,35 +114,30 @@ package flixel.system.debug
 			else
 				str += " [release]";
 			txt.text = str;
-			addChild(txt);
+			_overlays.addChild(txt);
 			
 			_gutter = 8;
 			var screenBounds:Rectangle = new Rectangle(_gutter,15+_gutter/2,_screen.x-_gutter*2,_screen.y-_gutter*1.5-15);
 			
 			log = new Log("log",0,0,true,screenBounds);
-			addChild(log);
+			_overlays.addChild(log);
 			
 			watch = new Watch("watch",0,0,true,screenBounds);
-			addChild(watch);
+			_overlays.addChild(watch);
 			
 			perf = new Perf("stats",0,0,false,screenBounds);
-			addChild(perf);
-			
-			vcr = new VCR();
-			vcr.x = (Width - vcr.width/2)/2;
-			vcr.y = 2;
-			addChild(vcr);
+			_overlays.addChild(perf);
 			
 			vis = new Vis();
-			vis.x = Width-vis.width - 4;
+			vis.x = _screen.x-vis.width - 4;
 			vis.y = 2;
-			addChild(vis);
+			_overlays.addChild(vis);
 			
 			setLayout(FlxG.DEBUGGER_STANDARD);
 			
 			//Should help with fake mouse focus type behavior
-			addEventListener(MouseEvent.MOUSE_OVER,handleMouseOver);
-			addEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
+			_overlays.addEventListener(MouseEvent.MOUSE_OVER,handleMouseOver);
+			_overlays.addEventListener(MouseEvent.MOUSE_OUT, handleMouseOut);
 		}
 		
 		/**
@@ -125,41 +149,34 @@ package flixel.system.debug
 			
 			if (log != null)
 			{
-				removeChild(log);
+				_overlays.removeChild(log);
 				log.destroy();
 				log = null;
 			}
 			
 			if (watch != null)
 			{
-				removeChild(watch);
+				_overlays.removeChild(watch);
 				watch.destroy();
 				watch = null;
 			}
 			
 			if (perf != null)
 			{
-				removeChild(perf);
+				_overlays.removeChild(perf);
 				perf.destroy();
 				perf = null;
 			}
 			
-			if (vcr != null)
-			{
-				removeChild(vcr);
-				vcr.destroy();
-				vcr = null;
-			}
-			
 			if (vis != null)
 			{
-				removeChild(vis);
+				_overlays.removeChild(vis);
 				vis.destroy();
 				vis = null;
 			}
 			
-			removeEventListener(MouseEvent.MOUSE_OVER,handleMouseOver);
-			removeEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
+			_overlays.removeEventListener(MouseEvent.MOUSE_OVER,handleMouseOver);
+			_overlays.removeEventListener(MouseEvent.MOUSE_OUT,handleMouseOut);
 		}
 		
 		/**
@@ -180,6 +197,17 @@ package flixel.system.debug
 		protected function handleMouseOut(E:MouseEvent=null):void
 		{
 			hasMouse = false;
+		}
+		
+		/**
+		 * Show/hide the Flash cursor according to the debugger's visilibity.
+		 */
+		protected function adjustFlashCursorVisibility():void
+		{
+			if(visible)
+				flash.ui.Mouse.show();
+			else if(!_useSystemCursor)
+				flash.ui.Mouse.hide();
 		}
 		
 		/**
@@ -245,6 +273,132 @@ package flixel.system.debug
 					perf.reposition(_screen.x,0);
 					break;
 			}
+		}
+		
+		/**
+		 * Read-only property that tells is the debugger is visible or not. You can
+		 * use the methods <code>show()</code> and <code>hide()</code> to control the
+		 * debugger visility.
+		 */
+		public function get visible():Boolean
+		{
+			return _overlays != null && _overlays.visible;
+		}
+		
+		/**
+		 * Hide the debugger. This method essentially sets the <code>visible</code> property to <code>false</code>.
+		 */
+		public function hide():void
+		{
+			_overlays.visible = false;
+			adjustFlashCursorVisibility();
+		}
+		
+		/**
+		 * Toggles the debugger visility.
+		 */
+		public function toggleVisility():void
+		{
+			if (visible)
+				hide();
+			else
+				show();
+		}
+		
+		/**
+		 * Shows the debugger. This method obeys <code>FlxG.debug</code>, which means that
+		 * if <code>FlxG.debug</code> is <code>false</code>, the method will silenty fail
+		 * and will not display the debugger. It's possible to ignore <code>FlxG.debug</code>
+		 * by using the <code>Force</code> parameter.
+		 * 
+		 * @param	Force if <code>true</code> the method will ignore <code>FlxG.debug</code> and will show the debugger. If <code>false</code>(default) the method will only show the debuger if <code>FlxG.debug</code> is <code>true</code>.
+		 */
+		public function show(Force:Boolean = false):void
+		{
+			if (Force || FlxG.debug) {
+				if (!_initialized)
+				{
+					// Debugger was only added to the screen, but not initialized.
+					init();
+				}
+				_overlays.visible = true;
+				adjustFlashCursorVisibility();
+			}
+		}
+		
+		/**
+		 * Adds an overlay to the debugger. Every windows used by the debugger, such as the console, is
+		 * an overlay. The overlay is added at the very top of the list, so it will appear in front
+		 * of all previously added overlays. Use <code>addOverlayAt()</code> to add an overlay
+		 * to a specific position.
+ 		 * 
+		 * @param	Overlay		The overlay to be added to the debugger.
+		 */
+		public function addOverlay(Overlay:Sprite):void
+		{
+			_overlays.addChild(Overlay);
+		}
+		
+		/**
+		 * Adds an overlay to the debugger at an specific position (layer) on the screen.
+		 * If you specify a currently occupied index position, the overlay object that exists at that
+		 * position and all higher positions are moved up one position in the overlays list.
+ 		 * 
+		 * @param	Overlay		The overlay to be added to the debugger.
+		 * @param	Index		The index to which the overlay is added. 
+		 */
+		public function addOverlayAt(Overlay:Sprite, Index:int):void
+		{
+			_overlays.addChildAt(Overlay, Index);
+		}
+		
+		/**
+		 * Removes an overlay from the debugger.
+		 * 
+		 * @param	Overlay		The overlay to be removed.
+		 */
+		public function removeOverlay(Overlay:Sprite):void
+		{
+			if (Overlay != null)
+			{
+				_overlays.removeChild(Overlay);
+			}
+		}
+		
+		/**
+		 * Removes an overlay by its index in the screen. 
+		 * 
+		 * @param	Index		The index from which the overlay is removed.
+		 */
+		public function removeOverlayAt(Index:int):void
+		{
+			_overlays.removeChildAt(Index);
+		}
+		
+		/**
+		 * Tells if the debugger is initialized. When Flixel starts, it will create a bare minimum
+		 * and uninitialized debugger if <code>FlxG.debug</code> is <code>false</code>. The debugger
+		 * will automatically initialize itself if a call to <code>show()</code> is made.
+		 */
+		public function get initialized():Boolean
+		{
+			return _initialized;
+		}
+		
+		/**
+		 * The width of the visual debugger area, which is the Flash Player window width.
+		 */
+		public function get width():Number
+		{
+			return _screen.x;
+		}
+		
+		/**
+		 * The height of the visual debugger area, which is the Flash Player window height.
+		 */
+		public function get height():Number
+		{
+			return _screen.y;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package flixel
 {
 	import flash.utils.getTimer;
+	import flixel.system.debug.FlxDebugger;
 	import flixel.util.FlxRandom;
 	import flixel.util.FlxU;
 	import flixel.system.FlxSound;
@@ -265,7 +266,7 @@ package flixel
 		 */
 		static public function log(Data:Object):void
 		{
-			if((_game != null) && (_game._debugger != null))
+			if((_game != null) && (_game._debugger.initialized))
 				_game._debugger.log.add((Data == null)?"ERROR: null object":((Data is Array)?FlxU.formatArray(Data as Array):Data.toString()));
 		}
 		
@@ -294,7 +295,7 @@ package flixel
 		 */
 		static public function watch(AnyObject:Object,VariableName:String,DisplayName:String=null):void
 		{
-			if((_game != null) && (_game._debugger != null))
+			if((_game != null) && (_game._debugger.initialized))
 				_game._debugger.watch.add(AnyObject,VariableName,DisplayName);
 		}
 		
@@ -307,7 +308,7 @@ package flixel
 		 */
 		static public function unwatch(AnyObject:Object,VariableName:String=null):void
 		{
-			if((_game != null) && (_game._debugger != null))
+			if((_game != null) && (_game._debugger.initialized))
 				_game._debugger.watch.remove(AnyObject,VariableName);
 		}
 		
@@ -716,7 +717,7 @@ package flixel
 		 */
 		static public function setDebuggerLayout(Layout:uint):void
 		{
-			if(_game._debugger != null)
+			if(_game._debugger.initialized)
 				_game._debugger.setLayout(Layout);
 		}
 		
@@ -725,7 +726,7 @@ package flixel
 		 */
 		static public function resetDebuggerLayout():void
 		{
-			if(_game._debugger != null)
+			if(_game._debugger.initialized)
 				_game._debugger.resetLayout();
 		}
 		
@@ -1075,7 +1076,7 @@ package flixel
 		{
 			if (FlxG.ignoreInput) return;
 			FlxG.keys.update();
-			if(!_game._debuggerUp || !_game._debugger.hasMouse)
+			if(!_game._debugger.visible || !_game._debugger.hasMouse)
 				FlxG.mouse.update(FlxG._game.mouseX,FlxG._game.mouseY);
 		}
 		
@@ -1141,6 +1142,15 @@ package flixel
 					cam._flashSprite.visible = cam.visible;
 				}
 			}
+		}
+		
+		/**
+		 * Access the game debugger. Using this reference it's possible to show/hide
+		 * the debug console, for instance.
+		 */
+		static public function get debugger():FlxDebugger
+		{
+			return _game._debugger;
 		}
 		
 		/*     --- Deprecated members in Flixel v2.57 ---     */
