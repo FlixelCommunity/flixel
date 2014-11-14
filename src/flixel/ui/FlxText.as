@@ -287,7 +287,7 @@ package flixel.ui
 				framePixels = new BitmapData(_pixels.width,_pixels.height,true,0);
 			framePixels.copyPixels(_pixels,_flashRect,_flashPointZero);
 
-			// TODO: Render: add docs
+			// Upload the new bitmapData to the GPU if current render is GPU-based.
 			refreshTexture();
 		}
 		

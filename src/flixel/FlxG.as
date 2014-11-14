@@ -705,8 +705,7 @@ package flixel
 		}
 		
 		/**
-		 * TODO: Render: add docs
-		 * Read-only: access the game render.
+		 * Read-only: access the game render. You can select a CPU or a GPU render during the game creation.
 		 */
 		static public function get render():FlxRender
 		{
@@ -751,7 +750,7 @@ package flixel
 		 */
 		static public function addCamera(NewCamera:FlxCamera):FlxCamera
 		{
-			if (FlxG.render is FlxBlittingRender)
+			if (FlxG.render.isBlitting())
 			{
 				FlxG._game.addChildAt(NewCamera._flashSprite,FlxG._game.getChildIndex(FlxG._game._mouse));
 			}

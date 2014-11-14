@@ -19,9 +19,8 @@ package flixel
 	import flixel.system.FlxSave;
 	import flixel.system.debug.FlxDebugger;
 	
-	// TODO: clean this up
-	import flixel.system.render.blitting.FlxBlittingRender;
 	import flixel.system.render.FlxRender;
+	import flixel.system.render.blitting.FlxBlittingRender;
 	import flixel.system.render.genome2d.FlxGenome2DRender;
 
 	/**
@@ -50,9 +49,14 @@ package flixel
 		public var useSystemCursor:Boolean;
 
 		/**
-		 * TODO: add docs about render
+		 * The render flixel is using to draw things into the screen.
+		 * All available renders are in the <code>system.render</code> package.
 		 */
 		internal var _render:FlxRender;
+		/**
+		 * Tells flixel to use hardware acceleration (Stage3D) to draw things.
+		 */
+		internal var _useGPU:Boolean;
 		/**
 		 * Current game state.
 		 */
@@ -137,8 +141,9 @@ package flixel
 		 * @param	GameFramerate	How frequently the game should update (default is 60 times per second).
 		 * @param	FlashFramerate	Sets the actual display framerate for Flash player (default is 30 times per second).
 		 * @param	UseSystemCursor	Whether to use the default OS mouse pointer, or to use custom flixel ones.
+		 * @param	UseGPU			Whether to use hardware acceleration for rendering (with Genome2D). Default is <code>false</code> (meaning that flixel will use blitting/CPU to draw things).
 		 */
-		public function FlxGame(GameSizeX:uint,GameSizeY:uint,InitialState:Class,Zoom:Number=1,GameFramerate:uint=60,FlashFramerate:uint=30,UseSystemCursor:Boolean=false)
+		public function FlxGame(GameSizeX:uint,GameSizeY:uint,InitialState:Class,Zoom:Number=1,GameFramerate:uint=60,FlashFramerate:uint=30,UseSystemCursor:Boolean=false,UseGPU:Boolean=false)
 		{
 			//super high priority init stuff (focus, mouse, etc)
 			_lostFocus = false;
@@ -164,6 +169,10 @@ package flixel
 			_requestedState = null;
 			_requestedReset = true;
 			_created = false;
+			
+			// inform the subsequent init code to use GPU for rendering.
+			_useGPU = UseGPU;
+			
 			addEventListener(Event.ADDED_TO_STAGE, create);
 		}
 		
@@ -479,7 +488,7 @@ package flixel
 		protected function draw():void
 		{
 			var mark:uint = getTimer();
-			_render.draw(_state);
+			_render.step(_state);
 			FlxG.signals.postDraw.dispatch();
 
 			if(_debugger.visible)
@@ -526,9 +535,8 @@ package flixel
 				createFocusScreen();
 			}
 			
-			// TODO: add docs
-			// TODO: init render based on Class coming from FlxGame constructor
-			_render = new FlxGenome2DRender();
+			// Creates and init the render that will be used to draw things into the screen.
+			_render = _useGPU ? new FlxGenome2DRender() : new FlxBlittingRender();
 			_render.init(this, onEnterFrame);
 		}
 		

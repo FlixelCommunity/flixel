@@ -44,7 +44,7 @@ package flixel.system.debug
 		public function Perf(Title:String, Width:Number, Height:Number, Resizable:Boolean=true, Bounds:Rectangle=null, BGColor:uint=0x7f7f7f7f, TopColor:uint=0x7f000000)
 		{
 			super(Title, Width, Height, Resizable, Bounds, BGColor, TopColor);
-			resize(90,66);
+			resize(90,112);
 			
 			_lastTime = 0;
 			_updateTimer = 0;
@@ -140,8 +140,11 @@ package flixel.system.debug
 					visibleCount += _visibleObject[i++];
 				visibleCount /= _visibleObjectMarker;
 
-				output += "D:" + visibleCount + " " + uint(drawTime/_flixelDrawMarker) + "ms";
+				output += "D:" + visibleCount + " " + uint(drawTime/_flixelDrawMarker) + "ms\n\n";
 
+				// Append the render info
+				output += "Render:" + FlxG.render.info + "\n";
+				
 				_text.text = output;
 
 				_flixelUpdateMarker = 0;

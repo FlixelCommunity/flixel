@@ -300,7 +300,7 @@ package flixel.util
 			}
 			
 			//then stamp the path down onto the game buffer
-			FlxG.render.drawToBuffer(Camera, null, FlxG.flashGfxSprite, null);
+			FlxG.render.drawDebug(Camera, FlxG.flashGfxSprite);
 		}
 		
 		static public function get manager():DebugPathDisplay

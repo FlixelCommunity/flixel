@@ -1,17 +1,14 @@
 package flixel
 {
-	import com.genome2d.textures.factories.GTextureFactory;
-	import com.genome2d.textures.GTexture;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.geom.ColorTransform;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flixel.system.render.blitting.FlxBlittingRender;
-	import flixel.system.render.genome2d.FlxGenome2DRender;
-	import flixel.util.FlxU;
+	import flixel.system.render.FlxTexture;
 	
+	import flixel.util.FlxU;
 	import flixel.util.FlxMath;
 	import flixel.util.FlxPoint;
 	import flixel.util.FlxRect;
@@ -103,18 +100,13 @@ package flixel
 		public var scroll:FlxPoint;
 		/**
 		 * The actual bitmap data of the camera display itself.
-		 * TODO: Render: Check if it is necessary.
 		 */
 		public var buffer:BitmapData;
 		/**
-		 * TODO: Render: add docs
+		 * A texture representing the camera background. It's used to render the camera when Flixel is in GPU-mode.
+		 * TODO: try to remove this property and use screen.texture (or equivalent) instead.
 		 */
-		public var texture:GTexture;
-		/**
-		 * The natural background color of the camera. Defaults to FlxG.bgColor.
-		 * NOTE: can be transparent for crazy FX!
-		 */
-		protected var _bgColor:uint;
+		public var bgTexture:FlxTexture;
 		/**
 		 * Sometimes it's easier to just work with a <code>FlxSprite</code> than it is to work
 		 * directly with the <code>BitmapData</code> buffer.  This sprite reference will
@@ -122,6 +114,11 @@ package flixel
 		 */
 		public var screen:FlxSprite;
 		
+		/**
+		 * The natural background color of the camera. Defaults to FlxG.bgColor.
+		 * NOTE: can be transparent for crazy FX!
+		 */
+		protected var _bgColor:uint;
 		/**
 		 * Indicates how far the camera is zoomed in.
 		 */
@@ -245,6 +242,7 @@ package flixel
 			screen.makeGraphic(width,height,0,true);
 			screen.setOriginToCorner();
 			buffer = screen.pixels;
+			bgTexture = new FlxTexture();
 			bgColor = FlxG.bgColor;
 			_color = 0xffffff;
 
@@ -302,10 +300,10 @@ package flixel
 			_fxShakeOffset = null;
 			_fill = null;
 			
-			if (texture != null)
+			if (bgTexture != null)
 			{
-				texture.dispose(); // TODO: Render: instead of using a texture here, use the Render's internal buffer.
-				texture = null;
+				bgTexture.destroy();
+				bgTexture = null;
 			}
 			
 			super.destroy();
@@ -664,16 +662,10 @@ package flixel
 		{
 			_bgColor = Color;
 			
-			if (texture != null)
+			if (!FlxG.render.isBlitting())
 			{
-				texture.dispose();
-				texture = null;
-			}
-			
-			if (FlxG.render is FlxGenome2DRender)
-			{
-				var bitmapData:BitmapData = new BitmapData(width, height, false, Color);
-				texture = GTextureFactory.createFromBitmapData("FlxCamera" + Math.random(), bitmapData);
+				// TODO: it could be improved by creating a 1x1 px texture that will be scaled during GPU render.
+				bgTexture.makeGraphic(width, height, Color);
 			}
 		}
 		
@@ -684,14 +676,6 @@ package flixel
 		public function get bgColor():uint
 		{
 			return _bgColor;
-		}
-		
-		/**
-		 * TODO: Render: add docs
-		 */
-		public function get colorTransform():ColorTransform
-		{
-			return _flashBitmap.transform.colorTransform;
 		}
 		
 		/**
@@ -724,7 +708,11 @@ package flixel
 		}
 		
 		/**
-		 * TODO: Render: add docs
+		 * The current color being added to the buffer because of any visual effect (e.g. flash or fade).
+		 * When an effect is in place, such as after calling <code>fade()</code>, the effect's color
+		 * must be added to the camera buffer. When there are more than one active effect, their color
+		 * is accumulated (blended) and drawn to the camera buffer.
+		 * This property stores the current accumulated color being draw to the buffer.
 		 */
 		public function set fxColorAcumulator(Value:uint):void
 		{
@@ -788,7 +776,7 @@ package flixel
 			// If the current render is not blitting there is no need
 			// to fill buffers and stuff, because only _fxColorAcumulator will be
 			// used to draw the effects.
-			if (!(FlxG.render is FlxBlittingRender)) return;			
+			if (!FlxG.render.isBlitting()) return;
 			
 			alpha = Color >> 24 & 0xFF;
 

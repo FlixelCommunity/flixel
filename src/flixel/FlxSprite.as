@@ -1,15 +1,12 @@
 package flixel
 {
-	import com.genome2d.textures.factories.GTextureFactory;
-	import com.genome2d.textures.GTexture;
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.geom.ColorTransform;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flixel.system.render.blitting.FlxBlittingRender;
-	import flixel.system.render.genome2d.FlxGenome2DRender;
+	import flixel.system.render.FlxTexture;
 	
 	import flixel.animation.FlxAnimation;
 	import flixel.util.FlxMath;
@@ -74,9 +71,9 @@ package flixel
 		 */
 		public var framePixels:BitmapData;
 		/**
-		 * TODO: Render: add docs.
+		 * A texture representing the sprite graphic. It's used to render the sprite when Flixel is in GPU-mode.
 		 */
-		public var texture:GTexture;
+		public var texture:FlxTexture;
 		/**
 		 * Set this flag to true to force the sprite to update during the draw() call.
 		 * NOTE: Rarely if ever necessary, most sprite operations will flip this flag automatically.
@@ -201,6 +198,7 @@ package flixel
 			_color = 0x00ffffff;
 			blend = null;
 			antialiasing = false;
+			cameras = null;
 			
 			finished = false;
 			_facing = RIGHT;
@@ -215,6 +213,7 @@ package flixel
 
 			_matrix = new Matrix();
 			_callback = null;
+			texture = new FlxTexture();
 			
 			if(SimpleGraphic == null)
 				SimpleGraphic = ImgDefault;
@@ -254,7 +253,7 @@ package flixel
 			
 			if (texture)
 			{
-				texture.dispose();
+				texture.destroy();
 				texture = null;
 			}
 			
@@ -439,7 +438,7 @@ package flixel
 			var maxFramesY:uint = FlxMath.floor(_pixels.height / frameHeight);
 			_maxFrames = maxFramesX * maxFramesY;
 			
-			refreshTexture();
+			texture.setBitmapData(_pixels);
 		}
 		
 		/**
@@ -480,17 +479,20 @@ package flixel
 			{
 				_flashPoint.x = _point.x;
 				_flashPoint.y = _point.y;
-				FlxG.render.copyPixelsToBuffer(Camera,texture,framePixels,_flashRect,_flashPoint,null,null,true);
+				FlxG.render.copyPixels(Camera,texture,framePixels,_flashRect,_flashPoint,null,null,true);
 			}
 			else //Advanced render
 			{
 				_matrix.identity();
-				_matrix.translate(-origin.x,-origin.y);
+				if (FlxG.render.isBlitting())
+				{
+					_matrix.translate( -origin.x, -origin.y);
+				}
 				_matrix.scale(scale.x,scale.y);
 				if((angle != 0) && (_bakedRotation <= 0))
 					_matrix.rotate(angle * 0.017453293);
 				_matrix.translate(_point.x+origin.x,_point.y+origin.y);
-				FlxG.render.drawToBuffer(Camera,texture,framePixels,_flashRect,_matrix,null,blend,null,antialiasing);
+				FlxG.render.draw(Camera,texture,framePixels,_flashRect,_matrix,null,blend,null,antialiasing);
 			}
 			
 			_VISIBLECOUNT++;
@@ -514,7 +516,7 @@ package flixel
 			
 			// If we are drawing things in GPU mode, Brush.framePixels might not be updated.
 			// Let's ensure framePixels is updated by calling calcFramePixels().
-			if (!(FlxG.render is FlxBlittingRender))
+			if (!FlxG.render.isBlitting())
 			{
 				Brush.calcFramePixels(); 
 			}
@@ -1014,7 +1016,7 @@ package flixel
 			_flashPoint.x = (TargetPoint.x - Camera.scroll.x) - _point.x;
 			_flashPoint.y = (TargetPoint.y - Camera.scroll.y) - _point.y;
 			
-			if (!(FlxG.render is FlxBlittingRender))
+			if (!FlxG.render.isBlitting())
 			{
 				// TODO: Render: improve this. It is copying pixels for every call to pixelsOverlapsPoint() when blitting is not the render.
 				// Update framePixels to the most recent data.
@@ -1048,11 +1050,10 @@ package flixel
 			_flashRect.x = indexX;
 			_flashRect.y = indexY;
 			
-			// TODO: Render: improve this block?
-			if (FlxG.render is FlxBlittingRender)
+			if (FlxG.render.isBlitting())
 			{
 				calcFramePixels();
-				_flashRect.x = _flashRect.y = 0; // TODO: Render: this line breaks GPU render.
+				_flashRect.x = _flashRect.y = 0;
 			}
 			
 			if(_callback != null)
@@ -1075,18 +1076,13 @@ package flixel
 		}
 		
 		/**
-		 * TODO: Render: add docs
+		 * Updates the sprite's texture with the current value of _pixels and re-upload the data to the GPU.
 		 */
 		protected function refreshTexture():void
 		{
-			// TODO: check using something like FlxG.render.type == FlxRender.GENOME2D
-			if (FlxG.render is FlxGenome2DRender)
+			if (!FlxG.render.isBlitting())
 			{
-				if (texture != null)
-				{
-					texture.dispose();
-				}
-				texture = GTextureFactory.createFromBitmapData("FlxSprite" + Math.random(), _pixels);
+				texture.setBitmapData(_pixels);
 			}
 		}
 	}
