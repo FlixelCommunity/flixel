@@ -18,6 +18,35 @@ package flixel.util
 	public class FlxPath
 	{
 		/**
+		 * Path behavior controls: move from the start of the path to the end then stop.
+		 */
+		static public const FORWARD:uint			= 0x000000;
+		/**
+		 * Path behavior controls: move from the end of the path to the start then stop.
+		 */
+		static public const BACKWARD:uint			= 0x000001;
+		/**
+		 * Path behavior controls: move from the start of the path to the end then directly back to the start, and start over.
+		 */
+		static public const LOOP_FORWARD:uint		= 0x000010;
+		/**
+		 * Path behavior controls: move from the end of the path to the start then directly back to the end, and start over.
+		 */
+		static public const LOOP_BACKWARD:uint		= 0x000100;
+		/**
+		 * Path behavior controls: move from the start of the path to the end then turn around and go back to the start, over and over.
+		 */
+		static public const YOYO:uint				= 0x001000;
+		/**
+		 * Path behavior controls: ignores any vertical component to the path data, only follows side to side.
+		 */
+		static public const HORIZONTAL_ONLY:uint	= 0x010000;
+		/**
+		 * Path behavior controls: ignores any horizontal component to the path data, only follows up and down.
+		 */
+		static public const VERTICAL_ONLY:uint		= 0x100000;
+		
+		/**
 		 * The list of <code>FlxPoint</code>s that make up the path data.
 		 */
 		public var nodes:Array;
