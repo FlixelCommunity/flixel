@@ -250,6 +250,8 @@ package flixel.system.render.genome2d
 								SourceRect.y,
 								SourceRect.width,
 								SourceRect.height,
+								0,
+								0,
 								(Camera.fxShakeOffset.x + Camera.x + DestPoint.x + SourceRect.width / 2) * Camera.zoom,
 								(Camera.fxShakeOffset.y + Camera.y + DestPoint.y + SourceRect.height / 2) * Camera.zoom,
 								Camera.zoom,
