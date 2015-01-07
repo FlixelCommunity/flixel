@@ -1,8 +1,6 @@
 # Change Log
----
 
 ## Version 3.0 - 10th January 2015
----
 
 This version introduces some major new features, improvements and re-organization of the code. It is no longer reverse compatible with projects that use Flixel v2.56 or below because of the new package structure, but almost all classes, methods and parameters are the same.
 
@@ -30,7 +28,6 @@ This version introduces some major new features, improvements and re-organizatio
 
 
 ## Version 2.56 - 16th Novembery 2013
----
 
 This version fixes many of Flixel's older bugs, while staying reverse compatible with projects that use Flixel v2.55 (the current version in [AdamAtomic/flixel](https://github.com/AdamAtomic/flixel)).
 
