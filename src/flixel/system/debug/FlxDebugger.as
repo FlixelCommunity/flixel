@@ -295,14 +295,21 @@ package flixel.system.debug
 		}
 		
 		/**
-		 * Toggles the debugger visility.
+		 * Toggles the debugger visility. This method obeys <code>FlxG.debug</code>, which means that
+		 * if <code>FlxG.debug</code> is <code>false</code>, the method will silenty fail
+		 * and will not toggle the debugger visibility. It's possible to ignore <code>FlxG.debug</code>
+		 * by using the <code>Force</code> parameter.
+		 * 
+		 * @param	Force if <code>true</code> the method will ignore <code>FlxG.debug</code> and will toggle the debugger visibility. If <code>false</code>(default) the method will only toggle the debugger visibility if <code>FlxG.debug</code> is <code>true</code>.
 		 */
-		public function toggleVisility():void
+		public function toggleVisility(Force:Boolean = false):void
 		{
-			if (visible)
-				hide();
-			else
-				show();
+			if (Force || FlxG.debug) {
+				if (visible)
+					hide();
+				else
+					show();
+			}
 		}
 		
 		/**
@@ -311,7 +318,7 @@ package flixel.system.debug
 		 * and will not display the debugger. It's possible to ignore <code>FlxG.debug</code>
 		 * by using the <code>Force</code> parameter.
 		 * 
-		 * @param	Force if <code>true</code> the method will ignore <code>FlxG.debug</code> and will show the debugger. If <code>false</code>(default) the method will only show the debuger if <code>FlxG.debug</code> is <code>true</code>.
+		 * @param	Force if <code>true</code> the method will ignore <code>FlxG.debug</code> and will show the debugger. If <code>false</code>(default) the method will only show the debugger if <code>FlxG.debug</code> is <code>true</code>.
 		 */
 		public function show(Force:Boolean = false):void
 		{
