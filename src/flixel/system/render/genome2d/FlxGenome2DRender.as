@@ -237,11 +237,12 @@ package flixel.system.render.genome2d
 		 * @param	SourceBitmapData	A bitmapData representing the graphic to be rendered.
 		 * @param	SourceRect			A rectangle that defines the area of the source image to use as input.
 		 * @param	DestPoint			The destination point that represents the upper-left corner of the rectangular area where the new pixels are placed.
+		 * @param	ColorTrans			A ColorTransform object used to adjust the color values of the input during rendering. It's <code>null</code> by default, meaning no transformation will be applied.
 		 * @param	AlphaBitmapData		A secondary, alpha BitmapData object source.
 		 * @param	AlphaPoint			The point in the alpha BitmapData object source that corresponds to the upper-left corner of the SourceRect parameter.
 		 * @param	MergeAlpha			To use the alpha channel, set the value to true. To copy pixels with no alpha channel, set the value to <code>false</code>
 		 */
-		public function copyPixels(Camera:FlxCamera, SourceTexture:FlxTexture, SourceBitmapData:BitmapData, SourceRect:Rectangle, DestPoint:Point, AlphaBitmapData:BitmapData = null, AlphaPoint:Point = null, MergeAlpha:Boolean = false):void
+		public function copyPixels(Camera:FlxCamera, SourceTexture:FlxTexture, SourceBitmapData:BitmapData, SourceRect:Rectangle, DestPoint:Point, ColorTrans:ColorTransform = null, AlphaBitmapData:BitmapData = null, AlphaPoint:Point = null, MergeAlpha:Boolean = false):void
 		{
 			var context:IContext = _genome.getContext();
 			
@@ -250,10 +251,18 @@ package flixel.system.render.genome2d
 								SourceRect.y,
 								SourceRect.width,
 								SourceRect.height,
+								0,
+								0,
 								(Camera.fxShakeOffset.x + Camera.x + DestPoint.x + SourceRect.width / 2) * Camera.zoom,
 								(Camera.fxShakeOffset.y + Camera.y + DestPoint.y + SourceRect.height / 2) * Camera.zoom,
 								Camera.zoom,
-								Camera.zoom);
+								Camera.zoom,
+								0,
+								ColorTrans ? ColorTrans.redMultiplier : 1, 
+								ColorTrans ? ColorTrans.greenMultiplier : 1, 
+								ColorTrans ? ColorTrans.blueMultiplier : 1, 
+								ColorTrans ? ColorTrans.alphaMultiplier : 1,
+								GBlendMode.NORMAL);
 		}
 		
 		/**
@@ -288,7 +297,12 @@ package flixel.system.render.genome2d
 									 TransMatrix.c * Camera.zoom,
 									 TransMatrix.d * Camera.zoom,
 									 (TransMatrix.tx + Camera.fxShakeOffset.x) * Camera.zoom,
-									 (TransMatrix.ty + Camera.fxShakeOffset.y) * Camera.zoom);
+									 (TransMatrix.ty + Camera.fxShakeOffset.y) * Camera.zoom,
+									 ColorTrans ? ColorTrans.redMultiplier : 1, 
+									 ColorTrans ? ColorTrans.greenMultiplier : 1, 
+									 ColorTrans ? ColorTrans.blueMultiplier : 1, 
+									 ColorTrans ? ColorTrans.alphaMultiplier : 1,
+									 GBlendMode.NORMAL);
 		}
 		
 		/**

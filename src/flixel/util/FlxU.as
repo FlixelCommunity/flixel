@@ -52,12 +52,13 @@ package flixel.util
 		/**
 		 * Blend two ARGB colors togheter, creating a new one.
 		 * 
-		 * @param   ColorA  An ARGB color to be blended.
-		 * @param   ColorB  An ARGB color to be blended.
+		 * @param   ColorA  	An ARGB color to be blended.
+		 * @param   ColorB  	An ARGB color to be blended.
+		 * @param   BlendAlpha  A boolean that tells if the alpha channel of both colors should be used during the blend.
 		 * 
 		 * @return  The resulting blended color as a <code>uint</code>.
 		 */
-		static public function blendColors(ColorA:uint, ColorB:uint):uint
+		static public function blendColors(ColorA:uint, ColorB:uint, BlendAlpha:Boolean = true):uint
 		{
 			// Ideas from here: http://stackoverflow.com/a/3233351/29827
 			var aa:uint = (ColorA >> 24) & 0xFF;
@@ -70,10 +71,13 @@ package flixel.util
 			var bg:uint = (ColorB >> 8)  & 0xFF;
 			var bb:uint = (ColorB >> 0)  & 0xFF;
 			
+			var ablend:Number = BlendAlpha ? (aa / 255) : 1.0;
+			var bblend:Number = BlendAlpha ? (ba / 255) : 1.0;
+			
 			var ra:uint = (aa + ba) & 0xFF;
-			var rr:uint = (ar + br) & 0xFF;
-			var rg:uint = (ag + bg) & 0xFF;
-			var rb:uint = (ab + bb) & 0xFF;
+			var rr:uint = uint(ar * ablend + br * bblend) & 0xFF;
+			var rg:uint = uint(ag * ablend + bg * bblend) & 0xFF;
+			var rb:uint = uint(ab * ablend + bb * bblend) & 0xFF;
 			
 			return (ra << 24) | (rr << 16) | (rg << 8) | rb;
 		}

@@ -479,7 +479,7 @@ package flixel
 			{
 				_flashPoint.x = _point.x;
 				_flashPoint.y = _point.y;
-				FlxG.render.copyPixels(Camera,texture,framePixels,_flashRect,_flashPoint,null,null,true);
+				FlxG.render.copyPixels(Camera,texture,framePixels,_flashRect,_flashPoint,_colorTransform,null,null,true);
 			}
 			else //Advanced render
 			{
@@ -492,7 +492,7 @@ package flixel
 				if((angle != 0) && (_bakedRotation <= 0))
 					_matrix.rotate(angle * 0.017453293);
 				_matrix.translate(_point.x+origin.x,_point.y+origin.y);
-				FlxG.render.draw(Camera,texture,framePixels,_flashRect,_matrix,null,blend,null,antialiasing);
+				FlxG.render.draw(Camera,texture,framePixels,_flashRect,_matrix,_colorTransform,blend,null,antialiasing);
 			}
 			
 			_VISIBLECOUNT++;

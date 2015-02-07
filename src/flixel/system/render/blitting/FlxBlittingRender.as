@@ -94,11 +94,12 @@ package flixel.system.render.blitting
 		 * @param	SourceBitmapData	A bitmapData representing the graphic to be rendered.
 		 * @param	SourceRect			A rectangle that defines the area of the source image to use as input.
 		 * @param	DestPoint			The destination point that represents the upper-left corner of the rectangular area where the new pixels are placed.
+		 * @param	ColorTrans			A ColorTransform object used to adjust the color values of the input during rendering. It's <code>null</code> by default, meaning no transformation will be applied.
 		 * @param	AlphaBitmapData		A secondary, alpha BitmapData object source.
 		 * @param	AlphaPoint			The point in the alpha BitmapData object source that corresponds to the upper-left corner of the SourceRect parameter.
 		 * @param	MergeAlpha			To use the alpha channel, set the value to true. To copy pixels with no alpha channel, set the value to <code>false</code>
 		 */
-		public function copyPixels(Camera:FlxCamera, SourceTexture:FlxTexture, SourceBitmapData:BitmapData, SourceRect:Rectangle, DestPoint:Point, AlphaBitmapData:BitmapData = null, AlphaPoint:Point = null, MergeAlpha:Boolean = false):void
+		public function copyPixels(Camera:FlxCamera, SourceTexture:FlxTexture, SourceBitmapData:BitmapData, SourceRect:Rectangle, DestPoint:Point, ColorTrans:ColorTransform = null, AlphaBitmapData:BitmapData = null, AlphaPoint:Point = null, MergeAlpha:Boolean = false):void
 		{
 			Camera.buffer.copyPixels(SourceBitmapData, SourceRect, DestPoint, AlphaBitmapData, AlphaPoint, MergeAlpha);
 		}
