@@ -649,7 +649,8 @@ package flixel
 		 */
 		public function set forceDebugger(Value:Boolean):void
 		{
-			throw ReferenceError("forceDebugger is deprecated, use FlxG.debug instead.");
+			FlxG.debug = Value;
+			trace("WARNING: forceDebugger is deprecated, use FlxG.debug instead.");
 		}
 	}
 }
