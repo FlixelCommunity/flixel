@@ -17,7 +17,7 @@ package flixel.plugin.replay
 	 * 
 	 * @author	Adam Atomic
 	 * 
-	 * Adaptation by Fernando Bevilacqua (dovyski@gmail.com)
+	 * Adaptation by Fernando Bevilacqua (dovyski&#64;gmail.com)
 	 */
 	public class FlxReplay implements FlxPlugin
 	{
