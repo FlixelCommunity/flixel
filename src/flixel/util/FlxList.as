@@ -13,11 +13,17 @@ package flixel.util
 		 * Stores a reference to a <code>FlxObject</code>.
 		 */
 		public var object:FlxObject;
+
 		/**
 		 * Stores a reference to the next link in the list.
 		 */
 		public var next:FlxList;
-		
+
+		/**
+		 * A pool to prevent repeated <code>new</code> calls
+		 */
+		static public var listPool:FlxObjectPool = new FlxObjectPool(FlxList);
+
 		/**
 		 * Creates a new link, and sets <code>object</code> and <code>next</code> to <code>null</code>.
 		 */
@@ -36,6 +42,8 @@ package flixel.util
 			if(next != null)
 				next.destroy();
 			next = null;
+
+			listPool.disposeObject(this);
 		}
 	}
 }

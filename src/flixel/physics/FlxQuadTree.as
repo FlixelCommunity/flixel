@@ -1,6 +1,7 @@
 package flixel.physics
 {
 	import flixel.util.FlxList;
+	import flixel.util.FlxObjectPool;
 	import flixel.FlxBasic;
 	import flixel.FlxGroup;
 	import flixel.FlxObject;
@@ -185,7 +186,17 @@ package flixel.physics
 		static protected var _checkObjectHullHeight:Number;
 		
 		/**
-		 * Instantiate a new Quad Tree node.
+		 * A pool to prevent repeated <code>new</code> calls.
+		 */
+		static public var quadTreePool:FlxObjectPool = new FlxObjectPool(FlxQuadTree);
+		
+		/**
+		 * local reference to FlxList's object pool
+		 */
+		protected var _listPool:FlxObjectPool;
+		
+		/**
+		 * Initialize a Quad Tree node.
 		 * 
 		 * @param	X			The X-coordinate of the point in space.
 		 * @param	Y			The Y-coordinate of the point in space.
@@ -193,11 +204,13 @@ package flixel.physics
 		 * @param	Height		Desired height of this node.
 		 * @param	Parent		The parent branch or node.  Pass null to create a root.
 		 */
-		public function FlxQuadTree(X:Number, Y:Number, Width:Number, Height:Number, Parent:FlxQuadTree=null)
+		public function init(X:Number, Y:Number, Width:Number, Height:Number, Parent:FlxQuadTree=null):void
 		{
-			super(X,Y,Width,Height);
-			_headA = _tailA = new FlxList();
-			_headB = _tailB = new FlxList();
+			_listPool = FlxList.listPool;
+			
+			make(X,Y,Width,Height);
+			_headA = _tailA = _listPool.getNew();
+			_headB = _tailB = _listPool.getNew();
 			
 			//Copy the parent's children (if there are any)
 			if(Parent != null)
@@ -212,7 +225,7 @@ package flixel.physics
 						if(_tailA.object != null)
 						{
 							ot = _tailA;
-							_tailA = new FlxList();
+							_tailA = _listPool.getNew();
 							ot.next = _tailA;
 						}
 						_tailA.object = iterator.object;
@@ -227,7 +240,7 @@ package flixel.physics
 						if(_tailB.object != null)
 						{
 							ot = _tailB;
-							_tailB = new FlxList();
+							_tailB = _listPool.getNew();
 							ot.next = _tailB;
 						}
 						_tailB.object = iterator.object;
@@ -262,16 +275,13 @@ package flixel.physics
 			if(_headA != null)
 				_headA.destroy();
 			_headA = null;
-			if(_tailA != null)
-				_tailA.destroy();
 			_tailA = null;
+			
 			if(_headB != null)
 				_headB.destroy();
 			_headB = null;
-			if(_tailB != null)
-				_tailB.destroy();
 			_tailB = null;
-
+			
 			if(_northWestTree != null)
 				_northWestTree.destroy();
 			_northWestTree = null;
@@ -288,6 +298,8 @@ package flixel.physics
 			_object = null;
 			_processingCallback = null;
 			_notifyCallback = null;
+			
+			quadTreePool.disposeObject(this);
 		}
 
 		/**
@@ -384,14 +396,22 @@ package flixel.physics
 				if((_objectTopEdge > _topEdge) && (_objectBottomEdge < _midpointY))
 				{
 					if(_northWestTree == null)
-						_northWestTree = new FlxQuadTree(_leftEdge,_topEdge,_halfWidth,_halfHeight,this);
+					{
+						_northWestTree = quadTreePool.getNew();
+						_northWestTree.init(_leftEdge, _topEdge, _halfWidth, _halfHeight, this);
+					}
+					
 					_northWestTree.addObject();
 					return;
 				}
 				if((_objectTopEdge > _midpointY) && (_objectBottomEdge < _bottomEdge))
 				{
 					if(_southWestTree == null)
-						_southWestTree = new FlxQuadTree(_leftEdge,_midpointY,_halfWidth,_halfHeight,this);
+					{
+						_southWestTree = quadTreePool.getNew();
+						_southWestTree.init(_leftEdge, _midpointY, _halfWidth, _halfHeight, this);
+					}
+					
 					_southWestTree.addObject();
 					return;
 				}
@@ -401,14 +421,22 @@ package flixel.physics
 				if((_objectTopEdge > _topEdge) && (_objectBottomEdge < _midpointY))
 				{
 					if(_northEastTree == null)
-						_northEastTree = new FlxQuadTree(_midpointX,_topEdge,_halfWidth,_halfHeight,this);
+					{
+						_northEastTree = quadTreePool.getNew();
+						_northEastTree.init(_midpointX, _topEdge, _halfWidth, _halfHeight, this);
+					}
+					
 					_northEastTree.addObject();
 					return;
 				}
 				if((_objectTopEdge > _midpointY) && (_objectBottomEdge < _bottomEdge))
 				{
 					if(_southEastTree == null)
-						_southEastTree = new FlxQuadTree(_midpointX,_midpointY,_halfWidth,_halfHeight,this);
+					{
+						_southEastTree = quadTreePool.getNew();
+						_southEastTree.init(_midpointX, _midpointY, _halfWidth, _halfHeight, this);
+					}
+					
 					_southEastTree.addObject();
 					return;
 				}
@@ -418,25 +446,41 @@ package flixel.physics
 			if((_objectRightEdge > _leftEdge) && (_objectLeftEdge < _midpointX) && (_objectBottomEdge > _topEdge) && (_objectTopEdge < _midpointY))
 			{
 				if(_northWestTree == null)
-					_northWestTree = new FlxQuadTree(_leftEdge,_topEdge,_halfWidth,_halfHeight,this);
+				{
+					_northWestTree = quadTreePool.getNew();
+					_northWestTree.init(_leftEdge, _topEdge, _halfWidth, _halfHeight, this);
+				}
+				
 				_northWestTree.addObject();
 			}
 			if((_objectRightEdge > _midpointX) && (_objectLeftEdge < _rightEdge) && (_objectBottomEdge > _topEdge) && (_objectTopEdge < _midpointY))
 			{
 				if(_northEastTree == null)
-					_northEastTree = new FlxQuadTree(_midpointX,_topEdge,_halfWidth,_halfHeight,this);
+				{
+					_northEastTree = quadTreePool.getNew();
+					_northEastTree.init(_midpointX, _topEdge, _halfWidth, _halfHeight, this);
+				}
+				
 				_northEastTree.addObject();
 			}
 			if((_objectRightEdge > _midpointX) && (_objectLeftEdge < _rightEdge) && (_objectBottomEdge > _midpointY) && (_objectTopEdge < _bottomEdge))
 			{
 				if(_southEastTree == null)
-					_southEastTree = new FlxQuadTree(_midpointX,_midpointY,_halfWidth,_halfHeight,this);
+				{
+					_southEastTree = quadTreePool.getNew();
+					_southEastTree.init(_midpointX, _midpointY, _halfWidth, _halfHeight, this);
+				}
+				
 				_southEastTree.addObject();
 			}
 			if((_objectRightEdge > _leftEdge) && (_objectLeftEdge < _midpointX) && (_objectBottomEdge > _midpointY) && (_objectTopEdge < _bottomEdge))
 			{
 				if(_southWestTree == null)
-					_southWestTree = new FlxQuadTree(_leftEdge,_midpointY,_halfWidth,_halfHeight,this);
+				{
+					_southWestTree = quadTreePool.getNew();
+					_southWestTree.init(_leftEdge, _midpointY, _halfWidth, _halfHeight, this);
+				}
+				
 				_southWestTree.addObject();
 			}
 		}
@@ -452,7 +496,7 @@ package flixel.physics
 				if(_tailA.object != null)
 				{
 					ot = _tailA;
-					_tailA = new FlxList();
+					_tailA = _listPool.getNew();
 					ot.next = _tailA;
 				}
 				_tailA.object = _object;
@@ -462,7 +506,7 @@ package flixel.physics
 				if(_tailB.object != null)
 				{
 					ot = _tailB;
-					_tailB = new FlxList();
+					_tailB = _listPool.getNew();
 					ot.next = _tailB;
 				}
 				_tailB.object = _object;
